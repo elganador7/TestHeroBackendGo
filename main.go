@@ -21,7 +21,10 @@ func main() {
 	cfg := config.LoadConfig()
 
 	database.ConnectDatabase(cfg)
-	database.DB.AutoMigrate(&models.User{})
+
+	for _, model := range models.AllModels {
+		database.DB.AutoMigrate(model)
+	}
 
 	router := gin.Default()
 
@@ -34,7 +37,7 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	routes.SetupRoutes(router)
+	routes.SetupRoutes(router, database.DB)
 
 	router.Run(":8080")
 }
