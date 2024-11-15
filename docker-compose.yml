@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_USER: youruser
       POSTGRES_PASSWORD: yourpassword
-      POSTGRES_DB: TestHeroBackendGo
+      POSTGRES_DB: TestHeroBackendGo  # Default database created by PostgreSQL
     ports:
       - "5432:5432"
     volumes:
