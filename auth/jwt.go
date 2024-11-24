@@ -8,7 +8,7 @@ import (
 
 var jwtSecret = []byte("your-secure-secret") // Use environment variable in production
 
-func GenerateJWT(userID uint) (string, error) {
+func GenerateJWT(userID string) (string, error) {
 	claims := jwt.MapClaims{
 		"userID": userID,
 		"exp":    time.Now().Add(time.Hour * 72).Unix(),

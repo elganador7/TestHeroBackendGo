@@ -4,4 +4,5 @@ var AllModels = []interface{}{
 	&User{},
 	&Question{},
 	&UserAnswer{},
+	&QuestionAnswer{},
 }

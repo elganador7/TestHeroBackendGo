@@ -20,3 +20,16 @@ func setupUserAnswerRoutes(router *gin.Engine, db *gorm.DB) {
 		userAnswersApi.GET("/user/:userId/summary", userAnswerCtrl.GetUserPerformanceSummary)
 	}
 }
+
+func setupUserAnswerRoutesTest(router *gin.Engine, db *gorm.DB) {
+	userAnswerCtrl := controllers.UserAnswerController{DB: db}
+
+	userAnswersApi := router.Group("/api/user_answers")
+
+	userAnswersApi.Use()
+	{
+		userAnswersApi.POST("/", userAnswerCtrl.CreateUserAnswer)
+		userAnswersApi.GET("/user/:userId", userAnswerCtrl.GetUserAnswersByUser)
+		userAnswersApi.GET("/user/:userId/summary", userAnswerCtrl.GetUserPerformanceSummary)
+	}
+}
