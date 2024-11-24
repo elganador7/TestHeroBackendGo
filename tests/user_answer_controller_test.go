@@ -25,7 +25,7 @@ func setupTestDB() *gorm.DB {
 
 func setupRouter(db *gorm.DB) *gin.Engine {
 	router := gin.Default()
-	routes.SetupRoutes(router, db)
+	routes.SetupTestRoutes(router, db)
 	return router
 }
 
@@ -110,6 +110,6 @@ func TestGetUserPerformanceSummary(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &response)
 
 	assert.Len(t, response, 1)
-	assert.Equal(t, "Math", response[0]["subject_area"])
-	assert.Equal(t, 0.5, response[0]["correct_rate"])
+	assert.Equal(t, "Math", response[0]["SubjectArea"])
+	assert.Equal(t, 0.5, response[0]["CorrectRate"])
 }

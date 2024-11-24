@@ -4,6 +4,7 @@ import (
 	"TestHeroBackendGo/config"
 	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
+	"TestHeroBackendGo/parser"
 	"TestHeroBackendGo/routes"
 	"log"
 
@@ -36,6 +37,8 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
+
+	parser.ParseJsonData(database.DB)
 
 	routes.SetupRoutes(router, database.DB)
 

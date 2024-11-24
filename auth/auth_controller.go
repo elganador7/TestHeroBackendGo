@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type RegisterInput struct {
@@ -26,7 +27,10 @@ func Register(c *gin.Context) {
 		return
 	}
 
-	user := models.User{Username: input.Username}
+	user := models.User{
+		ID:       uuid.New().String(),
+		Username: input.Username,
+	}
 	if err := user.SetPassword(input.Password); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Unable to set password"})
 		return
