@@ -8,6 +8,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
+
 	"TestHeroBackendGo/models"
 	"TestHeroBackendGo/routes"
 
@@ -34,11 +36,11 @@ func TestCreateUserAnswer(t *testing.T) {
 	router := setupRouter(db)
 
 	input := models.UserAnswer{
-		UserID:      1,
-		QuestionID:  2,
+		UserID:      "1",
+		QuestionID:  "2",
 		AnsweredAt:  time.Now(),
 		TimeTaken:   30,
-		IsCorrect:   true,
+		Attempts:    1,
 		SubjectArea: "Math",
 	}
 
@@ -61,11 +63,11 @@ func TestGetUserAnswersByUser(t *testing.T) {
 	router := setupRouter(db)
 
 	answer := models.UserAnswer{
-		UserID:      1,
-		QuestionID:  2,
+		UserID:      "1",
+		QuestionID:  "2",
 		AnsweredAt:  time.Now(),
 		TimeTaken:   30,
-		IsCorrect:   true,
+		Attempts:    1,
 		SubjectArea: "Math",
 	}
 	db.Create(&answer)
@@ -88,15 +90,17 @@ func TestGetUserPerformanceSummary(t *testing.T) {
 	router := setupRouter(db)
 
 	db.Create(&models.UserAnswer{
-		UserID:      1,
-		QuestionID:  1,
-		IsCorrect:   true,
+		ID:          uuid.New().String(),
+		UserID:      "1",
+		QuestionID:  "1",
+		Attempts:    1,
 		SubjectArea: "Math",
 	})
 	db.Create(&models.UserAnswer{
-		UserID:      1,
-		QuestionID:  2,
-		IsCorrect:   false,
+		ID:          uuid.New().String(),
+		UserID:      "1",
+		QuestionID:  "2",
+		Attempts:    2,
 		SubjectArea: "Math",
 	})
 

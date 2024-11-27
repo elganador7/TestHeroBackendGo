@@ -10,6 +10,7 @@ type Config struct {
 	DBUser     string
 	DBPassword string
 	DBName     string
+	OAIAPIKey  string
 }
 
 func LoadConfig() *Config {
@@ -19,5 +20,6 @@ func LoadConfig() *Config {
 		DBUser:     os.Getenv("DB_USER"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		DBName:     os.Getenv("DB_NAME"),
+		OAIAPIKey:  os.Getenv("OAI_API_KEY"),
 	}
 }

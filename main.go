@@ -1,6 +1,7 @@
 package main
 
 import (
+	"TestHeroBackendGo/agent"
 	"TestHeroBackendGo/config"
 	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
@@ -38,9 +39,13 @@ func main() {
 		AllowCredentials: true,
 	}))
 
+	log.Printf("API key: %s", cfg.OAIAPIKey)
+
+	agent := agent.NewAgent(cfg.OAIAPIKey)
+
 	parser.ParseJsonData(database.DB)
 
-	routes.SetupRoutes(router, database.DB)
+	routes.SetupRoutes(router, database.DB, agent)
 
 	router.Run(":8080")
 }

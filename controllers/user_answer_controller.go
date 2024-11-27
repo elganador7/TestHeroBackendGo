@@ -3,6 +3,9 @@ package controllers
 import (
 	"net/http"
 	"strconv"
+	"time"
+
+	"github.com/google/uuid"
 
 	"TestHeroBackendGo/models"
 
@@ -25,6 +28,9 @@ func (ctrl *UserAnswerController) CreateUserAnswer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	input.ID = uuid.New().String()
+	input.CreatedAt = time.Now()
 
 	if err := ctrl.DB.Create(&input).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create record"})
@@ -65,7 +71,7 @@ func (ctrl *UserAnswerController) GetUserPerformanceSummary(c *gin.Context) {
 	}
 
 	query := `
-		SELECT subject_area, AVG(CASE WHEN is_correct THEN 1 ELSE 0 END) AS correct_rate
+		SELECT subject_area, AVG(CASE WHEN attempts > 1 THEN 1 ELSE 0 END) AS correct_rate
 		FROM user_answers
 		WHERE user_id = ?
 		GROUP BY subject_area
