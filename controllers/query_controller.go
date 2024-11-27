@@ -172,7 +172,7 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 	answer := models.QuestionAnswer{
 		ID:            uuid.NewString(),
 		QuestionID:    question.ID,
-		CorrectAnswer: answerResponse.CorrectAnswer,
+		CorrectAnswer: optionsResponse.CorrectOption,
 		Explanation:   answerResponse.Explanation,
 	}
 

@@ -25,5 +25,5 @@ type OptionGeneratorInputSchema struct {
 
 type OptionGeneratorOutputSchema struct {
 	Options       datatypes.JSONMap `json:"options,omitempty" jsonschema_description:"The options for the new question"`
-	CorrectAnswer string            `json:"correct_answer" jsonschema_description:"The correct answer to the new question, given as the correct multiple choice option"`
+	CorrectOption string            `json:"correct_option" jsonschema_description:"The correct answer to the new question, given as the correct multiple choice option"`
 }

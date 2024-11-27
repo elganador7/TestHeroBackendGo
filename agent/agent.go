@@ -196,7 +196,7 @@ func (a *Agent) GenerateQuestionOptions(input models.OptionGeneratorInputSchema)
 			"C": "...",
 			"D": "..."
 		},
-		"correct_answer": "A",
+		"correct_option": "A",
 	}
 
 	Do not respond with anything other than JSON. You should write the explanation first to ensure that your answer is correct
