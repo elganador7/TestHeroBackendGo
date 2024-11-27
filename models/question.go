@@ -16,7 +16,9 @@ type Question struct {
 	TestType      string            `json:"test_type"`
 	Subject       string            `json:"subject"`
 	Topic         string            `json:"topic"`
+	Subtopic      string            `json:"subtopic"`
 	Difficulty    float64           `json:"difficulty"`
 	Options       datatypes.JSONMap `json:"options" gorm:"type:jsonb"`
 	EstimatedTime int               `json:"estimated_time"`
+	Paragraph     string            `json:"paragraph"`
 }

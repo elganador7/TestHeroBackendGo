@@ -86,12 +86,17 @@ func (ctrl *QuestionController) CreateQuestionWithAnswer(c *gin.Context) {
 }
 
 func (ctrl *QuestionController) GetQuestionByID(c *gin.Context) {
-	id := c.Param("id")
+	questionId := c.Param("id")
 	var question models.Question
 
-	if err := ctrl.DB.First(&question, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Question not found"})
-		return
+	// Fetch the question by ID
+	if err := ctrl.DB.First(&question, "id = ?", questionId).Error; err != nil {
+		if err == gorm.ErrRecordNotFound {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Question not found"})
+			return
+		} else {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch question"})
+		}
 	}
 
 	c.JSON(http.StatusOK, question)

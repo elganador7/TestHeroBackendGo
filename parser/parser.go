@@ -27,6 +27,7 @@ type JSONQuestion struct {
 		QuestionText  string `json:"question"`
 		Explanation   string `json:"explanation"`
 		CorrectAnswer string `json:"correct_answer"`
+		Paragraph     string `json:"paragraph"`
 	} `json:"question"`
 }
 
@@ -40,7 +41,8 @@ func ParseJsonData(db *gorm.DB) {
 
 	// Parse the JSON file
 	var data struct {
-		Math []JSONQuestion `json:"math"`
+		Math    []JSONQuestion `json:"math"`
+		English []JSONQuestion `json:"english"`
 	}
 	if err := json.NewDecoder(file).Decode(&data); err != nil {
 		log.Fatalf("Failed to parse JSON: %v", err)
@@ -68,6 +70,7 @@ func ParseJsonData(db *gorm.DB) {
 				"D": q.Question.Choices.D,
 			},
 			EstimatedTime: 60, // Example estimated time
+			Paragraph:     q.Question.Paragraph,
 		}
 
 		if err := db.Create(&question).Error; err != nil {
