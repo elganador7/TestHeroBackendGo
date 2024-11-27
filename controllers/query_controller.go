@@ -119,7 +119,7 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 	}
 
 	// Call the agent with the system prompt
-	questionResponse, err := ctrl.Agent.GenerateQuestionWithAnswer(inputSchema)
+	questionResponse, err := ctrl.Agent.GenerateQuestion(inputSchema)
 	if err != nil {
 		log.Fatalf("Error generating question: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate question"})
@@ -128,7 +128,22 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 
 	log.Printf("Generated question: %v", questionResponse)
 
-	optionsResponse, err := ctrl.Agent.GenerateQuestionOptions(questionResponse)
+	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
+	if err != nil {
+		log.Fatalf("Error generating answer: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate answer"})
+		return
+	}
+
+	log.Printf("Generated answer: %v", answerResponse)
+
+	optionInput := models.OptionGeneratorInputSchema{
+		QuestionText:  questionResponse.QuestionText,
+		Explanation:   answerResponse.Explanation,
+		CorrectAnswer: answerResponse.CorrectAnswer,
+	}
+
+	optionsResponse, err := ctrl.Agent.GenerateQuestionOptions(optionInput)
 	if err != nil {
 		log.Fatalf("Error generating options: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate options"})
@@ -157,8 +172,8 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 	answer := models.QuestionAnswer{
 		ID:            uuid.NewString(),
 		QuestionID:    question.ID,
-		CorrectAnswer: optionsResponse.CorrectAnswer,
-		Explanation:   questionResponse.CorrectAnswer,
+		CorrectAnswer: answerResponse.CorrectAnswer,
+		Explanation:   answerResponse.Explanation,
 	}
 
 	if err := ctrl.DB.Create(&answer).Error; err != nil {
