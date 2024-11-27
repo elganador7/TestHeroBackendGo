@@ -113,6 +113,8 @@ func (ctrl *QuestionController) GetRandomQuestion(c *gin.Context) {
 		return
 	}
 
+	log.Printf("Total questions: %d", count)
+
 	if count == 0 {
 		c.JSON(http.StatusOK, gin.H{"error": "No questions available"})
 		return
@@ -120,6 +122,8 @@ func (ctrl *QuestionController) GetRandomQuestion(c *gin.Context) {
 
 	// Generate a random offset
 	offset := rand.Intn(int(count))
+
+	log.Printf("Random offset: %d", offset)
 
 	// Fetch the question at the random offset
 	if err := ctrl.DB.Offset(offset).Limit(1).Find(&question).Error; err != nil {

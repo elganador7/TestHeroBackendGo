@@ -40,41 +40,26 @@ var questionGeneratorOutputSchema = GenerateSchema[models.QuestionGeneratorOutpu
 var optionGeneratorOutputSchema = GenerateSchema[models.OptionGeneratorOutputSchema]()
 
 // GenerateQuestionWithAnswer generates a new question and answer based on an existing question text.
-func (a *Agent) GenerateQuestionWithAnswer(input models.QuestionGeneratorInputSchema) (models.QuestionGeneratorOutputSchema, error) {
+func (a *Agent) GenerateQuestion(input models.QuestionGeneratorInputSchema) (models.QuestionGeneratorOutputSchema, error) {
 	ctx := context.Background()
 
 	systemPrompt := `You are an assistant for creating standardized test questions. Expect a JSON input with the following structure:
 
 	{
-		"paragraph": "...",
 		"question_text": "..."
 	}
 
-	First, generate a similar question. You should then answer the question logically, thinking through the problem step-by-step.
-	Ensure that your thinking is concise and clear. If the queestion is a math problem, generate a question and multiple-choice options formatted for MathJax rendering in React. Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
+	Generate a question that is similar to the one you are provided, you can modify the concept slightly as long as you test a similar topic.
+	If the queestion is a math problem, generate a question MathJax rendering in React. Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
 	Please use \( ... \) formatting for inline math even if the question you are provided uses other formatting. 
-	
-	Generate four options for the multiple-choice question. One should be the answer you created above. Select the option that you produced above
-	as the correct answer.
 	
 	Take the information from above and output json like the following:
 
 	{
 		"question_text": "...",
-		"explanation": "...",
-		"correct_value": {answer from explanation},
-		"options": {
-			"A": "...",
-			"B": "...",
-			"C": "...",
-			"D": "..."
-		},
-		"correct_answer": "A",
-		"estimated_time": 60
 	}
 
-	Do not respond with anything other than JSON. You should write the explanation first to ensure that your answer is correct
-	and matches your explanation.
+	Do not respond with anything other than JSON.
 	`
 
 	// Create a structured output parameter
@@ -103,7 +88,7 @@ func (a *Agent) GenerateQuestionWithAnswer(input models.QuestionGeneratorInputSc
 				JSONSchema: openai.F(schemaParam),
 			},
 		),
-		Model: openai.F(openai.ChatModelGPT4o2024_08_06),
+		Model: openai.F(openai.ChatModelGPT4oMini),
 	})
 	if err != nil {
 		return models.QuestionGeneratorOutputSchema{}, fmt.Errorf("API call failed: %w", err)
@@ -119,20 +104,90 @@ func (a *Agent) GenerateQuestionWithAnswer(input models.QuestionGeneratorInputSc
 	return result, nil
 }
 
-// GenerateQuestionWithAnswer generates a new question and answer based on an existing question text.
-func (a *Agent) GenerateQuestionOptions(input models.QuestionGeneratorOutputSchema) (models.OptionGeneratorOutputSchema, error) {
+func (a *Agent) GenerateAnswer(input models.QuestionGeneratorOutputSchema) (models.AnswerGeneratorOutputSchema, error) {
 	ctx := context.Background()
 
 	systemPrompt := `You are an assistant for creating standardized test questions. Expect a JSON input with the following structure:
 
 	{
 		"question_text": "..."
-		"correct_answer": "...",
+	}
+
+	Think through the question step by step until you reach an answer. You should record the explanation and the final correct answer 
+	in the JSON format given below.
+
+	{
+		"explanation": "...",
+		"correct_answer": "..."
+	}
+
+	If the queestion is a math problem, ensure your response and explanation use proper formatting for MathJax rendering in React. 
+	Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
+	Please use \( ... \) formatting for inline math even if the question you are provided uses other formatting. 
+	
+	
+	Do not respond with anything other than JSON. You should write the explanation first to ensure that your answer is correct
+	and matches your explanation. Do not second guess your answer.
+	`
+
+	// Create a structured output parameter
+	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
+		Name:        openai.F("generate_question_with_answer"),
+		Description: openai.F("Generate a new question and its answer based on the input question text"),
+		Schema:      openai.F(questionGeneratorOutputSchema),
+		Strict:      openai.Bool(true),
+	}
+
+	// Prepare the input question
+	inputJSON, err := json.Marshal(input)
+	if err != nil {
+		return models.AnswerGeneratorOutputSchema{}, fmt.Errorf("failed to marshal input: %w", err)
+	}
+
+	// Query the Chat Completions API
+	response, err := a.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage(systemPrompt),
+			openai.UserMessage(string(inputJSON)),
+		}),
+		ResponseFormat: openai.F[openai.ChatCompletionNewParamsResponseFormatUnion](
+			openai.ResponseFormatJSONSchemaParam{
+				Type:       openai.F(openai.ResponseFormatJSONSchemaTypeJSONSchema),
+				JSONSchema: openai.F(schemaParam),
+			},
+		),
+		Model: openai.F(openai.ChatModelGPT4oMini),
+	})
+	if err != nil {
+		return models.AnswerGeneratorOutputSchema{}, fmt.Errorf("API call failed: %w", err)
+	}
+
+	// Parse the response into the OutputSchema struct
+	var result models.AnswerGeneratorOutputSchema
+	err = json.Unmarshal([]byte(response.Choices[0].Message.Content), &result)
+	if err != nil {
+		return models.AnswerGeneratorOutputSchema{}, fmt.Errorf("failed to unmarshal response: %w", err)
+	}
+
+	return result, nil
+}
+
+// GenerateQuestionWithAnswer generates a new question and answer based on an existing question text.
+func (a *Agent) GenerateQuestionOptions(input models.OptionGeneratorInputSchema) (models.OptionGeneratorOutputSchema, error) {
+	ctx := context.Background()
+
+	systemPrompt := `You are an assistant for creating standardized test questions. Expect a JSON input with the following structure:
+
+	{
+		"question_text": "..."
 		"explanation": "..."
+		"correct_answer": "..."
 	}
 
 	Generate options that make sense in context, including the correct answer as one of the options. Then, output the 
-	options as a JSON object and the correct answer as the letter option that it is. 
+	options as a JSON object and the correct answer as the letter option that it is. Each of the options should be compatible with
+	MathJax rendering in React. Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
+	Make sure to wrap all math with that formatting, even if it is not used in the question.
 
 	{
 		"options": {
@@ -174,7 +229,7 @@ func (a *Agent) GenerateQuestionOptions(input models.QuestionGeneratorOutputSche
 				JSONSchema: openai.F(schemaParam),
 			},
 		),
-		Model: openai.F(openai.ChatModelGPT4o2024_08_06),
+		Model: openai.F(openai.ChatModelGPT4oMini),
 	})
 	if err != nil {
 		return models.OptionGeneratorOutputSchema{}, fmt.Errorf("API call failed: %w", err)
