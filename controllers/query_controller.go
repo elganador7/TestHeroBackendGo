@@ -4,6 +4,7 @@ import (
 	"TestHeroBackendGo/agent"
 	"TestHeroBackendGo/models"
 	"log"
+	"math/rand"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,64 +38,97 @@ func NewQueryController(db *gorm.DB, agent *agent.Agent) *QueryController {
 	}
 }
 
-// func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
-// 	var input struct {
-// 		TestType string `json:"test_type"`
-// 		Subject  string `json:"subject"`
-// 		Topic    string `json:"topic"`
-// 		Subtopic string `json:"subtopic"`
-// 	}
+func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
+	var req struct {
+		TestType string `json:"test_type"`
+		Subject  string `json:"subject"`
+		Topic    string `json:"topic"`
+		Subtopic string `json:"subtopic"`
+	}
 
-// 	if err := c.ShouldBindJSON(&input); err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
-// 		return
-// 	}
+	log.Printf("Request body: %v", req)
 
-// 	// Call the agent with the system prompt
-// 	response, err := ctrl.Agent.GenerateQuestionWithAnswer(input.TestType, input.Subject, input.Topic, input.Subtopic)
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate question"})
-// 		return
-// 	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-// 	// Parse the generated question
-// 	var questionData map[string]interface{}
-// 	if err := json.Unmarshal([]byte(response), &questionData); err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid question format"})
-// 		return
-// 	}
+	inputSchema := models.NewQuestionGeneratorInputSchema{
+		TestType:   req.TestType,
+		Subject:    req.Subject,
+		Topic:      req.Topic,
+		Subtopic:   req.Subtopic,
+		Difficulty: rand.Float64(),
+	}
 
-// 	// Save the question to the database
-// 	question := models.Question{
-// 		ID:            uuid.NewString(),
-// 		QuestionText:  questionData["question_text"].(string),
-// 		TestType:      input.TestType,
-// 		Subject:       input.Subject,
-// 		Topic:         input.Topic,
-// 		Subtopic:      input.Subtopic,
-// 		Options:       datatypes.JSONMap(questionData["options"].(map[string]interface{})),
-// 		EstimatedTime: int(questionData["estimated_time"].(float64)),
-// 	}
+	log.Printf("Input schema: %v", inputSchema)
 
-// 	if err := ctrl.DB.Create(&question).Error; err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save question"})
-// 		return
-// 	}
+	// Call the agent with the system prompt
+	questionResponse, err := ctrl.Agent.GenerateNewQuestion(inputSchema)
+	if err != nil {
+		log.Fatalf("Error generating question: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate question"})
+		return
+	}
 
-// 	answer := models.QuestionAnswer{
-// 		ID:            uuid.NewString(),
-// 		QuestionID:    question.ID,
-// 		CorrectAnswer: questionData["correct_answer"].(string),
-// 		Explanation:   questionData["explanation"].(string),
-// 	}
+	log.Printf("Generated question: %v", questionResponse)
 
-// 	if err := ctrl.DB.Create(&answer).Error; err != nil {
-// 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save answer"})
-// 		return
-// 	}
+	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
+	if err != nil {
+		log.Fatalf("Error generating answer: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate answer"})
+		return
+	}
 
-// 	c.JSON(http.StatusOK, question)
-// }
+	log.Printf("Generated answer: %v", answerResponse)
+
+	optionInput := models.OptionGeneratorInputSchema{
+		QuestionText:  questionResponse.QuestionText,
+		Explanation:   answerResponse.Explanation,
+		CorrectAnswer: answerResponse.CorrectAnswer,
+	}
+
+	optionsResponse, err := ctrl.Agent.GenerateQuestionOptions(optionInput)
+	if err != nil {
+		log.Fatalf("Error generating options: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate options"})
+		return
+	}
+
+	log.Printf("Generated options: %v", optionsResponse)
+
+	// Save the question to the database
+	question := models.Question{
+		ID:            uuid.NewString(),
+		QuestionText:  questionResponse.QuestionText,
+		TestType:      req.TestType,
+		Subject:       req.Subject,
+		Topic:         req.Topic,
+		Subtopic:      req.Subtopic,
+		Options:       optionsResponse.Options,
+		EstimatedTime: 60,
+		Difficulty:    inputSchema.Difficulty,
+	}
+
+	if err := ctrl.DB.Create(&question).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save question"})
+		return
+	}
+
+	answer := models.QuestionAnswer{
+		ID:            uuid.NewString(),
+		QuestionID:    question.ID,
+		CorrectAnswer: optionsResponse.CorrectOption,
+		Explanation:   answerResponse.Explanation,
+	}
+
+	if err := ctrl.DB.Create(&answer).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save answer"})
+		return
+	}
+
+	c.JSON(http.StatusOK, question)
+}
 
 func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 	questionId := c.Param("questionId")
@@ -113,13 +147,13 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 
 	log.Printf("Original question: %v", originalQuestion)
 
-	inputSchema := models.QuestionGeneratorInputSchema{
+	inputSchema := models.SimilarQuestionGeneratorInputSchema{
 		Paragraph:    originalQuestion.Paragraph,
 		QuestionText: originalQuestion.QuestionText,
 	}
 
 	// Call the agent with the system prompt
-	questionResponse, err := ctrl.Agent.GenerateQuestion(inputSchema)
+	questionResponse, err := ctrl.Agent.GenerateSimilarQuestion(inputSchema)
 	if err != nil {
 		log.Fatalf("Error generating question: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate question"})

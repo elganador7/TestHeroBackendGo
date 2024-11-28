@@ -5,7 +5,6 @@ import (
 	"TestHeroBackendGo/config"
 	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
-	"TestHeroBackendGo/parser"
 	"TestHeroBackendGo/routes"
 	"log"
 
@@ -43,7 +42,7 @@ func main() {
 
 	agent := agent.NewAgent(cfg.OAIAPIKey)
 
-	parser.ParseJsonData(database.DB)
+	// parser.ParseJsonData(database.DB)
 
 	routes.SetupRoutes(router, database.DB, agent)
 
