@@ -46,5 +46,9 @@ func main() {
 
 	routes.SetupRoutes(router, database.DB, agent)
 
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{"status": "healthy"})
+	})
+
 	router.Run(":8080")
 }
