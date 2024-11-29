@@ -2,6 +2,7 @@ package routes
 
 import (
 	"TestHeroBackendGo/agent"
+	"TestHeroBackendGo/auth"
 	"TestHeroBackendGo/controllers"
 
 	"github.com/gin-gonic/gin"
@@ -14,7 +15,7 @@ func setupQueryRoutes(router *gin.Engine, db *gorm.DB, agent *agent.Agent) {
 	queryApi := router.Group("/api/oai_queries")
 
 	// Protected routes
-	queryApi.Use()
+	queryApi.Use(auth.JWTAuthMiddleware())
 	{
 		queryApi.GET("/generate/similar/:questionId", queryCtrl.GenerateSimilarQuestionHandler)
 		queryApi.POST("/generate/new", queryCtrl.GenerateNewQuestionHandler)
