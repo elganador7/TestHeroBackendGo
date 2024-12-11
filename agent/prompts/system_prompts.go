@@ -9,9 +9,10 @@ var (
 		}
 
 		Generate options that make sense in context, including the correct answer as one of the options. Then, output the 
-		options as a JSON object and the correct answer as the letter option that it is. Each of the options should be compatible with
+		options as a JSON object and the correct answer as the letter option that it is. Each of the options should be formatted to be compatible with
 		MathJax rendering in React. Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
-		Make sure to wrap all math with that formatting, even if it is not used in the question. 
+		Make sure to wrap all math with that formatting, even if it is not used in the question. Make sure you
+		double escape everything since this content will be dynamically rendered in javascript.
 
 		{
 			"options": {
@@ -42,7 +43,8 @@ var (
 
 		If the queestion is a math problem, ensure your response and explanation use proper formatting for MathJax rendering in React. 
 		Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
-		Please use \( ... \) formatting for inline math even if the question you are provided uses other formatting. 
+		Please use \( ... \) formatting for inline math even if the question you are provided uses other formatting. Make sure you
+		double escape everything since this content will be dynamically rendered in javascript.
 		
 		
 		Do not respond with anything other than JSON. You should write the explanation first to ensure that your answer is correct
@@ -56,7 +58,8 @@ var (
 
 		Generate a question that is similar to the one you are provided, you can modify the concept slightly as long as you test a similar topic.
 		If the queestion is a math problem, generate a question MathJax rendering in React. Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
-		Please use \( ... \) formatting for inline math even if the question you are provided uses other formatting. 
+		Please use \( ... \) formatting for inline math even if the question you are provided uses other formatting. Make sure you
+		double escape everything since this content will be dynamically rendered in javascript.
 		
 		Take the information from above and output json like the following:
 
@@ -72,12 +75,13 @@ var (
 			"subject": "..."
 			"topic": "..."
 			"subtopic": "..."
-			"difficulty": 0
+			"difficulty": number
 		}
 		
 		Write a question for the given test type that specifically addresses the subtopic given. The requested difficulty will be a decimal ranging from 0.0 to 1.0.
-		Ensure that your question meets the difficulty requested while also addressing the subtopic.
-		
+		0 represents the easiest possible question and 1 the most difficult in the topic requested. Ensure that your question meets the difficulty requested while 
+		also addressing the subtopic. Make sure you double escape everything since this content will be dynamically rendered in havascript.
+
 		You should output the question in the following JSON Object format:
 
 		{
