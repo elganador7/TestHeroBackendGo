@@ -7,6 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"google.golang.org/api/oauth2/v2"
+	"gorm.io/gorm"
 )
 
 type RegisterInput struct {
@@ -17,6 +19,16 @@ type RegisterInput struct {
 type LoginInput struct {
 	Username string `json:"username" binding:"required"`
 	Password string `json:"password" binding:"required"`
+}
+
+type AuthController struct {
+	DB *gorm.DB
+}
+
+func NewAuthController(db *gorm.DB) *AuthController {
+	return &AuthController{
+		DB: db,
+	}
 }
 
 // POST /register
@@ -63,11 +75,44 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, err := GenerateJWT(user.ID)
+	token, expTime, err := GenerateJWT(user.ID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token, "userId": user.ID})
+	c.JSON(http.StatusOK, gin.H{"token": token, "userId": user.ID, "expTime": expTime})
+}
+
+type GoogleAuthRequest struct {
+	Token string `json:"token"`
+}
+
+func (ctrl *AuthController) HandleGoogleAuth(c *gin.Context) {
+	var authRequest GoogleAuthRequest
+	if err := c.ShouldBindJSON(&authRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	oauthService, err := oauth2.NewService(c.Request.Context())
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	tokenInfo, err := oauthService.Tokeninfo().IdToken(authRequest.Token).Do()
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	token, expTime, err := GenerateJWT(tokenInfo.UserId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	// Token is valid, retrieve user information
+	c.JSON(http.StatusOK, gin.H{"token": token, "userId": tokenInfo.UserId, "expTime": expTime})
 }

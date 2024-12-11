@@ -49,7 +49,7 @@ func main() {
 
 	// parser.ParseJsonData(database.DB)
 
-	routes.SetupRoutes(router, database.DB, agent)
+	routes.SetupRoutes(router, database.DB, agent, cfg)
 
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "healthy"})
