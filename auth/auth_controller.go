@@ -3,11 +3,13 @@ package auth
 import (
 	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"google.golang.org/api/oauth2/v2"
+	"google.golang.org/api/option"
 	"gorm.io/gorm"
 )
 
@@ -95,21 +97,36 @@ func (ctrl *AuthController) HandleGoogleAuth(c *gin.Context) {
 		return
 	}
 
-	oauthService, err := oauth2.NewService(c.Request.Context())
+	oauthService, err := oauth2.NewService(c.Request.Context(), option.WithoutAuthentication())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		log.Print(err.Error())
 		return
 	}
 
 	tokenInfo, err := oauthService.Tokeninfo().IdToken(authRequest.Token).Do()
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		log.Print(err.Error())
 		return
+	}
+
+	var user models.User
+	if err := database.DB.Where("username = ?", tokenInfo.Email).First(&user).Error; err != nil {
+		user := models.User{
+			ID:       uuid.New().String(),
+			Username: tokenInfo.Email,
+		}
+		if err := database.DB.Create(&user).Error; err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Username already exists"})
+			return
+		}
 	}
 
 	token, expTime, err := GenerateJWT(tokenInfo.UserId)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		log.Print(err.Error())
 		return
 	}
 
