@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -25,17 +26,23 @@ func NewUserAnswerController(db *gorm.DB) *UserAnswerController {
 func (ctrl *UserAnswerController) CreateUserAnswer(c *gin.Context) {
 	var input models.UserAnswer
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+
+	log.Printf(input.SubjectArea)
 
 	input.ID = uuid.New().String()
 	input.CreatedAt = time.Now()
 
 	if err := ctrl.DB.Create(&input).Error; err != nil {
+		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create record"})
 		return
 	}
+
+	log.Printf(input.SubjectArea)
 
 	c.JSON(http.StatusCreated, input)
 }
@@ -59,27 +66,30 @@ func (ctrl *UserAnswerController) GetUserAnswersByUser(c *gin.Context) {
 
 // GetUserPerformanceSummary retrieves a summary of the user's performance
 func (ctrl *UserAnswerController) GetUserPerformanceSummary(c *gin.Context) {
-	userID, err := strconv.Atoi(c.Param("userId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+	type Input struct {
+		UserId string `json:"userId"`
+	}
+
+	var input Input
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	var results []struct {
-		SubjectArea string
-		CorrectRate float64
-	}
+	var results []models.UserAnswer
 
 	query := `
-		SELECT subject_area, AVG(CASE WHEN attempts > 1 THEN 1 ELSE 0 END) AS correct_rate
+		SELECT *
 		FROM user_answers
-		WHERE user_id = ?
-		GROUP BY subject_area
 	`
-	if err := ctrl.DB.Raw(query, userID).Scan(&results).Error; err != nil {
+
+	if err := ctrl.DB.Raw(query).Scan(&results).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate performance summary"})
 		return
 	}
+
+	log.Printf("Results: %v", results)
 
 	c.JSON(http.StatusOK, results)
 }

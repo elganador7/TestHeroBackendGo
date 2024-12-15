@@ -5,8 +5,10 @@ import (
 	"TestHeroBackendGo/models"
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 	"google.golang.org/api/oauth2/v2"
 	"google.golang.org/api/option"
@@ -90,6 +92,49 @@ type GoogleAuthRequest struct {
 	Token string `json:"token"`
 }
 
+func RefreshToken(c *gin.Context) {
+	// Extract the token from the Authorization header
+	tokenString := c.GetHeader("Authorization")
+	if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token required"})
+		return
+	}
+
+	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+
+	// Validate the token
+	token, err := ValidateJWT(tokenString)
+	if err != nil || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid or expired token"})
+		return
+	}
+
+	// Extract claims and validate them
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok || !token.Valid {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token claims"})
+		return
+	}
+
+	userID, ok := claims["userID"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid userID in token"})
+		return
+	}
+
+	// Issue a new token
+	newToken, expTime, err := GenerateJWT(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate new token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"token":   newToken,
+		"expTime": expTime,
+	})
+}
+
 func (ctrl *AuthController) HandleGoogleAuth(c *gin.Context) {
 	var authRequest GoogleAuthRequest
 	if err := c.ShouldBindJSON(&authRequest); err != nil {
@@ -131,5 +176,5 @@ func (ctrl *AuthController) HandleGoogleAuth(c *gin.Context) {
 	}
 
 	// Token is valid, retrieve user information
-	c.JSON(http.StatusOK, gin.H{"token": token, "userId": tokenInfo.UserId, "expTime": expTime})
+	c.JSON(http.StatusOK, gin.H{"token": token, "userId": user.ID, "expTime": expTime})
 }
