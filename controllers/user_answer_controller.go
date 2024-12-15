@@ -31,7 +31,7 @@ func (ctrl *UserAnswerController) CreateUserAnswer(c *gin.Context) {
 		return
 	}
 
-	log.Printf(input.SubjectArea)
+	log.Printf(input.Subtopic)
 
 	input.ID = uuid.New().String()
 	input.CreatedAt = time.Now()
@@ -42,7 +42,7 @@ func (ctrl *UserAnswerController) CreateUserAnswer(c *gin.Context) {
 		return
 	}
 
-	log.Printf(input.SubjectArea)
+	log.Printf("Created record: %v", input)
 
 	c.JSON(http.StatusCreated, input)
 }
@@ -77,14 +77,19 @@ func (ctrl *UserAnswerController) GetUserPerformanceSummary(c *gin.Context) {
 		return
 	}
 
-	var results []models.UserAnswer
+	var results []struct {
+		Subtopic    string  `json:"subtopic"`
+		CorrectRate float64 `json:"correct_rate"`
+	}
 
 	query := `
-		SELECT *
+		SELECT subtopic, AVG(CASE WHEN attempts > 1 THEN 0 ELSE 1 END) AS correct_rate
 		FROM user_answers
+		WHERE user_id = ?
+		GROUP BY subtopic
 	`
 
-	if err := ctrl.DB.Raw(query).Scan(&results).Error; err != nil {
+	if err := ctrl.DB.Raw(query, input.UserId).Scan(&results).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate performance summary"})
 		return
 	}

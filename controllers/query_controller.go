@@ -110,6 +110,8 @@ func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
 		Difficulty:    inputSchema.Difficulty,
 	}
 
+	log.Printf("Saved question: %v", question)
+
 	if err := ctrl.DB.Create(&question).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save question"})
 		return

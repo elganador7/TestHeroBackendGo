@@ -43,8 +43,6 @@ func main() {
 		),
 	)
 
-	log.Printf("API key: %s", cfg.OAIAPIKey)
-
 	agent := agent.NewAgent(cfg.OAIAPIKey)
 
 	// parser.ParseJsonData(database.DB)
