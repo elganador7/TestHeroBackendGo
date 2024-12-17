@@ -12,6 +12,7 @@ require (
 	github.com/invopop/jsonschema v0.12.0
 	github.com/joho/godotenv v1.5.1
 	github.com/openai/openai-go v0.1.0-alpha.39
+	github.com/robfig/cron/v3 v3.0.1
 	github.com/stretchr/testify v1.9.0
 	golang.org/x/crypto v0.30.0
 	google.golang.org/api v0.211.0
