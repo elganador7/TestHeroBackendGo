@@ -30,8 +30,7 @@ func (ctrl *UserAnswerController) CreateUserAnswer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	log.Printf(input.Subtopic)
+	log.Printf("Input: %v", input)
 
 	input.ID = uuid.New().String()
 	input.CreatedAt = time.Now()
