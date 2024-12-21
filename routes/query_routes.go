@@ -19,5 +19,6 @@ func setupQueryRoutes(router *gin.Engine, db *gorm.DB, agent *agent.Agent) {
 	{
 		queryApi.GET("/generate/similar/:questionId", queryCtrl.GenerateSimilarQuestionHandler)
 		queryApi.POST("/generate/new", queryCtrl.GenerateNewQuestionHandler)
+		queryApi.POST("/generate/relevant", queryCtrl.GenerateRelevantQuestion)
 	}
 }

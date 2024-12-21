@@ -14,6 +14,7 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, agent *agent.Agent, cfg *confi
 	setupQuestionRoutes(router, db)
 	setupQuestionAnswerRoutes(router, db)
 	setupQueryRoutes(router, db, agent)
+	setupTestTopicDataRoutes(router, db)
 }
 
 func SetupTestRoutes(router *gin.Engine, db *gorm.DB) {
@@ -21,4 +22,5 @@ func SetupTestRoutes(router *gin.Engine, db *gorm.DB) {
 	setupUserAnswerRoutesTest(router, db)
 	setupQuestionRoutesTest(router, db)
 	setupQuestionAnswerRoutesTest(router, db)
+	setupTestTopicDataRoutesTest(router, db)
 }

@@ -59,9 +59,6 @@ func ParseJsonData(db *gorm.DB) {
 		question := models.Question{
 			ID:           uuid.New().String(),
 			QuestionText: q.Question.QuestionText,
-			TestType:     "SAT", // Assuming SAT for this example
-			Subject:      "Math",
-			Topic:        q.Domain,
 			Difficulty:   difficulty,
 			Options: datatypes.JSONMap{
 				"A": q.Question.Choices.A,

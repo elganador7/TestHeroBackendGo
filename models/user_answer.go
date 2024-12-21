@@ -8,13 +8,10 @@ import (
 
 type UserAnswer struct {
 	ID         string         `json:"id" gorm:"type:uuid;primaryKey"`
-	UserID     string         `json:"user_id" gorm:"not null;index"`     // Foreign key to User model
-	QuestionID string         `json:"question_id" gorm:"not null;index"` // Foreign key to Question model
-	TimeTaken  int            `json:"time_taken" gorm:"not null"`        // Time taken to answer (in seconds)
-	TestType   string         `json:"test_type" gorm:"not null"`
-	Subject    string         `json:"subject" gorm:"not null"`
-	Topic      string         `json:"topic" gorm:"not null"`
-	Subtopic   string         `json:"subtopic" gorm:"not null"`
+	UserID     string         `json:"user_id" gorm:"not null;index"`            // Foreign key to User model
+	QuestionID string         `json:"question_id" gorm:"not null;index"`        // Foreign key to Question model
+	TimeTaken  int            `json:"time_taken" gorm:"not null"`               // Time taken to answer (in seconds)
+	TestTopic  TestTopicData  `json:"test_topic" gorm:"foreignKey:TestTopicID"` // Relation to TestTopicData
 	Attempts   int            `json:"attempts" gorm:"not null"`
 	Difficulty float64        `json:"difficulty" gorm:"not null"`
 	CreatedAt  time.Time      `json:"created_at"`
