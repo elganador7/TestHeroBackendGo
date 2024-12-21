@@ -1,56 +1,141 @@
 {
-    "test_type": "ACT",
-    "subjects": [
-      {
-        "subject": "Math",
-        "topics": [
-          {
-            "topic": "Algebra",
-            "subtopics": [
-              {
-                "subtopic": "Pre-Algebra",
-                "specific_topic": "Basic number theory and terminology",
-                "description": "Questions based on math terminology (integers, prime numbers, and so on), basic number theory (rules of zero, order of operations and so on), and manipulation of fractions and decimals."
-              },
-              {
-                "subtopic": "Elementary Algebra",
-                "specific_topic": "Inequalities, linear equations, ratios, percentages, and averages",
-                "description": "Questions based on inequalities, linear equations, ratios, percentages, and averages."
-              },
-              {
-                "subtopic": "Intermediate Algebra",
-                "specific_topic": "Exponents, roots, simultaneous equations, and quadratic equations",
-                "description": "Questions based on exponents, roots, simultaneous equations, and quadratic equations."
-              }
-            ]
-          },
-          {
-            "topic": "Geometry",
-            "subtopics": [
-              {
-                "subtopic": "Plane Geometry",
-                "specific_topic": "Angles, lengths, triangles, quadrilaterals, circles, perimeter, area, and volume",
-                "description": "Questions based on angles, lengths, triangles, quadrilaterals, circles, perimeter, area, and volume."
-              },
-              {
-                "subtopic": "Coordinate Geometry",
-                "specific_topic": "Slope, distance, midpoint, parallel and perpendicular lines, points of intersection, and graphing",
-                "description": "Questions based on slope, distance, midpoint, parallel and perpendicular lines, points of intersection, and graphing."
-              }
-            ]
-          },
-          {
-            "topic": "Trigonometry",
-            "subtopics": [
-              {
-                "subtopic": "Basic Trigonometry",
-                "specific_topic": "Sine, cosine, tangent, and graphing",
-                "description": "Questions based on basic sine, cosine, and tangent functions, trig identities, and graphing."
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-  
+  "test_type": "ACT",
+  "subjects": [
+    {
+      "subject": "Math",
+      "topics": [
+        {
+          "topic": "Algebra",
+          "subtopics": [
+            {
+              "subtopic": "Pre-Algebra",
+              "specific_topics": [
+                {
+                  "specific_topic": "Math Terminology",
+                  "description": "Covers integers, prime numbers, and basic mathematical terms."
+                },
+                {
+                  "specific_topic": "Basic Number Theory",
+                  "description": "Focuses on rules of zero, order of operations, and similar concepts."
+                },
+                {
+                  "specific_topic": "Fractions and Decimals",
+                  "description": "Involves manipulation and calculations using fractions and decimals."
+                }
+              ],
+              "description": "Questions based on math terminology, basic number theory, and manipulation of fractions and decimals."
+            },
+            {
+              "subtopic": "Elementary Algebra",
+              "specific_topics": [
+                {
+                  "specific_topic": "Inequalities",
+                  "description": "Covers solving and graphing inequalities."
+                },
+                {
+                  "specific_topic": "Linear Equations",
+                  "description": "Focuses on solving and graphing linear equations."
+                },
+                {
+                  "specific_topic": "Ratios and Percentages",
+                  "description": "Involves solving problems using ratios and percentages."
+                },
+                {
+                  "specific_topic": "Averages",
+                  "description": "Covers finding the mean, median, and mode."
+                }
+              ],
+              "description": "Questions based on inequalities, linear equations, ratios, percentages, and averages."
+            },
+            {
+              "subtopic": "Intermediate Algebra",
+              "specific_topics": [
+                {
+                  "specific_topic": "Exponents and Roots",
+                  "description": "Covers laws of exponents and operations on roots."
+                },
+                {
+                  "specific_topic": "Simultaneous Equations",
+                  "description": "Focuses on solving systems of linear equations."
+                },
+                {
+                  "specific_topic": "Quadratic Equations",
+                  "description": "Involves solving and graphing quadratic equations."
+                }
+              ],
+              "description": "Questions based on exponents, roots, simultaneous equations, and quadratic equations."
+            }
+          ]
+        },
+        {
+          "topic": "Geometry",
+          "subtopics": [
+            {
+              "subtopic": "Plane Geometry",
+              "specific_topics": [
+                {
+                  "specific_topic": "Angles and Lengths",
+                  "description": "Covers calculations involving angles and side lengths."
+                },
+                {
+                  "specific_topic": "Triangles",
+                  "description": "Focuses on properties and calculations related to triangles."
+                },
+                {
+                  "specific_topic": "Quadrilaterals and Circles",
+                  "description": "Involves properties of quadrilaterals and circles."
+                },
+                {
+                  "specific_topic": "Perimeter, Area, and Volume",
+                  "description": "Covers calculations for 2D and 3D shapes."
+                }
+              ],
+              "description": "Questions based on angles, lengths, triangles, quadrilaterals, circles, perimeter, area, and volume."
+            },
+            {
+              "subtopic": "Coordinate Geometry",
+              "specific_topics": [
+                {
+                  "specific_topic": "Slope and Distance",
+                  "description": "Focuses on finding slope and distance between points."
+                },
+                {
+                  "specific_topic": "Midpoint and Intersections",
+                  "description": "Covers calculations of midpoints and intersections of lines."
+                },
+                {
+                  "specific_topic": "Graphing",
+                  "description": "Involves plotting and interpreting graphs."
+                }
+              ],
+              "description": "Questions based on slope, distance, midpoint, points of intersection, and graphing."
+            }
+          ]
+        },
+        {
+          "topic": "Trigonometry",
+          "subtopics": [
+            {
+              "subtopic": "Basic Trigonometry",
+              "specific_topics": [
+                {
+                  "specific_topic": "Sine, Cosine, and Tangent",
+                  "description": "Covers basic trigonometric functions and their applications."
+                },
+                {
+                  "specific_topic": "Trig Identities",
+                  "description": "Focuses on fundamental trigonometric identities."
+                },
+                {
+                  "specific_topic": "Graphing",
+                  "description": "Involves graphing sine, cosine, and tangent functions."
+                }
+              ],
+              "description": "Questions based on sine, cosine, tangent, trigonometric identities, and graphing."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
