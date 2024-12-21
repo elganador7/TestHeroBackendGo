@@ -225,8 +225,6 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 		return
 	}
 
-	log.Printf("testTopics: %v", testTopics)
-
 	// Query the user performance summary
 	var userPerformance []models.UserPerformanceSummary
 	if err := ctrl.DB.Where("user_id = ? AND test_type = ? AND subject = ?", userID, testType, subject).Find(&userPerformance).Error; err != nil {
@@ -246,21 +244,15 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 
 	for _, topic := range testTopics {
 		// Get the correct rate for the specific topic
-		correctRate := performanceMap[topic.SpecificTopic]
-		if correctRate == 0 && performanceMap[topic.SpecificTopic] != 0 {
+		correctRate, ok := performanceMap[topic.SpecificTopic]
+		if !ok {
 			// If no data available for this topic, treat it as 50% correct rate
 			correctRate = 0.5
-		}
-
-		// If correct rate is 0%, assign a higher weight to it
-		if correctRate == 0 {
-			// Treat 0% performance with a higher weight
-			correctRate = 0.1 // Assign low correct rate to increase the weight
 			performanceMap[topic.SpecificTopic] = correctRate
 		}
 
 		// Calculate weight: lower correct rate means higher weight
-		weight := 1 / (correctRate + 0.1) // +0.1 to avoid division by zero
+		weight := 1.01 - (correctRate)
 		weightMap[topic.SpecificTopic] = weight
 		weightedTopics = append(weightedTopics, topic)
 	}
@@ -269,7 +261,7 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 	var maxWeight float64
 	var selectedTopic models.TestTopicData
 
-	log.Printf("weightedTopics: %v", weightedTopics)
+	log.Printf("weightMap: %v", weightMap)
 
 	// Find the topic with the highest adjusted weight
 	for _, topic := range weightedTopics {
