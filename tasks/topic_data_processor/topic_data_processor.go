@@ -11,10 +11,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type Subtopic struct {
-	Subtopic      string `json:"subtopic"`
+type SpecificTopic struct {
 	SpecificTopic string `json:"specific_topic"`
 	Description   string `json:"description"`
+}
+
+type Subtopic struct {
+	Subtopic       string          `json:"subtopic"`
+	SpecificTopics []SpecificTopic `json:"specific_topics"`
+	Description    string          `json:"description"`
 }
 
 type Topic struct {
@@ -58,23 +63,25 @@ func processFile(filePath string, db *gorm.DB) error {
 	for _, subject := range actData.Subjects {
 		for _, topic := range subject.Topics {
 			for _, subtopic := range topic.Subtopics {
-				if exists := checkIfExists(db, actData.TestType, subject.Subject, topic.Topic, subtopic.Subtopic, subtopic.SpecificTopic); exists {
-					continue
-				}
+				for _, specificTopic := range subtopic.SpecificTopics {
+					if exists := checkIfExists(db, actData.TestType, subject.Subject, topic.Topic, subtopic.Subtopic, specificTopic.SpecificTopic); exists {
+						continue
+					}
 
-				testTopic := models.TestTopicData{
-					ID:            uuid.New().String(),
-					TestType:      actData.TestType,
-					Subject:       subject.Subject,
-					Topic:         topic.Topic,
-					Subtopic:      subtopic.Subtopic,
-					SpecificTopic: subtopic.SpecificTopic,
-					Description:   subtopic.Description,
-				}
+					testTopic := models.TestTopicData{
+						ID:            uuid.New().String(),
+						TestType:      actData.TestType,
+						Subject:       subject.Subject,
+						Topic:         topic.Topic,
+						Subtopic:      subtopic.Subtopic,
+						SpecificTopic: specificTopic.SpecificTopic,
+						Description:   specificTopic.Description,
+					}
 
-				// Insert each row into the database
-				if err := db.Create(&testTopic).Error; err != nil {
-					return fmt.Errorf("failed to insert data for file %s: %v", filePath, err)
+					// Insert each row into the database
+					if err := db.Create(&testTopic).Error; err != nil {
+						return fmt.Errorf("failed to insert data for file %s: %v", filePath, err)
+					}
 				}
 			}
 		}

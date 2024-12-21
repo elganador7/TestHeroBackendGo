@@ -169,6 +169,7 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 	question := models.Question{
 		ID:            uuid.NewString(),
 		QuestionText:  questionResponse.QuestionText,
+		TestTopicID:   originalQuestion.TestTopicID,
 		TestTopic:     originalQuestion.TestTopic,
 		Options:       optionsResponse.Options,
 		EstimatedTime: 60,
@@ -224,6 +225,8 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 		return
 	}
 
+	log.Printf("testTopics: %v", testTopics)
+
 	// Query the user performance summary
 	var userPerformance []models.UserPerformanceSummary
 	if err := ctrl.DB.Where("user_id = ? AND test_type = ? AND subject = ?", userID, testType, subject).Find(&userPerformance).Error; err != nil {
@@ -266,6 +269,8 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 	var maxWeight float64
 	var selectedTopic models.TestTopicData
 
+	log.Printf("weightedTopics: %v", weightedTopics)
+
 	// Find the topic with the highest adjusted weight
 	for _, topic := range weightedTopics {
 		// Multiply weight by a random value between 0 and 1
@@ -298,6 +303,8 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 		SpecificTopic: testTopicData.SpecificTopic,
 		Difficulty:    difficulty,
 	}
+
+	log.Printf("Test Topic Data: %+v", testTopicData)
 
 	// Call the agent with the system prompt
 	questionResponse, err := ctrl.Agent.GenerateNewQuestion(inputSchema)
