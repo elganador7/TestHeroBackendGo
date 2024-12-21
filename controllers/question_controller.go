@@ -59,9 +59,6 @@ func (ctrl *QuestionController) CreateQuestionWithAnswer(c *gin.Context) {
 	// Create question
 	question := models.Question{
 		QuestionText:  req.QuestionText,
-		TestType:      req.TestType,
-		Subject:       req.Subject,
-		Topic:         req.Topic,
 		Difficulty:    req.Difficulty,
 		Options:       req.Options,
 		EstimatedTime: req.EstimatedTime,

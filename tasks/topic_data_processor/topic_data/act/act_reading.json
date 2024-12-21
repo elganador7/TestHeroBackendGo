@@ -1,0 +1,46 @@
+{
+    "test_type": "ACT",
+    "subjects": [
+      {
+        "subject": "Reading",
+        "topics": [
+          {
+            "topic": "Reading Comprehension",
+            "subtopics": [
+              {
+                "subtopic": "Main Ideas",
+                "specific_topic": "Identifying the main ideas of the passage",
+                "description": "Identify the central theme or main idea of a passage, focusing on the primary argument or message conveyed by the text."
+              },
+              {
+                "subtopic": "Details",
+                "specific_topic": "Recognizing supporting details",
+                "description": "Identify and understand supporting details, facts, and examples that reinforce the main ideas in a passage."
+              },
+              {
+                "subtopic": "Inferences",
+                "specific_topic": "Making inferences based on context",
+                "description": "Draw logical conclusions from the passage based on information that is implied rather than directly stated."
+              }
+            ]
+          },
+          {
+            "topic": "Passage Analysis",
+            "subtopics": [
+              {
+                "subtopic": "Structure",
+                "specific_topic": "Understanding passage structure",
+                "description": "Analyze the organization and structure of a passage, understanding how each part of the text contributes to the overall argument."
+              },
+              {
+                "subtopic": "Logic and Reasoning",
+                "specific_topic": "Evaluating logic and reasoning in the passage",
+                "description": "Evaluate the reasoning behind arguments and ideas presented in the passage, assessing the validity and effectiveness of the logic used."
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  

@@ -39,10 +39,6 @@ func TestCreateUserAnswer(t *testing.T) {
 		QuestionID: "2",
 		TimeTaken:  30,
 		Attempts:   1,
-		TestType:   "SAT",
-		Subject:    "Math",
-		Topic:      "Algebra",
-		Subtopic:   "Advanced Algebra",
 	}
 
 	body, _ := json.Marshal(input)
@@ -68,10 +64,6 @@ func TestGetUserAnswersByUser(t *testing.T) {
 		QuestionID: "2",
 		TimeTaken:  30,
 		Attempts:   1,
-		TestType:   "SAT",
-		Subject:    "Math",
-		Topic:      "Algebra",
-		Subtopic:   "Advanced Algebra",
 	}
 	db.Create(&answer)
 
@@ -97,14 +89,12 @@ func TestGetUserPerformanceSummary(t *testing.T) {
 		UserID:     "1",
 		QuestionID: "1",
 		Attempts:   1,
-		Subject:    "Math",
 	})
 	db.Create(&models.UserAnswer{
 		ID:         uuid.New().String(),
 		UserID:     "1",
 		QuestionID: "2",
 		Attempts:   2,
-		Subject:    "Math",
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/api/user_answers/user/1/summary", nil)
@@ -117,6 +107,5 @@ func TestGetUserPerformanceSummary(t *testing.T) {
 	json.Unmarshal(w.Body.Bytes(), &response)
 
 	assert.Len(t, response, 1)
-	assert.Equal(t, "Math", response[0]["SubjectArea"])
 	assert.Equal(t, 0.5, response[0]["CorrectRate"])
 }
