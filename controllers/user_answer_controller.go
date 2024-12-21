@@ -76,24 +76,18 @@ func (ctrl *UserAnswerController) GetUserPerformanceSummary(c *gin.Context) {
 		return
 	}
 
-	var results []struct {
-		Subtopic    string  `json:"subtopic"`
-		CorrectRate float64 `json:"correct_rate"`
-	}
+	var performance []models.UserPerformanceSummary
 
-	query := `
-		SELECT subtopic, AVG(CASE WHEN attempts > 1 THEN 0 ELSE 1 END) AS correct_rate
-		FROM user_answers
-		WHERE user_id = ?
-		GROUP BY subtopic
-	`
-
-	if err := ctrl.DB.Raw(query, input.UserId).Scan(&results).Error; err != nil {
+	// Query the materialized view for the user's performance by subtopic
+	if err := ctrl.DB.
+		Table("user_performance_summary").
+		Where("user_id = ?", input.UserId).
+		Find(&performance).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate performance summary"})
 		return
 	}
 
-	log.Printf("Results: %v", results)
+	log.Printf("Results: %v", performance)
 
-	c.JSON(http.StatusOK, results)
+	c.JSON(http.StatusOK, performance)
 }

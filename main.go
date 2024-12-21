@@ -6,6 +6,7 @@ import (
 	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
 	"TestHeroBackendGo/routes"
+	"TestHeroBackendGo/tasks"
 	"log"
 
 	"github.com/gin-contrib/cors"
@@ -42,6 +43,9 @@ func main() {
 			},
 		),
 	)
+
+	// Start Tasks
+	tasks.RunTasks(database.DB)
 
 	agent := agent.NewAgent(cfg.OAIAPIKey)
 

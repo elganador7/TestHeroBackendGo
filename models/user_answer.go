@@ -16,6 +16,7 @@ type UserAnswer struct {
 	Topic      string         `json:"topic" gorm:"not null"`
 	Subtopic   string         `json:"subtopic" gorm:"not null"`
 	Attempts   int            `json:"attempts" gorm:"not null"`
+	Difficulty float64        `json:"difficulty" gorm:"not null"`
 	CreatedAt  time.Time      `json:"created_at"`
 	UpdatedAt  time.Time      `json:"updated_at"`
 	DeletedAt  gorm.DeletedAt `json:"-" gorm:"index"`

@@ -8,6 +8,8 @@ import (
 )
 
 func RunTasks(db *gorm.DB) {
+	CreateMaterializedView(db)
+
 	// Initialize the cron scheduler
 	c := cron.New()
 
@@ -21,7 +23,7 @@ func RunTasks(db *gorm.DB) {
 	}
 
 	// Schedule a task to aggregate user performance every 5 minutes
-	_, err = c.AddFunc("*/5 * * * *", func() {
+	_, err = c.AddFunc("*/1 * * * *", func() {
 		log.Println("Running scheduled task to aggregate user performance...")
 		RefreshMaterializedView(db)
 	})
