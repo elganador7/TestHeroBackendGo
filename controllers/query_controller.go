@@ -40,77 +40,16 @@ func NewQueryController(db *gorm.DB, agent *agent.Agent) *QueryController {
 }
 
 func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
-	var req struct {
-		TestType string `json:"test_type"`
-		Subject  string `json:"subject"`
-		Topic    string `json:"topic"`
-		Subtopic string `json:"subtopic"`
-	}
+	var testTopicData models.TestTopicData
 
-	if err := c.ShouldBindJSON(&req); err != nil {
+	if err := c.ShouldBindJSON(&testTopicData); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	inputSchema := models.NewQuestionGeneratorInputSchema{
-		TestType:   req.TestType,
-		Subject:    req.Subject,
-		Topic:      req.Topic,
-		Subtopic:   req.Subtopic,
-		Difficulty: rand.Float64(),
-	}
-
-	// Call the agent with the system prompt
-	questionResponse, err := ctrl.Agent.GenerateNewQuestion(inputSchema)
+	question, err := ctrl.GenerateNewQuestionWithTopicData(testTopicData, rand.Float64())
 	if err != nil {
-		log.Fatalf("Error generating question: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate question"})
-		return
-	}
-
-	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
-	if err != nil {
-		log.Fatalf("Error generating answer: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate answer"})
-		return
-	}
-
-	optionInput := models.OptionGeneratorInputSchema{
-		QuestionText:  questionResponse.QuestionText,
-		Explanation:   answerResponse.Explanation,
-		CorrectAnswer: answerResponse.CorrectAnswer,
-	}
-
-	optionsResponse, err := ctrl.Agent.GenerateQuestionOptions(optionInput)
-	if err != nil {
-		log.Fatalf("Error generating options: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate options"})
-		return
-	}
-
-	// Save the question to the database
-	question := models.Question{
-		ID:            uuid.NewString(),
-		QuestionText:  questionResponse.QuestionText,
-		Options:       optionsResponse.Options,
-		EstimatedTime: 60,
-		Difficulty:    inputSchema.Difficulty,
-	}
-
-	if err := ctrl.DB.Create(&question).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save question"})
-		return
-	}
-
-	answer := models.QuestionAnswer{
-		ID:            uuid.NewString(),
-		QuestionID:    question.ID,
-		CorrectAnswer: optionsResponse.CorrectOption,
-		Explanation:   answerResponse.Explanation,
-	}
-
-	if err := ctrl.DB.Create(&answer).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save answer"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
