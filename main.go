@@ -6,6 +6,7 @@ import (
 	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
 	"TestHeroBackendGo/routes"
+	"TestHeroBackendGo/tasks"
 	"log"
 
 	"github.com/gin-contrib/cors"
@@ -33,7 +34,7 @@ func main() {
 	router.Use(
 		cors.New(
 			cors.Config{
-				AllowOrigins:     []string{"http://localhost:5173", "https://app.testscorehero.com"}, // Allow your frontend URL
+				AllowOrigins:     []string{"http://localhost:5173", "https://app.testscorehero.com"},
 				AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 				AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 				ExposeHeaders:    []string{"Content-Length"},
@@ -43,13 +44,14 @@ func main() {
 		),
 	)
 
-	log.Printf("API key: %s", cfg.OAIAPIKey)
+	// Start Tasks
+	tasks.RunTasks(database.DB)
 
 	agent := agent.NewAgent(cfg.OAIAPIKey)
 
 	// parser.ParseJsonData(database.DB)
 
-	routes.SetupRoutes(router, database.DB, agent)
+	routes.SetupRoutes(router, database.DB, agent, cfg)
 
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "healthy"})

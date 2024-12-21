@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -25,17 +26,22 @@ func NewUserAnswerController(db *gorm.DB) *UserAnswerController {
 func (ctrl *UserAnswerController) CreateUserAnswer(c *gin.Context) {
 	var input models.UserAnswer
 	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Printf("Input: %v", input)
 
 	input.ID = uuid.New().String()
 	input.CreatedAt = time.Now()
 
 	if err := ctrl.DB.Create(&input).Error; err != nil {
+		log.Println(err.Error())
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create record"})
 		return
 	}
+
+	log.Printf("Created record: %v", input)
 
 	c.JSON(http.StatusCreated, input)
 }
@@ -59,27 +65,29 @@ func (ctrl *UserAnswerController) GetUserAnswersByUser(c *gin.Context) {
 
 // GetUserPerformanceSummary retrieves a summary of the user's performance
 func (ctrl *UserAnswerController) GetUserPerformanceSummary(c *gin.Context) {
-	userID, err := strconv.Atoi(c.Param("userId"))
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
+	type Input struct {
+		UserId string `json:"userId"`
+	}
+
+	var input Input
+	if err := c.ShouldBindJSON(&input); err != nil {
+		log.Println(err.Error())
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	var results []struct {
-		SubjectArea string
-		CorrectRate float64
-	}
+	var performance []models.UserPerformanceSummary
 
-	query := `
-		SELECT subject_area, AVG(CASE WHEN attempts > 1 THEN 1 ELSE 0 END) AS correct_rate
-		FROM user_answers
-		WHERE user_id = ?
-		GROUP BY subject_area
-	`
-	if err := ctrl.DB.Raw(query, userID).Scan(&results).Error; err != nil {
+	// Query the materialized view for the user's performance by subtopic
+	if err := ctrl.DB.
+		Table("user_performance_summary").
+		Where("user_id = ?", input.UserId).
+		Find(&performance).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate performance summary"})
 		return
 	}
 
-	c.JSON(http.StatusOK, results)
+	log.Printf("Results: %v", performance)
+
+	c.JSON(http.StatusOK, performance)
 }
