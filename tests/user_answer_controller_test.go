@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/google/uuid"
 
@@ -36,12 +35,14 @@ func TestCreateUserAnswer(t *testing.T) {
 	router := setupRouter(db)
 
 	input := models.UserAnswer{
-		UserID:      "1",
-		QuestionID:  "2",
-		AnsweredAt:  time.Now(),
-		TimeTaken:   30,
-		Attempts:    1,
-		SubjectArea: "Math",
+		UserID:     "1",
+		QuestionID: "2",
+		TimeTaken:  30,
+		Attempts:   1,
+		TestType:   "SAT",
+		Subject:    "Math",
+		Topic:      "Algebra",
+		Subtopic:   "Advanced Algebra",
 	}
 
 	body, _ := json.Marshal(input)
@@ -63,12 +64,14 @@ func TestGetUserAnswersByUser(t *testing.T) {
 	router := setupRouter(db)
 
 	answer := models.UserAnswer{
-		UserID:      "1",
-		QuestionID:  "2",
-		AnsweredAt:  time.Now(),
-		TimeTaken:   30,
-		Attempts:    1,
-		SubjectArea: "Math",
+		UserID:     "1",
+		QuestionID: "2",
+		TimeTaken:  30,
+		Attempts:   1,
+		TestType:   "SAT",
+		Subject:    "Math",
+		Topic:      "Algebra",
+		Subtopic:   "Advanced Algebra",
 	}
 	db.Create(&answer)
 
@@ -90,18 +93,18 @@ func TestGetUserPerformanceSummary(t *testing.T) {
 	router := setupRouter(db)
 
 	db.Create(&models.UserAnswer{
-		ID:          uuid.New().String(),
-		UserID:      "1",
-		QuestionID:  "1",
-		Attempts:    1,
-		SubjectArea: "Math",
+		ID:         uuid.New().String(),
+		UserID:     "1",
+		QuestionID: "1",
+		Attempts:   1,
+		Subject:    "Math",
 	})
 	db.Create(&models.UserAnswer{
-		ID:          uuid.New().String(),
-		UserID:      "1",
-		QuestionID:  "2",
-		Attempts:    2,
-		SubjectArea: "Math",
+		ID:         uuid.New().String(),
+		UserID:     "1",
+		QuestionID: "2",
+		Attempts:   2,
+		Subject:    "Math",
 	})
 
 	req := httptest.NewRequest(http.MethodGet, "/api/user_answers/user/1/summary", nil)

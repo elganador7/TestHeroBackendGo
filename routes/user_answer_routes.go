@@ -15,9 +15,9 @@ func setupUserAnswerRoutes(router *gin.Engine, db *gorm.DB) {
 
 	userAnswersApi.Use(auth.JWTAuthMiddleware())
 	{
-		userAnswersApi.POST("/", userAnswerCtrl.CreateUserAnswer)
+		userAnswersApi.POST("/submitUserAnswer", userAnswerCtrl.CreateUserAnswer)
 		userAnswersApi.GET("/user/:userId", userAnswerCtrl.GetUserAnswersByUser)
-		userAnswersApi.GET("/user/:userId/summary", userAnswerCtrl.GetUserPerformanceSummary)
+		userAnswersApi.POST("/user/summary", userAnswerCtrl.GetUserPerformanceSummary)
 	}
 }
 
