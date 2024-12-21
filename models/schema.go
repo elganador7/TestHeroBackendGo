@@ -8,11 +8,13 @@ type SimilarQuestionGeneratorInputSchema struct {
 }
 
 type NewQuestionGeneratorInputSchema struct {
-	TestType   string  `json:"test_type" jsonschema_description:"The test type for the new question, such as the SAT or ACT"`
-	Subject    string  `json:"subject" jsonschema_description:"The subject for the new question, such as Math, Science, or English"`
-	Topic      string  `json:"topic" jsonschema_description:"The topic for the new question, such as Algebra, Chemistry, or Literature"`
-	Subtopic   string  `json:"subtopic" jsonschema_description:"The subtopic for the new question, such as Advanced Algebra, Plane Geometry, or Trigonometry"`
-	Difficulty float64 `json:"difficulty" jsonschema_description:"The difficulty for the new question, a decimal from 0.0 to 1.0"`
+	TestType      string  `json:"test_type" jsonschema_description:"The test type for the new question, such as the SAT or ACT"`
+	Subject       string  `json:"subject" jsonschema_description:"The subject for the new question, such as Math, Science, or English"`
+	Topic         string  `json:"topic" jsonschema_description:"The topic for the new question, such as Algebra, Chemistry, or Literature"`
+	Subtopic      string  `json:"subtopic" jsonschema_description:"The subtopic for the new question, such as Advanced Algebra, Plane Geometry, or Trigonometry"`
+	SpecificTopic string  `json:"specific_topic" jsonschema_description:"The specific topic for the new question, such as Trigonometry, Trigonometric Identities, or Trigonometric Equations"`
+	Description   string  `json:"description" jsonschema_description:"The description of the specific_topic for the new question"`
+	Difficulty    float64 `json:"difficulty" jsonschema_description:"The difficulty for the new question, a decimal from 0.0 to 1.0"`
 }
 
 // OutputSchema defines the structured output for a new question and its answer.

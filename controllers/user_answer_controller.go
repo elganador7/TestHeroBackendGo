@@ -30,7 +30,6 @@ func (ctrl *UserAnswerController) CreateUserAnswer(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Printf("Input: %v", input)
 
 	input.ID = uuid.New().String()
 	input.CreatedAt = time.Now()
@@ -40,8 +39,6 @@ func (ctrl *UserAnswerController) CreateUserAnswer(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create record"})
 		return
 	}
-
-	log.Printf("Created record: %v", input)
 
 	c.JSON(http.StatusCreated, input)
 }
@@ -86,8 +83,6 @@ func (ctrl *UserAnswerController) GetUserPerformanceSummary(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate performance summary"})
 		return
 	}
-
-	log.Printf("Results: %v", performance)
 
 	c.JSON(http.StatusOK, performance)
 }

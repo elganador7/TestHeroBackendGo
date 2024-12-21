@@ -1,0 +1,80 @@
+{
+  "test_type": "ACT",
+  "subjects": [
+    {
+      "subject": "English",
+      "topics": [
+        {
+          "topic": "Production of Writing",
+          "subtopics": [
+            {
+              "subtopic": "Topic Development",
+              "specific_topics": [
+                {
+                  "specific_topic": "Rhetorical aspects of texts",
+                  "description": "Demonstrate an understanding of, and control over, the rhetorical aspects of texts. Identify the purposes of parts of texts, determine whether a text or part of a text has met its intended goal, and evaluate the relevance of material in terms of a text’s focus."
+                }
+              ],
+              "description": "Questions focused on the development of topics, including rhetorical aspects of texts."
+            },
+            {
+              "subtopic": "Organization, Unity, and Cohesion",
+              "specific_topics": [
+                {
+                  "specific_topic": "Logical organization and smooth flow",
+                  "description": "Use various strategies to ensure that a text is logically organized, flows smoothly, and has an effective introduction and conclusion."
+                }
+              ],
+              "description": "Questions focused on the organization, unity, and cohesion of texts."
+            }
+          ]
+        },
+        {
+          "topic": "Knowledge of Language",
+          "subtopics": [
+            {
+              "subtopic": "Conventions of Standard English",
+              "specific_topics": [
+                {
+                  "specific_topic": "Understanding grammar, usage, and mechanics",
+                  "description": "These questions require you to apply an understanding of the conventions of standard English grammar, usage, and mechanics to revise and edit text."
+                }
+              ],
+              "description": "Questions focused on conventions of standard English grammar, usage, and mechanics."
+            },
+            {
+              "subtopic": "Sentence Structure and Formation",
+              "specific_topics": [
+                {
+                  "specific_topic": "Revising sentence structure",
+                  "description": "Apply understanding of sentence structure and formation in a text and make revisions to improve the writing."
+                }
+              ],
+              "description": "Questions focused on revising sentence structure and formation."
+            },
+            {
+              "subtopic": "Punctuation",
+              "specific_topics": [
+                {
+                  "specific_topic": "Revising punctuation issues",
+                  "description": "Recognize common problems with standard English punctuation and make revisions to improve the writing."
+                }
+              ],
+              "description": "Questions focused on revising punctuation issues."
+            },
+            {
+              "subtopic": "Usage",
+              "specific_topics": [
+                {
+                  "specific_topic": "Revising usage issues",
+                  "description": "Recognize common problems with standard English usage in a text and make revisions to improve the writing."
+                }
+              ],
+              "description": "Questions focused on revising issues with usage in standard English."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
