@@ -47,8 +47,6 @@ func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
 		Subtopic string `json:"subtopic"`
 	}
 
-	log.Printf("Request body: %v", req)
-
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
@@ -62,8 +60,6 @@ func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
 		Difficulty: rand.Float64(),
 	}
 
-	log.Printf("Input schema: %v", inputSchema)
-
 	// Call the agent with the system prompt
 	questionResponse, err := ctrl.Agent.GenerateNewQuestion(inputSchema)
 	if err != nil {
@@ -72,16 +68,12 @@ func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Generated question: %v", questionResponse)
-
 	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
 	if err != nil {
 		log.Fatalf("Error generating answer: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate answer"})
 		return
 	}
-
-	log.Printf("Generated answer: %v", answerResponse)
 
 	optionInput := models.OptionGeneratorInputSchema{
 		QuestionText:  questionResponse.QuestionText,
@@ -96,8 +88,6 @@ func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Generated options: %v", optionsResponse)
-
 	// Save the question to the database
 	question := models.Question{
 		ID:            uuid.NewString(),
@@ -106,8 +96,6 @@ func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
 		EstimatedTime: 60,
 		Difficulty:    inputSchema.Difficulty,
 	}
-
-	log.Printf("Saved question: %v", question)
 
 	if err := ctrl.DB.Create(&question).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save question"})
@@ -144,8 +132,6 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 		}
 	}
 
-	log.Printf("Original question: %v", originalQuestion)
-
 	inputSchema := models.SimilarQuestionGeneratorInputSchema{
 		Paragraph:    originalQuestion.Paragraph,
 		QuestionText: originalQuestion.QuestionText,
@@ -159,16 +145,12 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Generated question: %v", questionResponse)
-
 	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
 	if err != nil {
 		log.Fatalf("Error generating answer: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate answer"})
 		return
 	}
-
-	log.Printf("Generated answer: %v", answerResponse)
 
 	optionInput := models.OptionGeneratorInputSchema{
 		QuestionText:  questionResponse.QuestionText,
@@ -183,13 +165,11 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 		return
 	}
 
-	log.Printf("Generated options: %v", optionsResponse)
-
 	// Save the question to the database
 	question := models.Question{
 		ID:            uuid.NewString(),
 		QuestionText:  questionResponse.QuestionText,
-		TestTopicID:   originalQuestion.TestTopicID,
+		TestTopic:     originalQuestion.TestTopic,
 		Options:       optionsResponse.Options,
 		EstimatedTime: 60,
 	}
@@ -216,10 +196,20 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 
 // GenerateQuestion generates a question tailored to the current user's performance
 func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
-	// Get TestType and Subject from query parameters
-	testType := c.DefaultQuery("test_type", "")
-	subject := c.DefaultQuery("subject", "")
-	userID := c.DefaultQuery("user_id", "") // Assuming user_id is passed in query params
+	var req struct {
+		TestType string `json:"test_type"`
+		Subject  string `json:"subject"`
+		UserId   string `json:"user_id"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	testType := req.TestType
+	subject := req.Subject
+	userID := req.UserId
 
 	// Check if testType and subject are provided
 	if testType == "" || subject == "" || userID == "" {
@@ -296,9 +286,7 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 	}
 
 	// Return the selected question
-	c.JSON(http.StatusOK, gin.H{
-		"question": question,
-	})
+	c.JSON(http.StatusOK, question)
 }
 
 func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData models.TestTopicData, difficulty float64) (models.Question, error) {
@@ -311,8 +299,6 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 		Difficulty:    difficulty,
 	}
 
-	log.Printf("Input schema: %v", inputSchema)
-
 	// Call the agent with the system prompt
 	questionResponse, err := ctrl.Agent.GenerateNewQuestion(inputSchema)
 	if err != nil {
@@ -320,15 +306,11 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 		return models.Question{}, err
 	}
 
-	log.Printf("Generated question: %v", questionResponse)
-
 	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
 	if err != nil {
 		log.Fatalf("Error generating answer: %v", err)
 		return models.Question{}, err
 	}
-
-	log.Printf("Generated answer: %v", answerResponse)
 
 	optionInput := models.OptionGeneratorInputSchema{
 		QuestionText:  questionResponse.QuestionText,
@@ -342,8 +324,6 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 		return models.Question{}, err
 	}
 
-	log.Printf("Generated options: %v", optionsResponse)
-
 	// Save the question to the database
 	question := models.Question{
 		ID:            uuid.NewString(),
@@ -351,10 +331,9 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 		Options:       optionsResponse.Options,
 		EstimatedTime: 60,
 		Difficulty:    inputSchema.Difficulty,
+		TestTopicID:   testTopicData.ID,
 		TestTopic:     testTopicData,
 	}
-
-	log.Printf("Saved question: %v", question)
 
 	if err := ctrl.DB.Create(&question).Error; err != nil {
 		return models.Question{}, err
