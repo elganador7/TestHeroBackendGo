@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func CreateMaterializedView(db *gorm.DB) {
+func CreateMaterializedView(db *gorm.DB) error {
 	// Check if the materialized view already exists
 	var exists bool
 	query := `SELECT EXISTS (
@@ -15,8 +15,8 @@ func CreateMaterializedView(db *gorm.DB) {
 
 	// Execute the query to check existence
 	if err := db.Raw(query).Scan(&exists).Error; err != nil {
-		fmt.Printf("Error checking materialized view existence: %v\n", err)
-		return
+		return fmt.Errorf("error checking for materialized view: %v", err)
+
 	}
 
 	// If the materialized view doesn't exist, create it
@@ -30,25 +30,28 @@ func CreateMaterializedView(db *gorm.DB) {
 				tt.topic,
 				tt.subtopic,
 				tt.specific_topic,  -- Include specific_topic in the view
-				AVG(CASE WHEN ua.attempts > 1 THEN 0 ELSE 1.0 END) AS correct_rate
+				AVG(CASE WHEN ua.attempts > 1 THEN 0 ELSE 1.0 END) AS correct_rate,
+				SUM(CASE WHEN ua.attempts > 1 THEN 0 ELSE ua.difficulty END) AS total_points,
+				SUM(ua.difficulty) AS total_points_possible
 			FROM 
 				user_answers ua
-			JOIN 
-				test_topic_data tt ON ua.test_topic_id = tt.id -- Join with TestTopicData on TestTopicID
+			JOIN
+				test_topic_data tt ON ua.test_topic_id = tt.id
 			GROUP BY 
-				ua.user_id, tt.test_type, tt.subject, tt.topic, tt.subtopic, tt.specific_topic; -- Group by specific_topic as well
+				ua.user_id, tt.test_type, tt.subject, tt.topic, tt.subtopic, tt.specific_topic;
 
 		`
 
 		// Run the query to create the materialized view
 		if err := db.Exec(createQuery).Error; err != nil {
-			fmt.Printf("Error creating materialized view: %v\n", err)
-			return
+			return fmt.Errorf("error creating materialized view: %v", err)
 		}
 		fmt.Println("Materialized view 'user_performance_summary' created successfully.")
 	} else {
 		fmt.Println("Materialized view 'user_performance_summary' already exists.")
 	}
+
+	return nil
 }
 
 func RefreshMaterializedView(db *gorm.DB) {
