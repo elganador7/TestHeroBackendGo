@@ -12,7 +12,9 @@ var (
 		options as a JSON object and the correct answer as the letter option that it is. Each of the options should be formatted to be compatible with
 		MathJax rendering in React. Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
 		Make sure to wrap all math with that formatting, even if it is not used in the question. Make sure you
-		double escape everything since this content will be dynamically rendered in javascript.
+		double escape all mathematical expressions and symbols since this content will be dynamically rendered in javascript.
+
+		Make sure each of the options that includes math equations or mathematical symbols is wrapped in \( ... \).
 
 		{
 			"options": {
@@ -24,8 +26,9 @@ var (
 			"correct_option": "A",
 		}
 
-		Do not respond with anything other than JSON. You should write the explanation first to ensure that your answer is correct
-		and matches your explanation.
+		DO NOT RESPOND WITH ANYTHING OTHER THAN JSON. DO NOT REPEAT ANY OPTIONS. ENSURE THAT ONLY ONE OPTION IS CORRECT BASED ON 
+		THE EXPLANATION GIVEN.
+
 	`
 
 	AnswerGeneratorSystemPrompt = `You are an assistant for creating standardized test questions. Expect a JSON input with the following structure:
