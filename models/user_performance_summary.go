@@ -10,6 +10,7 @@ type UserPerformanceSummary struct {
 	CorrectRate         float64 `json:"correct_rate" gorm:"column:correct_rate"`
 	TotalPoints         float64 `json:"total_points" gorm:"column:total_points"`
 	TotalPointsPossible float64 `json:"total_points_possible" gorm:"column:total_points_possible"`
+	QuestionCount       int     `json:"question_count" gorm:"column:question_count"`
 }
 
 // TableName overrides the default table name for GORM

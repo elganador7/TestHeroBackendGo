@@ -92,11 +92,6 @@ func TestGetUserPerformanceSummary(t *testing.T) {
 	db := setupTestDB()
 	router := setupRouterWithController(db)
 
-	// Seed data into the materialized view (simulate)
-	db.Exec(`CREATE TABLE user_performance_summary (
-		user_id TEXT,
-		correct_rate REAL
-	)`)
 	db.Exec(`INSERT INTO user_performance_summary (user_id, correct_rate) VALUES
 		('1', 0.75)`)
 

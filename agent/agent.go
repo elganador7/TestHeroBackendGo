@@ -11,20 +11,23 @@ import (
 	"github.com/invopop/jsonschema"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
+	"gorm.io/gorm"
 )
 
 type Agent struct {
 	client *openai.Client
+	DB     *gorm.DB
 }
 
 // NewAgent initializes and returns a new Agent.
-func NewAgent(apiKey string) *Agent {
+func NewAgent(apiKey string, db *gorm.DB) *Agent {
 	client := openai.NewClient(
 		option.WithAPIKey(apiKey), // defaults to os.LookupEnv("OPENAI_API_KEY")
 	)
 
 	return &Agent{
 		client: client,
+		DB:     db,
 	}
 }
 

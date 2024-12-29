@@ -9,8 +9,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 
-	"TestHeroBackendGo/controllers"
+	"TestHeroBackendGo/agent"
+	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
+	"TestHeroBackendGo/routes"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
@@ -22,16 +24,11 @@ func setupTestDBForQuestionAnswer() *gorm.DB {
 	return db
 }
 
-func setupRouterWithQuestionAnswerController(db *gorm.DB) *gin.Engine {
-	router := gin.Default()
-	controller := controllers.NewQuestionAnswerController(db)
-	router.GET("/api/answers/question/:questionId", controller.GetAnswerByQuestionID)
-	return router
-}
-
 func TestGetAnswerByQuestionID(t *testing.T) {
 	db := setupTestDBForQuestionAnswer()
-	router := setupRouterWithQuestionAnswerController(db)
+	router := gin.Default()
+	agent := agent.NewAgent("", db)
+	routes.SetupRoutes(router, database.DB, agent, false)
 
 	// Seed a question-answer record
 	answer := models.QuestionAnswer{

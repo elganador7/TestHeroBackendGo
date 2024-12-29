@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"TestHeroBackendGo/models"
+	"TestHeroBackendGo/utils"
 	"log"
 	"math/rand"
 	"net/http"
@@ -17,13 +18,6 @@ type QuestionController struct {
 
 func NewQuestionController(db *gorm.DB) *QuestionController {
 	return &QuestionController{DB: db}
-}
-
-// GET /questions
-func (ctrl *QuestionController) GetQuestions(c *gin.Context) {
-	var questions []models.Question
-	ctrl.DB.Find(&questions)
-	c.JSON(http.StatusOK, questions)
 }
 
 // POST /questions
@@ -94,6 +88,32 @@ func (ctrl *QuestionController) GetQuestionByID(c *gin.Context) {
 		} else {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch question"})
 		}
+	}
+
+	c.JSON(http.StatusOK, question)
+}
+
+func (ctrl *QuestionController) GetQueuedQuestionByUserAndTopic(c *gin.Context) {
+	var req struct {
+		TestType string `json:"test_type"`
+		Subject  string `json:"subject"`
+		UserId   string `json:"user_id"`
+	}
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	var queuedQuestion models.QueuedQuestion
+	if err := ctrl.DB.Where("user_id = ? AND test_type = ? AND subject = ?", req.UserId, req.TestType, req.Subject).Find(&queuedQuestion).Limit(1).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user performance"})
+		return
+	}
+
+	question, c, found, err := utils.GetQuestionByID(queuedQuestion.QuestionID, queuedQuestion.Question, ctrl.DB, c)
+	if err != nil || !found {
+		return
 	}
 
 	c.JSON(http.StatusOK, question)
