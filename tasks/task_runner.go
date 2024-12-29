@@ -6,10 +6,12 @@ import (
 	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
 
+	"TestHeroBackendGo/agent"
+	"TestHeroBackendGo/models"
 	"TestHeroBackendGo/tasks/topic_data_processor"
 )
 
-func RunTasks(db *gorm.DB) {
+func RunTasks(db *gorm.DB, agent *agent.Agent, userIdQuestionGenerationChannel chan models.QuestionGeneratorTopicInput) {
 	err := CreateMaterializedView(db)
 	if err != nil {
 		log.Fatalf("Error creating materialized view: %v", err)

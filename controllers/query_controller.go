@@ -23,20 +23,6 @@ const (
 	// a topic in which a student has answered 85% correctly as it does for a topic in which a student has answered 95% correctly
 )
 
-// Request body for OpenAI API
-type OpenAIRequest struct {
-	Prompt    string `json:"prompt"`
-	MaxTokens int    `json:"max_tokens"`
-	Model     string `json:"model"`
-}
-
-// OpenAIResponse structure
-type OpenAIResponse struct {
-	Choices []struct {
-		Text string `json:"text"`
-	} `json:"choices"`
-}
-
 type QueryController struct {
 	DB    *gorm.DB
 	Agent *agent.Agent
@@ -243,11 +229,23 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 }
 
 func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData models.TestTopicData, difficulty float64) (models.Question, error) {
+	previousQuestionModels := []models.Question{}
+	previousQuestionTexts := []string{}
+
+	if err := ctrl.DB.Where("test_topic_id = ?", testTopicData.ID).Find(&previousQuestionModels).Limit(5).Error; err != nil {
+		return models.Question{}, err
+	}
+
+	for _, question := range previousQuestionModels {
+		previousQuestionTexts = append(previousQuestionTexts, question.QuestionText)
+	}
+
 	inputSchema := models.NewQuestionGeneratorInputSchema{
-		Topic:         testTopicData.Topic,
-		Subtopic:      testTopicData.Subtopic,
-		SpecificTopic: testTopicData.SpecificTopic,
-		Difficulty:    difficulty,
+		Topic:             testTopicData.Topic,
+		Subtopic:          testTopicData.Subtopic,
+		SpecificTopic:     testTopicData.SpecificTopic,
+		Difficulty:        difficulty,
+		PreviousQuestions: previousQuestionTexts,
 	}
 
 	systemPrompt, ok := prompts.PromptMap[testTopicData.TestType][testTopicData.Subject]

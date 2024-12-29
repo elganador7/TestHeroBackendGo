@@ -33,6 +33,7 @@ func CreateMaterializedView(db *gorm.DB) error {
 				AVG(CASE WHEN ua.attempts > 1 THEN 0 ELSE 1.0 END) AS correct_rate,
 				SUM(CASE WHEN ua.attempts > 1 THEN 0 ELSE ua.difficulty END) AS total_points,
 				SUM(ua.difficulty) AS total_points_possible
+				COUNT(*) AS question_count
 			FROM 
 				user_answers ua
 			JOIN
