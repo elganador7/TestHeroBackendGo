@@ -7,6 +7,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"net/url"
 
 	"github.com/invopop/jsonschema"
 	"github.com/openai/openai-go"
@@ -157,8 +160,27 @@ func (a *Agent) GenerateAnswer(input models.QuestionGeneratorOutputSchema) (mode
 		return models.AnswerGeneratorOutputSchema{}, fmt.Errorf("failed to marshal input: %w", err)
 	}
 
-	// Query the Chat Completions API
-	response, err := a.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
+	// Define Wolfram Alpha tool
+	wolframTool := openai.ChatCompletionToolParam{
+		Type: openai.F(openai.ChatCompletionToolTypeFunction),
+		Function: openai.F(openai.FunctionDefinitionParam{
+			Name:        openai.String("query_wolfram"),
+			Description: openai.String("Query the Wolfram Alpha API to compute or verify mathematical expressions"),
+			Parameters: openai.F(openai.FunctionParameters{
+				"type": "object",
+				"properties": map[string]interface{}{
+					"expression": map[string]string{
+						"type":        "string",
+						"description": "The mathematical expression to compute or verify.",
+					},
+				},
+				"required": []string{"expression"},
+			}),
+		}),
+	}
+
+	// Set up the API parameters
+	params := openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(prompts.AnswerGeneratorSystemPrompt),
 			openai.UserMessage(string(inputJSON)),
@@ -170,9 +192,41 @@ func (a *Agent) GenerateAnswer(input models.QuestionGeneratorOutputSchema) (mode
 			},
 		),
 		Model: openai.F(openai.ChatModelGPT4oMini),
-	})
+		Tools: openai.F([]openai.ChatCompletionToolParam{wolframTool}),
+	}
+
+	// Query the Chat Completions API
+	response, err := a.client.Chat.Completions.New(ctx, params)
 	if err != nil {
-		return models.AnswerGeneratorOutputSchema{}, fmt.Errorf("API call failed: %w", err)
+		return models.AnswerGeneratorOutputSchema{}, fmt.Errorf("open AI API call failed: %w", err)
+	}
+
+	// Handle tool calls if present
+	toolCalls := response.Choices[0].Message.ToolCalls
+	log.Println("printing toolCalls")
+	log.Println("toolCalls: ", toolCalls)
+	log.Printf("toolCalls: %v", toolCalls)
+
+	if len(toolCalls) > 0 {
+		for _, toolCall := range toolCalls {
+			if toolCall.Function.Name == "query_wolfram" {
+				// Extract the expression from the tool call arguments
+				var args map[string]interface{}
+				if err := json.Unmarshal([]byte(toolCall.Function.Arguments), &args); err != nil {
+					return models.AnswerGeneratorOutputSchema{}, fmt.Errorf("failed to parse tool call arguments: %w", err)
+				}
+				expression := args["expression"].(string)
+
+				// Query Wolfram Alpha
+				wolframResult, err := queryWolframAlpha(expression)
+				if err != nil {
+					return models.AnswerGeneratorOutputSchema{}, fmt.Errorf("wolfram Alpha query failed: %w", err)
+				}
+
+				// Return the result to the tool
+				params.Messages.Value = append(params.Messages.Value, openai.ToolMessage(toolCall.ID, wolframResult))
+			}
+		}
 	}
 
 	// Parse the response into the OutputSchema struct
@@ -183,6 +237,56 @@ func (a *Agent) GenerateAnswer(input models.QuestionGeneratorOutputSchema) (mode
 	}
 
 	return result, nil
+}
+
+// queryWolframAlpha sends a mathematical expression to Wolfram Alpha and returns the result
+func queryWolframAlpha(expression string) (string, error) {
+	appID := "your-wolfram-alpha-app-id" // Replace with your Wolfram Alpha App ID
+
+	// Encode the query
+	query := url.Values{}
+	query.Set("input", expression)
+	query.Set("format", "plaintext")
+	query.Set("output", "JSON")
+	query.Set("appid", appID)
+
+	// Build the API URL
+	apiURL := fmt.Sprintf("https://www.wolframalpha.com/api/v1/llm-apiy?%s", query.Encode())
+
+	log.Printf("Wolfram Alpha URL: %s", apiURL)
+
+	// Perform the HTTP GET request
+	resp, err := http.Get(apiURL)
+	if err != nil {
+		return "", fmt.Errorf("failed to call Wolfram Alpha API: %w", err)
+	}
+	defer resp.Body.Close()
+
+	// Parse the response
+	var wolframResponse struct {
+		QueryResult struct {
+			Pods []struct {
+				Title   string `json:"title"`
+				Subpods []struct {
+					Plaintext string `json:"plaintext"`
+				} `json:"subpods"`
+			} `json:"pods"`
+		} `json:"queryresult"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&wolframResponse); err != nil {
+		return "", fmt.Errorf("failed to parse Wolfram Alpha API response: %w", err)
+	}
+
+	// Extract the computation result
+	for _, pod := range wolframResponse.QueryResult.Pods {
+		if pod.Title == "Result" {
+			for _, subpod := range pod.Subpods {
+				return subpod.Plaintext, nil
+			}
+		}
+	}
+
+	return "", fmt.Errorf("no result found in Wolfram Alpha response")
 }
 
 // GenerateQuestionWithAnswer generates a new question and answer based on an existing question text.

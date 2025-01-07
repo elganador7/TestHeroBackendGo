@@ -20,7 +20,7 @@ import (
 
 func setupTestDBForQuestionAnswer() *gorm.DB {
 	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	db.AutoMigrate(&models.QuestionAnswer{})
+	db.AutoMigrate(models.AllModels...)
 	return db
 }
 
@@ -28,7 +28,7 @@ func TestGetAnswerByQuestionID(t *testing.T) {
 	db := setupTestDBForQuestionAnswer()
 	router := gin.Default()
 	agent := agent.NewAgent("", db)
-	routes.SetupRoutes(router, database.DB, agent, false)
+	routes.SetupRoutes(router, database.DB, agent, true)
 
 	// Seed a question-answer record
 	answer := models.QuestionAnswer{
@@ -38,7 +38,7 @@ func TestGetAnswerByQuestionID(t *testing.T) {
 	db.Create(&answer)
 
 	// Test case: Valid question ID
-	req := httptest.NewRequest(http.MethodGet, "/api/answers/question/123", nil)
+	req := httptest.NewRequest(http.MethodGet, "/api/questionAnswers/123", nil)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 
@@ -51,7 +51,7 @@ func TestGetAnswerByQuestionID(t *testing.T) {
 	assert.Equal(t, answer.CorrectAnswer, response.CorrectAnswer)
 
 	// Test case: Invalid question ID
-	req = httptest.NewRequest(http.MethodGet, "/api/answers/question/999", nil)
+	req = httptest.NewRequest(http.MethodGet, "/api/questionAnswers/999", nil)
 	w = httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 

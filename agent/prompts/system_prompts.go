@@ -39,6 +39,8 @@ var (
 		Think through the question step by step until you reach a solution to the question above.. You should record the explanation and the final correct answer 
 		in the JSON format given below.
 
+		If the question requires mathematical calculations, you should use the Wolfram Alpha tool to validate your calculations.
+
 		{
 			"explanation": "...",
 			"correct_answer": "..."

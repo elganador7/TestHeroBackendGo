@@ -15,12 +15,9 @@ import (
 )
 
 const (
-	DEFAULT_CORRECT_SCORE          = 1
-	DEFAULT_QUESTION_DIFFICULTY    = 0.5
-	MINIMUM_QUESTION_DIFFICULTY    = 0.05
-	QUESTION_DISTRIBUTION_MODIFIER = 0.1 // Reducing this makes the algorithm give users more questions on weak topics
-	// It is added to 1 and then the correct rate is subtracted, meaning 0.05 should yield twice as many questions for
-	// a topic in which a student has answered 85% correctly as it does for a topic in which a student has answered 95% correctly
+	DEFAULT_CORRECT_SCORE       = 0.5
+	DEFAULT_QUESTION_DIFFICULTY = 0.5
+	MINIMUM_QUESTION_DIFFICULTY = 0.05
 )
 
 type QueryController struct {
@@ -173,15 +170,14 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 	performanceMap := make(map[string]float64)
 	questionDifficultyMap := make(map[string]float64)
 	for _, performance := range userPerformance {
-		log.Printf("Performance: %v", performance)
 		if performance.TotalPointsPossible == 0 {
-			log.Printf("Setting defaults for topic %v", performance.SpecificTopic)
 			performanceMap[performance.SpecificTopic] = DEFAULT_CORRECT_SCORE
 			questionDifficultyMap[performance.SpecificTopic] = DEFAULT_QUESTION_DIFFICULTY
+		} else {
+			difficulty := performance.TotalPoints / performance.TotalPointsPossible
+			performanceMap[performance.SpecificTopic] = difficulty * performance.TotalPoints
+			questionDifficultyMap[performance.SpecificTopic] = difficulty
 		}
-		performanceMap[performance.SpecificTopic] = (performance.TotalPoints * performance.TotalPoints) / performance.TotalPointsPossible
-		questionDifficultyMap[performance.SpecificTopic] = performance.TotalPoints / performance.TotalPointsPossible
-
 	}
 
 	// Create a list of topics with their weights
@@ -211,10 +207,6 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 			selectedTopic = topic
 		}
 	}
-
-	log.Printf(("Performance Map: %v"), performanceMap)
-
-	log.Printf("Selected topic: %v, Weight: %v, Performance: %v", selectedTopic, minWeight, difficulty)
 
 	// Query for a question based on the selected topic
 	question, err := ctrl.GenerateNewQuestionWithTopicData(selectedTopic, difficulty)
