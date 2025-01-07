@@ -11,8 +11,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 
+	"TestHeroBackendGo/agent"
 	"TestHeroBackendGo/controllers"
 	"TestHeroBackendGo/models"
+	"TestHeroBackendGo/routes"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/sqlite"
@@ -90,7 +92,9 @@ func TestGetUserAnswersByUser(t *testing.T) {
 
 func TestGetUserPerformanceSummary(t *testing.T) {
 	db := setupTestDB()
-	router := setupRouterWithController(db)
+	router := gin.Default()
+	agent := agent.NewAgent("", db)
+	routes.SetupRoutes(router, db, agent, true)
 
 	db.Exec(`INSERT INTO user_performance_summary (user_id, correct_rate) VALUES
 		('1', 0.75)`)

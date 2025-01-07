@@ -7,9 +7,8 @@ import (
 )
 
 func GenerateHandlers(isTest bool) []gin.HandlerFunc {
-	handlers := []gin.HandlerFunc{}
 	if !isTest {
-		handlers = append(handlers, auth.JWTAuthMiddleware())
+		return []gin.HandlerFunc{auth.JWTAuthMiddleware()}
 	}
-	return handlers
+	return []gin.HandlerFunc{}
 }
