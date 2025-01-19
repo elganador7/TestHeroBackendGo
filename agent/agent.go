@@ -159,24 +159,6 @@ func (a *Agent) GenerateAnswer(input models.QuestionGeneratorOutputSchema) (mode
 		return models.AnswerGeneratorOutputSchema{}, fmt.Errorf("failed to marshal input: %w", err)
 	}
 
-	// wolframTool := openai.ChatCompletionToolParam{
-	// 	Type: openai.F(openai.ChatCompletionToolTypeFunction),
-	// 	Function: openai.F(openai.FunctionDefinitionParam{
-	// 		Name:        openai.String("query_wolfram"),
-	// 		Description: openai.String("Query the Wolfram Alpha API LLM to compute or verify mathematical expressions"),
-	// 		Parameters: openai.F(openai.FunctionParameters{
-	// 			"type": "object",
-	// 			"properties": map[string]interface{}{
-	// 				"expression": map[string]string{
-	// 					"type":        "string",
-	// 					"description": "The mathematical expression to compute or verify and instructions on what to do with it, returns a string detailing the results of the calculation. You should format your request in a way that wolfram can handle and use the result to validate your calculations",
-	// 				},
-	// 			},
-	// 			"required": []string{"expression"},
-	// 		}),
-	// 	}),
-	// }
-
 	// Set up the API parameters
 	params := openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
