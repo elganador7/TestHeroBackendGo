@@ -46,7 +46,7 @@ func main() {
 
 	userIdGenerationQuestionChannel := make(chan models.QuestionGeneratorTopicInput)
 
-	agent := agent.NewAgent(cfg.OAIAPIKey, database.DB, cfg.WolframAppID)
+	agent := agent.NewAgent(cfg.OAIAPIKey, database.DB)
 
 	// Should this be run from the main thread?
 	go tasks.MonitorTestTopicChannel(database.DB, agent, userIdGenerationQuestionChannel)
