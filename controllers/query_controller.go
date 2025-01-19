@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"TestHeroBackendGo/agent"
+	"TestHeroBackendGo/agent/prompts"
 	"TestHeroBackendGo/models"
 	"fmt"
 	"log"
@@ -13,19 +14,11 @@ import (
 	"gorm.io/gorm"
 )
 
-// Request body for OpenAI API
-type OpenAIRequest struct {
-	Prompt    string `json:"prompt"`
-	MaxTokens int    `json:"max_tokens"`
-	Model     string `json:"model"`
-}
-
-// OpenAIResponse structure
-type OpenAIResponse struct {
-	Choices []struct {
-		Text string `json:"text"`
-	} `json:"choices"`
-}
+const (
+	DEFAULT_CORRECT_SCORE       = 0.5
+	DEFAULT_QUESTION_DIFFICULTY = 0.5
+	MINIMUM_QUESTION_DIFFICULTY = 0.05
+)
 
 type QueryController struct {
 	DB    *gorm.DB
@@ -76,17 +69,23 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 		QuestionText: originalQuestion.QuestionText,
 	}
 
+	systemPrompt, ok := prompts.PromptMap[originalQuestion.TestTopic.TestType][originalQuestion.TestTopic.Subject]
+	if !ok {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid test type or subject in original question"})
+		return
+	}
+
 	// Call the agent with the system prompt
-	questionResponse, err := ctrl.Agent.GenerateSimilarQuestion(inputSchema)
+	questionResponse, err := ctrl.Agent.GenerateSimilarQuestion(inputSchema, systemPrompt)
 	if err != nil {
-		log.Fatalf("Error generating question: %v", err)
+		log.Printf("Error generating question: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate question"})
 		return
 	}
 
 	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
 	if err != nil {
-		log.Fatalf("Error generating answer: %v", err)
+		log.Printf("Error generating answer: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate answer"})
 		return
 	}
@@ -99,7 +98,7 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 
 	optionsResponse, err := ctrl.Agent.GenerateQuestionOptions(optionInput)
 	if err != nil {
-		log.Fatalf("Error generating options: %v", err)
+		log.Printf("Error generating options: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate options"})
 		return
 	}
@@ -147,78 +146,74 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 		return
 	}
 
-	testType := req.TestType
-	subject := req.Subject
-	userID := req.UserId
-
 	// Check if testType and subject are provided
-	if testType == "" || subject == "" || userID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "TestType, Subject, and UserID are required"})
+	if req.TestType == "" || req.Subject == "" || req.UserId == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "req.TestType, Subject, and UserID are required"})
 		return
 	}
 
-	// Query for all topics, subtopics, and specific topics under the testType and subject
+	// Query for all topics, subtopics, and specific topics under the req.TestType and subject
 	var testTopics []models.TestTopicData
-	if err := ctrl.DB.Where("test_type = ? AND subject = ?", testType, subject).Find(&testTopics).Error; err != nil {
+	if err := ctrl.DB.Where("test_type = ? AND subject = ?", req.TestType, req.Subject).Find(&testTopics).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch test topics"})
 		return
 	}
 
 	// Query the user performance summary
 	var userPerformance []models.UserPerformanceSummary
-	if err := ctrl.DB.Where("user_id = ? AND test_type = ? AND subject = ?", userID, testType, subject).Find(&userPerformance).Error; err != nil {
+	if err := ctrl.DB.Where("user_id = ? AND test_type = ? AND subject = ?", req.UserId, req.TestType, req.Subject).Find(&userPerformance).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user performance"})
 		return
 	}
 
 	// Create a map of specific topics to performance
 	performanceMap := make(map[string]float64)
+	questionDifficultyMap := make(map[string]float64)
 	for _, performance := range userPerformance {
-		performanceMap[performance.SpecificTopic] = performance.CorrectRate
+		if performance.TotalPointsPossible == 0 {
+			performanceMap[performance.SpecificTopic] = DEFAULT_CORRECT_SCORE
+			questionDifficultyMap[performance.SpecificTopic] = DEFAULT_QUESTION_DIFFICULTY
+		} else {
+			difficulty := performance.TotalPoints / performance.TotalPointsPossible
+			performanceMap[performance.SpecificTopic] = difficulty * performance.TotalPoints
+			questionDifficultyMap[performance.SpecificTopic] = difficulty
+		}
 	}
 
 	// Create a list of topics with their weights
-	var weightedTopics []models.TestTopicData
-	weightMap := make(map[string]float64)
+	var selectedTopic models.TestTopicData
+	minWeight := 1000000000000000.0 // Very big number
+	difficulty := 0.5
 
 	for _, topic := range testTopics {
 		// Get the correct rate for the specific topic
-		correctRate, ok := performanceMap[topic.SpecificTopic]
+		score, ok := performanceMap[topic.SpecificTopic]
 		if !ok {
 			// If no data available for this topic, treat it as 50% correct rate
-			correctRate = 0.5
-			performanceMap[topic.SpecificTopic] = correctRate
+			score = DEFAULT_CORRECT_SCORE
+			performanceMap[topic.SpecificTopic] = score
+			questionDifficultyMap[topic.SpecificTopic] = DEFAULT_QUESTION_DIFFICULTY
 		}
 
 		// Calculate weight: lower correct rate means higher weight
-		weight := 1.01 - (correctRate)
-		weightMap[topic.SpecificTopic] = weight
-		weightedTopics = append(weightedTopics, topic)
-	}
-
-	// Now, adjust each topic's weight by multiplying it by a random number between 0 and 1
-	var maxWeight float64
-	var selectedTopic models.TestTopicData
-
-	log.Printf("weightMap: %v", weightMap)
-
-	// Find the topic with the highest adjusted weight
-	for _, topic := range weightedTopics {
-		// Multiply weight by a random value between 0 and 1
-		randomFactor := rand.Float64() // Random float between 0 and 1
-		adjustedWeight := weightMap[topic.SpecificTopic] * randomFactor
-
-		// Select the topic with the highest adjusted weight
-		if adjustedWeight > maxWeight {
-			maxWeight = adjustedWeight
+		weight := score * rand.Float64()
+		if weight < minWeight {
+			minWeight = weight
+			if questionDifficultyMap[topic.SpecificTopic] > MINIMUM_QUESTION_DIFFICULTY {
+				difficulty = questionDifficultyMap[topic.SpecificTopic]
+			} else {
+				difficulty = MINIMUM_QUESTION_DIFFICULTY
+			}
 			selectedTopic = topic
 		}
 	}
 
 	// Query for a question based on the selected topic
-	question, err := ctrl.GenerateNewQuestionWithTopicData(selectedTopic, performanceMap[selectedTopic.SpecificTopic])
+	question, err := ctrl.GenerateNewQuestionWithTopicData(selectedTopic, difficulty)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Errorf("failed to generate question: %v", err)})
+		log.Printf("Failed to generate question: %v", err)
+		return
 	}
 
 	// Return the selected question
@@ -226,19 +221,32 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 }
 
 func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData models.TestTopicData, difficulty float64) (models.Question, error) {
-	inputSchema := models.NewQuestionGeneratorInputSchema{
-		TestType:      testTopicData.TestType,
-		Subject:       testTopicData.Subject,
-		Topic:         testTopicData.Topic,
-		Subtopic:      testTopicData.Subtopic,
-		SpecificTopic: testTopicData.SpecificTopic,
-		Difficulty:    difficulty,
+	previousQuestionModels := []models.Question{}
+	previousQuestionTexts := []string{}
+
+	if err := ctrl.DB.Where("test_topic_id = ?", testTopicData.ID).Find(&previousQuestionModels).Limit(5).Error; err != nil {
+		return models.Question{}, err
 	}
 
-	log.Printf("Test Topic Data: %+v", testTopicData)
+	for _, question := range previousQuestionModels {
+		previousQuestionTexts = append(previousQuestionTexts, question.QuestionText)
+	}
+
+	inputSchema := models.NewQuestionGeneratorInputSchema{
+		Topic:             testTopicData.Topic,
+		Subtopic:          testTopicData.Subtopic,
+		SpecificTopic:     testTopicData.SpecificTopic,
+		Difficulty:        difficulty,
+		PreviousQuestions: previousQuestionTexts,
+	}
+
+	systemPrompt, ok := prompts.PromptMap[testTopicData.TestType][testTopicData.Subject]
+	if !ok {
+		return models.Question{}, fmt.Errorf("no prompt found for test type %s and subject %s", testTopicData.TestType, testTopicData.Subject)
+	}
 
 	// Call the agent with the system prompt
-	questionResponse, err := ctrl.Agent.GenerateNewQuestion(inputSchema)
+	questionResponse, err := ctrl.Agent.GenerateNewQuestion(inputSchema, systemPrompt)
 	if err != nil {
 		log.Fatalf("Error generating question: %v", err)
 		return models.Question{}, err
@@ -246,7 +254,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 
 	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
 	if err != nil {
-		log.Fatalf("Error generating answer: %v", err)
+		log.Printf("Error generating answer: %v", err)
 		return models.Question{}, err
 	}
 
@@ -258,7 +266,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 
 	optionsResponse, err := ctrl.Agent.GenerateQuestionOptions(optionInput)
 	if err != nil {
-		log.Fatalf("Error generating options: %v", err)
+		log.Printf("Error generating options: %v", err)
 		return models.Question{}, err
 	}
 
@@ -272,6 +280,13 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 		TestTopicID:   testTopicData.ID,
 		TestTopic:     testTopicData,
 	}
+
+	formattedQuestion, err := ctrl.Agent.ValidateMathJaxFormatting(question)
+	if err != nil {
+		return models.Question{}, err
+	}
+
+	question = formattedQuestion.TranslateQuestionOutputSchemaToQuestion(question)
 
 	if err := ctrl.DB.Create(&question).Error; err != nil {
 		return models.Question{}, err

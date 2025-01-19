@@ -6,17 +6,22 @@ import (
 	"github.com/robfig/cron/v3"
 	"gorm.io/gorm"
 
+	"TestHeroBackendGo/agent"
+	"TestHeroBackendGo/models"
 	"TestHeroBackendGo/tasks/topic_data_processor"
 )
 
-func RunTasks(db *gorm.DB) {
-	CreateMaterializedView(db)
+func RunTasks(db *gorm.DB, agent *agent.Agent, userIdQuestionGenerationChannel chan models.QuestionGeneratorTopicInput) {
+	err := CreateMaterializedView(db)
+	if err != nil {
+		log.Fatalf("Error creating materialized view: %v", err)
+	}
 
 	// Path to the root directory where JSON files are stored
 	rootDir := "./tasks/topic_data_processor/topic_data"
 
 	// Process the directory and load data into the database
-	err := topic_data_processor.ProcessDirectory(rootDir, db)
+	err = topic_data_processor.ProcessDirectory(rootDir, db)
 	if err != nil {
 		log.Fatalf("Error processing files: %v", err)
 	}
@@ -27,7 +32,7 @@ func RunTasks(db *gorm.DB) {
 	c := cron.New()
 
 	// Schedule the task: Every day at 1:00 AM
-	_, err = c.AddFunc("0 1 * * *", func() {
+	_, err = c.AddFunc("*/1 * * * *", func() {
 		log.Println("Running scheduled task to archive old answers...")
 		ArchiveOldAnswersTask(db)
 	})

@@ -20,3 +20,37 @@ type Question struct {
 	EstimatedTime int               `json:"estimated_time"`
 	Paragraph     string            `json:"paragraph"`
 }
+
+type QuestionOutputSchema struct {
+	QuestionText  string            `json:"question_text"`
+	Difficulty    float64           `json:"difficulty"`
+	Options       datatypes.JSONMap `json:"options,omitempty" jsonschema_description:"The options for the new question"`
+	EstimatedTime int               `json:"estimated_time"`
+	Paragraph     string            `json:"paragraph"`
+}
+
+func (question Question) TranslateQuestionToQuestionOutputSchema() QuestionOutputSchema {
+	return QuestionOutputSchema{
+		QuestionText:  question.QuestionText,
+		Difficulty:    question.Difficulty,
+		Options:       question.Options,
+		EstimatedTime: question.EstimatedTime,
+		Paragraph:     question.Paragraph,
+	}
+}
+
+func (formattedQuestion QuestionOutputSchema) TranslateQuestionOutputSchemaToQuestion(originalQuestion Question) Question {
+	return Question{
+		ID:            originalQuestion.ID,
+		QuestionText:  formattedQuestion.QuestionText,
+		TestTopicID:   originalQuestion.TestTopicID,
+		TestTopic:     originalQuestion.TestTopic,
+		Difficulty:    formattedQuestion.Difficulty,
+		Options:       formattedQuestion.Options,
+		EstimatedTime: formattedQuestion.EstimatedTime,
+		Paragraph:     formattedQuestion.Paragraph,
+		CreatedAt:     originalQuestion.CreatedAt,
+		UpdatedAt:     originalQuestion.UpdatedAt,
+		DeletedAt:     originalQuestion.DeletedAt,
+	}
+}

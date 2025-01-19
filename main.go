@@ -44,14 +44,17 @@ func main() {
 		),
 	)
 
+	userIdGenerationQuestionChannel := make(chan models.QuestionGeneratorTopicInput)
+
+	agent := agent.NewAgent(cfg.OAIAPIKey, database.DB)
+
+	// Should this be run from the main thread?
+	go tasks.MonitorTestTopicChannel(database.DB, agent, userIdGenerationQuestionChannel)
+
 	// Start Tasks
-	tasks.RunTasks(database.DB)
+	tasks.RunTasks(database.DB, agent, userIdGenerationQuestionChannel)
 
-	agent := agent.NewAgent(cfg.OAIAPIKey)
-
-	// parser.ParseJsonData(database.DB)
-
-	routes.SetupRoutes(router, database.DB, agent, cfg)
+	routes.SetupRoutes(router, database.DB, agent, false)
 
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "healthy"})

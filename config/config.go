@@ -12,6 +12,7 @@ type Config struct {
 	DBName             string
 	OAIAPIKey          string
 	GoogleClientSecret string
+	WolframAppID       string
 }
 
 func LoadConfig() *Config {
@@ -23,5 +24,6 @@ func LoadConfig() *Config {
 		DBName:             os.Getenv("DB_NAME"),
 		OAIAPIKey:          os.Getenv("OAI_API_KEY"),
 		GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
+		WolframAppID:       os.Getenv("WOLFRAM_APP_ID"),
 	}
 }
