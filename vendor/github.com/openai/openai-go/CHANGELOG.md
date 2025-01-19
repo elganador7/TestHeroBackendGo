@@ -1,5 +1,72 @@
 # Changelog
 
+## 0.1.0-alpha.46 (2025-01-17)
+
+Full Changelog: [v0.1.0-alpha.45...v0.1.0-alpha.46](https://github.com/openai/openai-go/compare/v0.1.0-alpha.45...v0.1.0-alpha.46)
+
+### Chores
+
+* **internal:** streaming refactors ([#165](https://github.com/openai/openai-go/issues/165)) ([168a030](https://github.com/openai/openai-go/commit/168a0305dc423cb09cefbfe0ad7c9c240a6a41b8))
+* **types:** rename vector store chunking strategy ([#169](https://github.com/openai/openai-go/issues/169)) ([2dc79a6](https://github.com/openai/openai-go/commit/2dc79a62b58e78275a68ee19d85b9be7873a3491))
+
+## 0.1.0-alpha.45 (2025-01-09)
+
+Full Changelog: [v0.1.0-alpha.44...v0.1.0-alpha.45](https://github.com/openai/openai-go/compare/v0.1.0-alpha.44...v0.1.0-alpha.45)
+
+### Chores
+
+* **internal:** spec update ([#158](https://github.com/openai/openai-go/issues/158)) ([0ca04bd](https://github.com/openai/openai-go/commit/0ca04bdb233cf8fc5ea9ff497363a466bb95759a))
+
+## 0.1.0-alpha.44 (2025-01-08)
+
+Full Changelog: [v0.1.0-alpha.43...v0.1.0-alpha.44](https://github.com/openai/openai-go/compare/v0.1.0-alpha.43...v0.1.0-alpha.44)
+
+### Documentation
+
+* **readme:** fix misplaced period ([#156](https://github.com/openai/openai-go/issues/156)) ([438fe84](https://github.com/openai/openai-go/commit/438fe84825a5d73a649d72c64ba52bf2f59e8847))
+
+## 0.1.0-alpha.43 (2025-01-03)
+
+Full Changelog: [v0.1.0-alpha.42...v0.1.0-alpha.43](https://github.com/openai/openai-go/compare/v0.1.0-alpha.42...v0.1.0-alpha.43)
+
+### Chores
+
+* **api:** bump spec version ([#154](https://github.com/openai/openai-go/issues/154)) ([e55cffe](https://github.com/openai/openai-go/commit/e55cffe979c1e573ca2fe713365f31c62bb00b0e))
+
+## 0.1.0-alpha.42 (2025-01-02)
+
+Full Changelog: [v0.1.0-alpha.41...v0.1.0-alpha.42](https://github.com/openai/openai-go/compare/v0.1.0-alpha.41...v0.1.0-alpha.42)
+
+### Chores
+
+* bump license year ([#151](https://github.com/openai/openai-go/issues/151)) ([c3e375e](https://github.com/openai/openai-go/commit/c3e375eca1eaece3b73b6918e5c07474717decc5))
+
+## 0.1.0-alpha.41 (2024-12-21)
+
+Full Changelog: [v0.1.0-alpha.40...v0.1.0-alpha.41](https://github.com/openai/openai-go/compare/v0.1.0-alpha.40...v0.1.0-alpha.41)
+
+### Chores
+
+* **internal:** spec update ([#146](https://github.com/openai/openai-go/issues/146)) ([a9a67ba](https://github.com/openai/openai-go/commit/a9a67ba2f487d23adc7238c1151cab76a7fd9f01))
+
+
+### Documentation
+
+* **readme:** fix typo ([#148](https://github.com/openai/openai-go/issues/148)) ([1bb2322](https://github.com/openai/openai-go/commit/1bb23222e794c8439a56f765dee0c8d4e0db6eac))
+
+## 0.1.0-alpha.40 (2024-12-17)
+
+Full Changelog: [v0.1.0-alpha.39...v0.1.0-alpha.40](https://github.com/openai/openai-go/compare/v0.1.0-alpha.39...v0.1.0-alpha.40)
+
+### Features
+
+* **api:** new o1 and GPT-4o models + preference fine-tuning ([#142](https://github.com/openai/openai-go/issues/142)) ([9207561](https://github.com/openai/openai-go/commit/920756111c0f7725eb5746b22c1393e327dc2990))
+
+
+### Chores
+
+* **internal:** spec update ([#145](https://github.com/openai/openai-go/issues/145)) ([bc0dba4](https://github.com/openai/openai-go/commit/bc0dba40f69294f460b3d448a6a093e487509dca))
+
 ## 0.1.0-alpha.39 (2024-12-05)
 
 Full Changelog: [v0.1.0-alpha.38...v0.1.0-alpha.39](https://github.com/openai/openai-go/compare/v0.1.0-alpha.38...v0.1.0-alpha.39)
