@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"TestHeroBackendGo/models"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -17,10 +18,12 @@ func NewQuestionAnswerController(db *gorm.DB) *QuestionAnswerController {
 }
 
 func (ctrl *QuestionAnswerController) GetAnswerByQuestionID(c *gin.Context) {
-	id := c.Param("questionId")
-	var answer models.QuestionAnswer
+	questionId := c.Param("questionId")
+	log.Printf("questionId is %s", questionId)
+	answer := models.QuestionAnswer{}
 
-	if err := ctrl.DB.Where("question_id = ?", id).First(&answer).Error; err != nil {
+	if err := ctrl.DB.Where(models.QuestionAnswer{QuestionID: questionId}).First(&answer).Error; err != nil {
+		log.Printf("Failed to get question answer: %v", err)
 		c.JSON(http.StatusNotFound, gin.H{"error": "Answer not found"})
 		return
 	}

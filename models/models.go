@@ -6,4 +6,5 @@ var AllModels = []interface{}{
 	&UserAnswer{},
 	&QuestionAnswer{},
 	&TestTopicData{},
+	&UserAnswerArchive{},
 }

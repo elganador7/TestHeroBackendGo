@@ -1,4 +1,4 @@
-package controllers
+package tests
 
 import (
 	"bytes"
@@ -6,33 +6,39 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 
+	"TestHeroBackendGo/agent"
+	"TestHeroBackendGo/controllers"
 	"TestHeroBackendGo/models"
 	"TestHeroBackendGo/routes"
 
 	"github.com/gin-gonic/gin"
-	"github.com/stretchr/testify/assert"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
 
 func setupTestDB() *gorm.DB {
 	db, _ := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
-	db.AutoMigrate(&models.UserAnswer{})
+	db.AutoMigrate(&models.UserAnswer{}, &models.UserPerformanceSummary{})
 	return db
 }
 
-func setupRouter(db *gorm.DB) *gin.Engine {
+func setupRouterWithController(db *gorm.DB) *gin.Engine {
 	router := gin.Default()
-	routes.SetupTestRoutes(router, db)
+	controller := controllers.NewUserAnswerController(db)
+	router.POST("/api/user_answers/", controller.CreateUserAnswer)
+	router.GET("/api/user_answers/user/:userId", controller.GetUserAnswersByUser)
+	router.POST("/api/user_answers/user/summary", controller.GetUserPerformanceSummary)
 	return router
 }
 
 func TestCreateUserAnswer(t *testing.T) {
 	db := setupTestDB()
-	router := setupRouter(db)
+	router := setupRouterWithController(db)
 
 	input := models.UserAnswer{
 		UserID:     "1",
@@ -53,13 +59,16 @@ func TestCreateUserAnswer(t *testing.T) {
 	var createdAnswer models.UserAnswer
 	db.First(&createdAnswer)
 	assert.Equal(t, input.UserID, createdAnswer.UserID)
+	assert.NotEmpty(t, createdAnswer.ID)
+	assert.WithinDuration(t, time.Now(), createdAnswer.CreatedAt, time.Second)
 }
 
 func TestGetUserAnswersByUser(t *testing.T) {
 	db := setupTestDB()
-	router := setupRouter(db)
+	router := setupRouterWithController(db)
 
 	answer := models.UserAnswer{
+		ID:         uuid.New().String(),
 		UserID:     "1",
 		QuestionID: "2",
 		TimeTaken:  30,
@@ -73,6 +82,7 @@ func TestGetUserAnswersByUser(t *testing.T) {
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
+
 	var response []models.UserAnswer
 	json.Unmarshal(w.Body.Bytes(), &response)
 
@@ -82,30 +92,29 @@ func TestGetUserAnswersByUser(t *testing.T) {
 
 func TestGetUserPerformanceSummary(t *testing.T) {
 	db := setupTestDB()
-	router := setupRouter(db)
+	router := gin.Default()
+	agent := agent.NewAgent("", db)
+	routes.SetupRoutes(router, db, agent, true)
 
-	db.Create(&models.UserAnswer{
-		ID:         uuid.New().String(),
-		UserID:     "1",
-		QuestionID: "1",
-		Attempts:   1,
-	})
-	db.Create(&models.UserAnswer{
-		ID:         uuid.New().String(),
-		UserID:     "1",
-		QuestionID: "2",
-		Attempts:   2,
-	})
+	db.Exec(`INSERT INTO user_performance_summary (user_id, correct_rate) VALUES
+		('1', 0.75)`)
 
-	req := httptest.NewRequest(http.MethodGet, "/api/user_answers/user/1/summary", nil)
+	input := map[string]string{
+		"userId": "1",
+	}
+	body, _ := json.Marshal(input)
+	req := httptest.NewRequest(http.MethodPost, "/api/user_answers/user/summary", bytes.NewBuffer(body))
+	req.Header.Set("Content-Type", "application/json")
 	w := httptest.NewRecorder()
 
 	router.ServeHTTP(w, req)
 
 	assert.Equal(t, http.StatusOK, w.Code)
-	var response []map[string]interface{}
+
+	var response []models.UserPerformanceSummary
 	json.Unmarshal(w.Body.Bytes(), &response)
 
 	assert.Len(t, response, 1)
-	assert.Equal(t, 0.5, response[0]["CorrectRate"])
+	assert.Equal(t, "1", response[0].UserID)
+	assert.Equal(t, 0.75, response[0].CorrectRate)
 }
