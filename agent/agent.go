@@ -15,21 +15,19 @@ import (
 )
 
 type Agent struct {
-	client       *openai.Client
-	DB           *gorm.DB
-	WolframAppID string
+	client *openai.Client
+	DB     *gorm.DB
 }
 
 // NewAgent initializes and returns a new Agent.
-func NewAgent(apiKey string, db *gorm.DB, wolframAppID string) *Agent {
+func NewAgent(apiKey string, db *gorm.DB) *Agent {
 	client := openai.NewClient(
 		option.WithAPIKey(apiKey), // defaults to os.LookupEnv("OPENAI_API_KEY")
 	)
 
 	return &Agent{
-		client:       client,
-		DB:           db,
-		WolframAppID: wolframAppID,
+		client: client,
+		DB:     db,
 	}
 }
 
@@ -55,7 +53,7 @@ func (a *Agent) GenerateSimilarQuestion(input models.SimilarQuestionGeneratorInp
 	// Create a structured output parameter
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
 		Name:        openai.F("generate_question_with_answer"),
-		Description: openai.F("Generate a new question and its answer based on the input question text"),
+		Description: openai.F("Generate a new question based on the input question text"),
 		Schema:      openai.F(questionGeneratorOutputSchema),
 		Strict:      openai.Bool(true),
 	}
@@ -102,7 +100,7 @@ func (a *Agent) GenerateNewQuestion(input models.NewQuestionGeneratorInputSchema
 	// Create a structured output parameter
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
 		Name:        openai.F("generate_question_with_answer"),
-		Description: openai.F("Generate a new question and its answer based on the input json"),
+		Description: openai.F("Generate a new question based on the input json listing the topic details"),
 		Schema:      openai.F(questionGeneratorOutputSchema),
 		Strict:      openai.Bool(true),
 	}
@@ -148,7 +146,7 @@ func (a *Agent) GenerateAnswer(input models.QuestionGeneratorOutputSchema) (mode
 	// Create a structured output parameter
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
 		Name:        openai.F("generate_question_with_answer"),
-		Description: openai.F("Generate a new question and its answer based on the input question text"),
+		Description: openai.F("Generate the correct answer based on the input question text"),
 		Schema:      openai.F(answerGeneratorOutputSchema),
 		Strict:      openai.Bool(true),
 	}
