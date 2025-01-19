@@ -78,14 +78,14 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 	// Call the agent with the system prompt
 	questionResponse, err := ctrl.Agent.GenerateSimilarQuestion(inputSchema, systemPrompt)
 	if err != nil {
-		log.Fatalf("Error generating question: %v", err)
+		log.Printf("Error generating question: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate question"})
 		return
 	}
 
 	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
 	if err != nil {
-		log.Fatalf("Error generating answer: %v", err)
+		log.Printf("Error generating answer: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate answer"})
 		return
 	}
@@ -98,7 +98,7 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 
 	optionsResponse, err := ctrl.Agent.GenerateQuestionOptions(optionInput)
 	if err != nil {
-		log.Fatalf("Error generating options: %v", err)
+		log.Printf("Error generating options: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate options"})
 		return
 	}
@@ -254,7 +254,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 
 	answerResponse, err := ctrl.Agent.GenerateAnswer(questionResponse)
 	if err != nil {
-		log.Fatalf("Error generating answer: %v", err)
+		log.Printf("Error generating answer: %v", err)
 		return models.Question{}, err
 	}
 
@@ -266,7 +266,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 
 	optionsResponse, err := ctrl.Agent.GenerateQuestionOptions(optionInput)
 	if err != nil {
-		log.Fatalf("Error generating options: %v", err)
+		log.Printf("Error generating options: %v", err)
 		return models.Question{}, err
 	}
 

@@ -27,7 +27,7 @@ func setupTestDBForQuestionAnswer() *gorm.DB {
 func TestGetAnswerByQuestionID(t *testing.T) {
 	db := setupTestDBForQuestionAnswer()
 	router := gin.Default()
-	agent := agent.NewAgent("", db)
+	agent := agent.NewAgent("", db, "")
 	routes.SetupRoutes(router, database.DB, agent, true)
 
 	// Seed a question-answer record
