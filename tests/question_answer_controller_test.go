@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"TestHeroBackendGo/agent"
-	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
 	"TestHeroBackendGo/routes"
 
@@ -28,7 +27,7 @@ func TestGetAnswerByQuestionID(t *testing.T) {
 	db := setupTestDBForQuestionAnswer()
 	router := gin.Default()
 	agent := agent.NewAgent("", db)
-	routes.SetupRoutes(router, database.DB, agent, true)
+	routes.SetupRoutes(router, db, agent, true)
 
 	// Seed a question-answer record
 	answer := models.QuestionAnswer{
