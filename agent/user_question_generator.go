@@ -42,9 +42,7 @@ func (a *Agent) GenerateRelevantQuestion(questionGenerationInput models.Question
 	performanceMap := make(map[string]float64)
 	questionDifficultyMap := make(map[string]float64)
 	for _, performance := range userPerformance {
-		log.Printf("Performance: %v", performance)
 		if performance.TotalPointsPossible == 0 {
-			log.Printf("Setting defaults for topic %v", performance.SpecificTopic)
 			performanceMap[performance.SpecificTopic] = DEFAULT_CORRECT_SCORE
 			questionDifficultyMap[performance.SpecificTopic] = DEFAULT_QUESTION_DIFFICULTY
 		}
