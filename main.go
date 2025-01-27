@@ -54,7 +54,7 @@ func main() {
 	// Start Tasks
 	tasks.RunTasks(database.DB, agent, userIdGenerationQuestionChannel)
 
-	routes.SetupRoutes(router, database.DB, agent, false)
+	routes.SetupRoutes(router, database.DB, agent, cfg.StripeKeyDev, false)
 
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "healthy"})

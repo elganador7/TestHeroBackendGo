@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -12,6 +13,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" || !strings.HasPrefix(tokenString, "Bearer ") {
+			log.Default().Println("Authorization token required")
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization token required"})
 			c.Abort()
 			return
@@ -20,6 +22,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 		token, err := ValidateJWT(tokenString)
 		if err != nil || !token.Valid {
+			log.Default().Println("Invalid token")
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid token"})
 			c.Abort()
 			return

@@ -27,7 +27,7 @@ func TestGetAnswerByQuestionID(t *testing.T) {
 	db := setupTestDBForQuestionAnswer()
 	router := gin.Default()
 	agent := agent.NewAgent("", db)
-	routes.SetupRoutes(router, db, agent, true)
+	routes.SetupRoutes(router, db, agent, "", true)
 
 	// Seed a question-answer record
 	answer := models.QuestionAnswer{

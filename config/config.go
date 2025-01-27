@@ -13,6 +13,8 @@ type Config struct {
 	OAIAPIKey          string
 	GoogleClientSecret string
 	WolframAppID       string
+	StripeKeyProd      string
+	StripeKeyDev       string
 }
 
 func LoadConfig() *Config {
@@ -25,5 +27,7 @@ func LoadConfig() *Config {
 		OAIAPIKey:          os.Getenv("OAI_API_KEY"),
 		GoogleClientSecret: os.Getenv("GOOGLE_CLIENT_SECRET"),
 		WolframAppID:       os.Getenv("WOLFRAM_APP_ID"),
+		StripeKeyProd:      os.Getenv("STR_ACCESS_PROD"),
+		StripeKeyDev:       os.Getenv("STR_ACCESS_DEV"),
 	}
 }

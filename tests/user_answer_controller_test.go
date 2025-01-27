@@ -94,7 +94,7 @@ func TestGetUserPerformanceSummary(t *testing.T) {
 	db := setupTestDB()
 	router := gin.Default()
 	agent := agent.NewAgent("", db)
-	routes.SetupRoutes(router, db, agent, true)
+	routes.SetupRoutes(router, db, agent, "", true)
 
 	db.Exec(`INSERT INTO user_performance_summary (user_id, correct_rate) VALUES
 		('1', 0.75)`)
