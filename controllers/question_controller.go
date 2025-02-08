@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -34,15 +33,15 @@ func (ctrl *QuestionController) CreateQuestion(c *gin.Context) {
 
 func (ctrl *QuestionController) CreateQuestionWithAnswer(c *gin.Context) {
 	var req struct {
-		QuestionText  string            `json:"question_text"`
-		TestType      string            `json:"test_type"`
-		Subject       string            `json:"subject"`
-		Topic         string            `json:"topic"`
-		Difficulty    float64           `json:"difficulty"`
-		Options       datatypes.JSONMap `json:"options"`
-		EstimatedTime int               `json:"estimated_time"`
-		CorrectAnswer string            `json:"correct_answer"`
-		Explanation   string            `json:"explanation"`
+		QuestionText  string   `json:"question_text"`
+		TestType      string   `json:"test_type"`
+		Subject       string   `json:"subject"`
+		Topic         string   `json:"topic"`
+		Difficulty    float64  `json:"difficulty"`
+		Options       []string `json:"options"`
+		EstimatedTime int      `json:"estimated_time"`
+		CorrectAnswer string   `json:"correct_answer"`
+		Explanation   string   `json:"explanation"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {

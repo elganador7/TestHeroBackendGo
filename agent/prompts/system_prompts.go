@@ -8,8 +8,8 @@ var (
 			"correct_answer": "..."
 		}
 
-		Generate options that make sense in context, including the correct answer as one of the options. Then, output the 
-		options as a JSON object and the correct answer as the letter option that it is. Each of the options should be formatted to be compatible with
+		Generate options that make sense in context, including the correct answer as one of the options. Output the 
+		options as an array and the correct answer as the index of the correct option (0-3). Each of the options should be formatted to be compatible with
 		MathJax rendering in React. Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
 		Make sure to wrap all math with that formatting, even if it is not used in the question. Make sure you
 		double escape all mathematical expressions and symbols since this content will be dynamically rendered in javascript.
@@ -17,17 +17,17 @@ var (
 		Make sure each of the options that includes math equations or mathematical symbols is wrapped in \( ... \).
 
 		{
-			"options": {
-				"A": "...",
-				"B": "...",
-				"C": "...",
-				"D": "..."
-			},
-			"correct_option": "A",
+			"options": [
+				"First option",
+				"Second option",
+				"Third option",
+				"Fourth option"
+			],
+			"correct_index": 0
 		}
 
 		DO NOT RESPOND WITH ANYTHING OTHER THAN JSON. DO NOT REPEAT ANY OPTIONS. ENSURE THAT ONLY ONE OPTION IS CORRECT BASED ON 
-		THE EXPLANATION GIVEN.
+		THE EXPLANATION GIVEN. ALWAYS PROVIDE EXACTLY 4 OPTIONS.
 
 	`
 

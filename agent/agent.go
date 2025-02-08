@@ -43,7 +43,7 @@ func GenerateSchema[T any]() interface{} {
 
 var questionGeneratorOutputSchema = GenerateSchema[models.QuestionGeneratorOutputSchema]()
 var answerGeneratorOutputSchema = GenerateSchema[models.AnswerGeneratorOutputSchema]()
-var optionGeneratorOutputSchema = GenerateSchema[models.OptionGeneratorOutputSchema]()
+var rawOptionGeneratorOutputSchema = GenerateSchema[models.OptionGeneratorOutputSchema]()
 var rawQuestionOutputSchema = GenerateSchema[models.QuestionOutputSchema]()
 
 // GenerateQuestionWithAnswer generates a new question and answer based on an existing question text.
@@ -197,7 +197,7 @@ func (a *Agent) GenerateQuestionOptions(input models.OptionGeneratorInputSchema)
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
 		Name:        openai.F("generate_options_for_question"),
 		Description: openai.F("Generate options for a question based on the question text and answer in json"),
-		Schema:      openai.F(optionGeneratorOutputSchema),
+		Schema:      openai.F(rawOptionGeneratorOutputSchema),
 		Strict:      openai.Bool(true),
 	}
 
