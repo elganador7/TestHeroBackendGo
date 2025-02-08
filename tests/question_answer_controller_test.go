@@ -32,7 +32,7 @@ func TestGetAnswerByQuestionID(t *testing.T) {
 	// Seed a question-answer record
 	answer := models.QuestionAnswer{
 		QuestionID:    "123",
-		CorrectAnswer: "The correct answer is 42",
+		CorrectAnswer: "23423",
 	}
 	db.Create(&answer)
 
