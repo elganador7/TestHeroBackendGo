@@ -7,8 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupStripeRoutes(router *gin.Engine, isTest bool) {
-	stripeCtrl := controllers.NewStripeController()
+func setupStripeRoutes(router *gin.Engine, stripeKey string, isTest bool) {
+	stripeCtrl := controllers.NewStripeController(stripeKey)
 
 	stripeApi := router.Group("/api/stripe")
 	stripeApi.Use(utils.GenerateHandlers(isTest)...)
