@@ -19,10 +19,6 @@ cloud.google.com/go/auth/oauth2adapt
 # cloud.google.com/go/compute/metadata v0.6.0
 ## explicit; go 1.21
 cloud.google.com/go/compute/metadata
-# filippo.io/edwards25519 v1.1.0
-## explicit; go 1.20
-filippo.io/edwards25519
-filippo.io/edwards25519/field
 # github.com/bahlo/generic-list-go v0.2.0
 ## explicit; go 1.18
 github.com/bahlo/generic-list-go
@@ -119,9 +115,6 @@ github.com/go-playground/universal-translator
 # github.com/go-playground/validator/v10 v10.24.0
 ## explicit; go 1.20
 github.com/go-playground/validator/v10
-# github.com/go-sql-driver/mysql v1.8.1
-## explicit; go 1.18
-github.com/go-sql-driver/mysql
 # github.com/goccy/go-json v0.10.5
 ## explicit; go 1.19
 github.com/goccy/go-json
@@ -516,12 +509,6 @@ google.golang.org/protobuf/types/known/timestamppb
 # gopkg.in/yaml.v3 v3.0.1
 ## explicit
 gopkg.in/yaml.v3
-# gorm.io/datatypes v1.2.5
-## explicit; go 1.19
-gorm.io/datatypes
-# gorm.io/driver/mysql v1.5.7
-## explicit; go 1.14
-gorm.io/driver/mysql
 # gorm.io/driver/postgres v1.5.11
 ## explicit; go 1.19
 gorm.io/driver/postgres

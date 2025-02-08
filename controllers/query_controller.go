@@ -121,7 +121,7 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 	answer := models.QuestionAnswer{
 		ID:            uuid.NewString(),
 		QuestionID:    question.ID,
-		CorrectAnswer: optionsResponse.CorrectOption,
+		CorrectAnswer: optionsResponse.CorrectAnswer,
 		Explanation:   answerResponse.Explanation,
 	}
 
@@ -295,7 +295,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 	answer := models.QuestionAnswer{
 		ID:            uuid.NewString(),
 		QuestionID:    question.ID,
-		CorrectAnswer: optionsResponse.CorrectOption,
+		CorrectAnswer: optionsResponse.CorrectAnswer,
 		Explanation:   answerResponse.Explanation,
 	}
 
