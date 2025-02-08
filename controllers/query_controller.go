@@ -51,10 +51,11 @@ func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
 
 func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 	questionId := c.Param("questionId")
+	log.Printf("Generating similar question for question ID: %s", questionId)
 	var originalQuestion models.Question
 
-	// Fetch the question by ID
-	if err := ctrl.DB.First(&originalQuestion, "id = ?", questionId).Error; err != nil {
+	// Fetch the question by ID with the TestTopic preloaded
+	if err := ctrl.DB.Preload("TestTopic").First(&originalQuestion, "id = ?", questionId).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Question not found"})
 			return
@@ -69,9 +70,11 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 		QuestionText: originalQuestion.QuestionText,
 	}
 
+	log.Printf("Original question: %+v", originalQuestion)
+
 	systemPrompt, ok := prompts.PromptMap[originalQuestion.TestTopic.TestType][originalQuestion.TestTopic.Subject]
 	if !ok {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid test type or subject in original question"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid test type or subject in original question"})
 		return
 	}
 
@@ -224,7 +227,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 	previousQuestionModels := []models.Question{}
 	previousQuestionTexts := []string{}
 
-	if err := ctrl.DB.Where("test_topic_id = ?", testTopicData.ID).Find(&previousQuestionModels).Limit(5).Error; err != nil {
+	if err := ctrl.DB.Preload("TestTopic").Where("test_topic_id = ?", testTopicData.ID).Find(&previousQuestionModels).Limit(5).Error; err != nil {
 		return models.Question{}, err
 	}
 
