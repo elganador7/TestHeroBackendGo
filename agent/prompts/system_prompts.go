@@ -9,7 +9,8 @@ var (
 		}
 
 		Generate options that make sense in context, including the correct answer as one of the options. Output the 
-		options as an array and the correct answer as the index of the correct option (0-3). Each of the options should be formatted to be compatible with
+		options as an array and the correct answer should remain be the value of the correct answer as we will do a direct comparison 
+		to determine if the user is correct. Each of the options should be formatted to be compatible with
 		MathJax rendering in React. Since $ ... $ can conflict with Markdown or certain text processors, \( ... \) is often safer for inline math.
 		Make sure to wrap all math with that formatting, even if it is not used in the question. Make sure you
 		double escape all mathematical expressions and symbols since this content will be dynamically rendered in javascript.
@@ -23,11 +24,11 @@ var (
 				"Third option",
 				"Fourth option"
 			],
-			"correct_index": 0
+			"correct_option": "Value of the correct option here"
 		}
 
 		DO NOT RESPOND WITH ANYTHING OTHER THAN JSON. DO NOT REPEAT ANY OPTIONS. ENSURE THAT ONLY ONE OPTION IS CORRECT BASED ON 
-		THE EXPLANATION GIVEN. ALWAYS PROVIDE EXACTLY 4 OPTIONS.
+		THE EXPLANATION GIVEN..
 
 	`
 
