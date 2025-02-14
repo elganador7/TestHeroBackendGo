@@ -1,0 +1,129 @@
+{
+  "test_type": "MCAT",
+  "subjects": [
+    {
+      "subject": "Chemical_Physical",
+      "topics": [
+        {
+          "topic": "General Chemistry",
+          "subtopics": [
+            {
+              "subtopic": "Atomic Structure",
+              "specific_topics": [
+                {
+                  "specific_topic": "Atomic Theory",
+                  "description": "Understanding atomic models and electron configuration"
+                },
+                {
+                  "specific_topic": "Periodic Trends",
+                  "description": "Properties and trends in the periodic table"
+                },
+                {
+                  "specific_topic": "Chemical Bonding",
+                  "description": "Understanding ionic, covalent, and metallic bonds"
+                }
+              ],
+              "description": "Fundamental concepts of atomic structure and bonding"
+            },
+            {
+              "subtopic": "Chemical Processes",
+              "specific_topics": [
+                {
+                  "specific_topic": "Thermodynamics",
+                  "description": "Energy changes in chemical reactions"
+                },
+                {
+                  "specific_topic": "Kinetics",
+                  "description": "Reaction rates and mechanisms"
+                },
+                {
+                  "specific_topic": "Equilibrium",
+                  "description": "Chemical equilibrium and factors affecting it"
+                }
+              ],
+              "description": "Chemical reactions and their properties"
+            }
+          ]
+        },
+        {
+          "topic": "Physics",
+          "subtopics": [
+            {
+              "subtopic": "Mechanics",
+              "specific_topics": [
+                {
+                  "specific_topic": "Forces and Motion",
+                  "description": "Newton's laws and their applications"
+                },
+                {
+                  "specific_topic": "Work and Energy",
+                  "description": "Energy transformations and conservation"
+                },
+                {
+                  "specific_topic": "Fluids",
+                  "description": "Fluid dynamics and pressure"
+                }
+              ],
+              "description": "Basic principles of physical motion and forces"
+            },
+            {
+              "subtopic": "Waves and Circuits",
+              "specific_topics": [
+                {
+                  "specific_topic": "Wave Properties",
+                  "description": "Sound and light wave behavior"
+                },
+                {
+                  "specific_topic": "Circuits",
+                  "description": "Electrical circuits and components"
+                },
+                {
+                  "specific_topic": "Magnetism",
+                  "description": "Magnetic fields and electromagnetic induction"
+                }
+              ],
+              "description": "Wave phenomena and electrical concepts"
+            }
+          ]
+        },
+        {
+          "topic": "Biochemistry",
+          "subtopics": [
+            {
+              "subtopic": "Biomolecules",
+              "specific_topics": [
+                {
+                  "specific_topic": "Amino Acids",
+                  "description": "Structure and properties of amino acids"
+                },
+                {
+                  "specific_topic": "Proteins",
+                  "description": "Protein structure and function"
+                },
+                {
+                  "specific_topic": "Enzymes",
+                  "description": "Enzyme kinetics and regulation"
+                }
+              ],
+              "description": "Structure and function of biological molecules"
+            },
+            {
+              "subtopic": "Metabolism",
+              "specific_topics": [
+                {
+                  "specific_topic": "Energy Pathways",
+                  "description": "Metabolic pathways and energy production"
+                },
+                {
+                  "specific_topic": "Regulation",
+                  "description": "Metabolic regulation and control"
+                }
+              ],
+              "description": "Biochemical pathways and processes"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

@@ -1,0 +1,158 @@
+{
+  "test_type": "MCAT",
+  "subjects": [
+    {
+      "subject": "Psychological",
+      "topics": [
+        {
+          "topic": "Psychology Fundamentals",
+          "subtopics": [
+            {
+              "subtopic": "Cognitive Processes",
+              "specific_topics": [
+                {
+                  "specific_topic": "Memory",
+                  "description": "Types of memory and memory formation"
+                },
+                {
+                  "specific_topic": "Learning",
+                  "description": "Learning theories and mechanisms"
+                },
+                {
+                  "specific_topic": "Consciousness",
+                  "description": "States of consciousness and awareness"
+                }
+              ],
+              "description": "Basic psychological processes and functions"
+            },
+            {
+              "subtopic": "Development",
+              "specific_topics": [
+                {
+                  "specific_topic": "Lifespan Development",
+                  "description": "Physical and cognitive development stages"
+                },
+                {
+                  "specific_topic": "Social Development",
+                  "description": "Development of social behaviors and relationships"
+                },
+                {
+                  "specific_topic": "Personality",
+                  "description": "Personality theories and development"
+                }
+              ],
+              "description": "Human development across the lifespan"
+            }
+          ]
+        },
+        {
+          "topic": "Social Processes",
+          "subtopics": [
+            {
+              "subtopic": "Social Interaction",
+              "specific_topics": [
+                {
+                  "specific_topic": "Group Dynamics",
+                  "description": "Group behavior and influence"
+                },
+                {
+                  "specific_topic": "Social Influence",
+                  "description": "Conformity, compliance, and obedience"
+                },
+                {
+                  "specific_topic": "Identity Formation",
+                  "description": "Development of personal and social identity"
+                }
+              ],
+              "description": "Social behavior and group processes"
+            },
+            {
+              "subtopic": "Cultural Factors",
+              "specific_topics": [
+                {
+                  "specific_topic": "Cultural Norms",
+                  "description": "Cultural influences on behavior"
+                },
+                {
+                  "specific_topic": "Diversity",
+                  "description": "Impact of diversity on social interaction"
+                }
+              ],
+              "description": "Cultural influences on behavior and health"
+            }
+          ]
+        },
+        {
+          "topic": "Behavior and Health",
+          "subtopics": [
+            {
+              "subtopic": "Mental Health",
+              "specific_topics": [
+                {
+                  "specific_topic": "Psychological Disorders",
+                  "description": "Common mental health conditions"
+                },
+                {
+                  "specific_topic": "Treatment Approaches",
+                  "description": "Therapeutic interventions and approaches"
+                },
+                {
+                  "specific_topic": "Stress Response",
+                  "description": "Biological and psychological stress responses"
+                }
+              ],
+              "description": "Mental health and psychological well-being"
+            },
+            {
+              "subtopic": "Health Behaviors",
+              "specific_topics": [
+                {
+                  "specific_topic": "Health Decision Making",
+                  "description": "Factors influencing health choices"
+                },
+                {
+                  "specific_topic": "Social Support",
+                  "description": "Role of social support in health"
+                }
+              ],
+              "description": "Behavioral influences on health outcomes"
+            }
+          ]
+        },
+        {
+          "topic": "Social Systems",
+          "subtopics": [
+            {
+              "subtopic": "Social Structures",
+              "specific_topics": [
+                {
+                  "specific_topic": "Healthcare Access",
+                  "description": "Social determinants of healthcare access"
+                },
+                {
+                  "specific_topic": "Social Inequality",
+                  "description": "Impact of social disparities on health"
+                }
+              ],
+              "description": "Social systems and healthcare"
+            },
+            {
+              "subtopic": "Research Methods",
+              "specific_topics": [
+                {
+                  "specific_topic": "Study Design",
+                  "description": "Research methodology in behavioral science"
+                },
+                {
+                  "specific_topic": "Data Analysis",
+                  "description": "Interpreting behavioral research data"
+                }
+              ],
+              "description": "Understanding behavioral research"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

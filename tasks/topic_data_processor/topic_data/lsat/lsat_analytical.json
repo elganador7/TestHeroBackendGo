@@ -1,0 +1,121 @@
+{
+  "test_type": "LSAT",
+  "subjects": [
+    {
+      "subject": "Analytical",
+      "topics": [
+        {
+          "topic": "Basic Game Types",
+          "subtopics": [
+            {
+              "subtopic": "Ordering Games",
+              "specific_topics": [
+                {
+                  "specific_topic": "Linear Ordering",
+                  "description": "Arranging items in a single line or sequence"
+                },
+                {
+                  "specific_topic": "Circular Ordering",
+                  "description": "Arranging items in a circular pattern"
+                },
+                {
+                  "specific_topic": "Multiple Ordering",
+                  "description": "Working with multiple sequences or orderings"
+                }
+              ],
+              "description": "Games involving arrangement of items in order"
+            },
+            {
+              "subtopic": "Grouping Games",
+              "specific_topics": [
+                {
+                  "specific_topic": "Basic Grouping",
+                  "description": "Distributing items into defined groups"
+                },
+                {
+                  "specific_topic": "Matching",
+                  "description": "Pairing items between different categories"
+                },
+                {
+                  "specific_topic": "Selection",
+                  "description": "Choosing items from a larger set"
+                }
+              ],
+              "description": "Games involving distribution into groups"
+            }
+          ]
+        },
+        {
+          "topic": "Advanced Game Types",
+          "subtopics": [
+            {
+              "subtopic": "Hybrid Games",
+              "specific_topics": [
+                {
+                  "specific_topic": "Ordering with Grouping",
+                  "description": "Combining ordering and grouping elements"
+                },
+                {
+                  "specific_topic": "Network Games",
+                  "description": "Working with interconnected relationships"
+                }
+              ],
+              "description": "Games combining multiple basic types"
+            },
+            {
+              "subtopic": "Unusual Games",
+              "specific_topics": [
+                {
+                  "specific_topic": "Spatial Relations",
+                  "description": "Understanding physical or spatial relationships"
+                },
+                {
+                  "specific_topic": "Variable Games",
+                  "description": "Working with changing conditions or variables"
+                }
+              ],
+              "description": "Non-standard game formats"
+            }
+          ]
+        },
+        {
+          "topic": "Rule Analysis",
+          "subtopics": [
+            {
+              "subtopic": "Rule Types",
+              "specific_topics": [
+                {
+                  "specific_topic": "Conditional Rules",
+                  "description": "Understanding if-then relationships"
+                },
+                {
+                  "specific_topic": "Numerical Rules",
+                  "description": "Working with numerical restrictions"
+                },
+                {
+                  "specific_topic": "Blocking Rules",
+                  "description": "Understanding restrictions and prohibitions"
+                }
+              ],
+              "description": "Understanding and applying different rule types"
+            },
+            {
+              "subtopic": "Rule Integration",
+              "specific_topics": [
+                {
+                  "specific_topic": "Rule Interaction",
+                  "description": "Understanding how rules work together"
+                },
+                {
+                  "specific_topic": "Rule Deduction",
+                  "description": "Drawing conclusions from multiple rules"
+                }
+              ],
+              "description": "Working with multiple rules simultaneously"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 
