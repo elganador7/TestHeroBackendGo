@@ -1,0 +1,117 @@
+{
+  "test_type": "GRE",
+  "subjects": [
+    {
+      "subject": "Analytical",
+      "topics": [
+        {
+          "topic": "Analyze an Issue",
+          "subtopics": [
+            {
+              "subtopic": "Argument Development",
+              "specific_topics": [
+                {
+                  "specific_topic": "Thesis Development",
+                  "description": "Creating and supporting a clear position on the issue"
+                },
+                {
+                  "specific_topic": "Evidence Selection",
+                  "description": "Choosing relevant examples and evidence to support positions"
+                },
+                {
+                  "specific_topic": "Counter-Arguments",
+                  "description": "Addressing potential objections and alternative viewpoints"
+                }
+              ],
+              "description": "Tasks involving developing and supporting a position on an issue"
+            },
+            {
+              "subtopic": "Writing Structure",
+              "specific_topics": [
+                {
+                  "specific_topic": "Organization",
+                  "description": "Organizing ideas logically and effectively"
+                },
+                {
+                  "specific_topic": "Transitions",
+                  "description": "Creating smooth connections between ideas"
+                }
+              ],
+              "description": "Tasks focused on essay organization and flow"
+            }
+          ]
+        },
+        {
+          "topic": "Analyze an Argument",
+          "subtopics": [
+            {
+              "subtopic": "Argument Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Assumption Identification",
+                  "description": "Identifying unstated assumptions in arguments"
+                },
+                {
+                  "specific_topic": "Evidence Evaluation",
+                  "description": "Evaluating the quality and relevance of evidence"
+                },
+                {
+                  "specific_topic": "Logical Flaws",
+                  "description": "Identifying logical flaws and weaknesses in arguments"
+                }
+              ],
+              "description": "Tasks involving critical analysis of arguments"
+            },
+            {
+              "subtopic": "Constructive Critique",
+              "specific_topics": [
+                {
+                  "specific_topic": "Improvement Suggestions",
+                  "description": "Suggesting ways to strengthen arguments"
+                },
+                {
+                  "specific_topic": "Alternative Explanations",
+                  "description": "Providing alternative interpretations of evidence"
+                }
+              ],
+              "description": "Tasks focused on constructive criticism of arguments"
+            }
+          ]
+        },
+        {
+          "topic": "Writing Mechanics",
+          "subtopics": [
+            {
+              "subtopic": "Language Use",
+              "specific_topics": [
+                {
+                  "specific_topic": "Clarity and Precision",
+                  "description": "Using clear and precise language"
+                },
+                {
+                  "specific_topic": "Grammar and Style",
+                  "description": "Maintaining appropriate grammar and writing style"
+                }
+              ],
+              "description": "Tasks involving effective use of language"
+            },
+            {
+              "subtopic": "Academic Writing",
+              "specific_topics": [
+                {
+                  "specific_topic": "Academic Tone",
+                  "description": "Maintaining appropriate academic tone and formality"
+                },
+                {
+                  "specific_topic": "Citation and Support",
+                  "description": "Properly incorporating and citing evidence"
+                }
+              ],
+              "description": "Tasks focused on academic writing conventions"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

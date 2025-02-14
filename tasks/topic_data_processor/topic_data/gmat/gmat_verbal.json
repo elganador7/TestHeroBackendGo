@@ -1,0 +1,137 @@
+{
+  "test_type": "GMAT",
+  "subjects": [
+    {
+      "subject": "Verbal",
+      "topics": [
+        {
+          "topic": "Reading Comprehension",
+          "subtopics": [
+            {
+              "subtopic": "Main Idea and Structure",
+              "specific_topics": [
+                {
+                  "specific_topic": "Main Idea Identification",
+                  "description": "Identifying central themes and primary purpose of passages"
+                },
+                {
+                  "specific_topic": "Passage Organization",
+                  "description": "Understanding how information is structured and presented"
+                },
+                {
+                  "specific_topic": "Author's Perspective",
+                  "description": "Recognizing author's attitude and tone"
+                }
+              ],
+              "description": "Questions about overall passage comprehension and structure"
+            },
+            {
+              "subtopic": "Critical Reasoning",
+              "specific_topics": [
+                {
+                  "specific_topic": "Supporting Evidence",
+                  "description": "Identifying evidence that supports main ideas"
+                },
+                {
+                  "specific_topic": "Inference",
+                  "description": "Drawing logical conclusions from passage content"
+                },
+                {
+                  "specific_topic": "Application",
+                  "description": "Applying passage information to new situations"
+                }
+              ],
+              "description": "Questions requiring analysis and evaluation of arguments"
+            }
+          ]
+        },
+        {
+          "topic": "Critical Reasoning",
+          "subtopics": [
+            {
+              "subtopic": "Argument Structure",
+              "specific_topics": [
+                {
+                  "specific_topic": "Argument Analysis",
+                  "description": "Identifying premises, conclusions, and assumptions"
+                },
+                {
+                  "specific_topic": "Logical Flaws",
+                  "description": "Recognizing common logical fallacies"
+                },
+                {
+                  "specific_topic": "Evidence Evaluation",
+                  "description": "Assessing the quality and relevance of evidence"
+                }
+              ],
+              "description": "Questions about analyzing and evaluating arguments"
+            },
+            {
+              "subtopic": "Argument Construction",
+              "specific_topics": [
+                {
+                  "specific_topic": "Strengthening Arguments",
+                  "description": "Identifying information that strengthens conclusions"
+                },
+                {
+                  "specific_topic": "Weakening Arguments",
+                  "description": "Identifying information that weakens conclusions"
+                },
+                {
+                  "specific_topic": "Assumption Identification",
+                  "description": "Recognizing unstated assumptions in arguments"
+                }
+              ],
+              "description": "Questions about improving or challenging arguments"
+            }
+          ]
+        },
+        {
+          "topic": "Sentence Correction",
+          "subtopics": [
+            {
+              "subtopic": "Grammar Rules",
+              "specific_topics": [
+                {
+                  "specific_topic": "Subject-Verb Agreement",
+                  "description": "Ensuring subjects and verbs agree in number"
+                },
+                {
+                  "specific_topic": "Pronoun Usage",
+                  "description": "Using pronouns correctly and clearly"
+                },
+                {
+                  "specific_topic": "Verb Tense and Form",
+                  "description": "Using correct verb tenses and forms"
+                },
+                {
+                  "specific_topic": "Modifiers",
+                  "description": "Using modifiers correctly and avoiding dangling modifiers"
+                }
+              ],
+              "description": "Questions testing knowledge of grammar rules"
+            },
+            {
+              "subtopic": "Style and Clarity",
+              "specific_topics": [
+                {
+                  "specific_topic": "Concision",
+                  "description": "Expressing ideas clearly and efficiently"
+                },
+                {
+                  "specific_topic": "Parallelism",
+                  "description": "Maintaining parallel structure in sentences"
+                },
+                {
+                  "specific_topic": "Idioms",
+                  "description": "Using standard English idioms correctly"
+                }
+              ],
+              "description": "Questions about effective and clear writing"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 
