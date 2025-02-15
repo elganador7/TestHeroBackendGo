@@ -9,20 +9,16 @@ import (
 	"TestHeroBackendGo/agent/prompts/sat_prompts"
 )
 
-var PromptMap = map[string]map[string]string{
+var SubjectTopicPromptMap = map[string]map[string]string{
 	"ACT": {
-		"Math": act_prompts.ActMathPrompt,
+		"Math":    act_prompts.ActMathPrompt,
+		"English": act_prompts.ActEnglishPrompt,
+		"Science": act_prompts.ActSciencePrompt,
+		"Reading": act_prompts.ActReadingPrompt,
 	},
 	"SAT": {
-		"Math":       sat_prompts.SATMathGeneralPrompt,
-		"NoCalc":     sat_prompts.SATMathNoCalcPrompt,
-		"Calc":       sat_prompts.SATMathCalcPrompt,
-		"GridIn":     sat_prompts.SATMathGridInPrompt,
-		"Reading":    sat_prompts.SATReadingGeneralPrompt,
-		"Literature": sat_prompts.SATReadingLiteraturePrompt,
-		"Science":    sat_prompts.SATReadingSciencePrompt,
-		"Social":     sat_prompts.SATReadingSocialSciencePrompt,
-		"Paired":     sat_prompts.SATReadingPairedPrompt,
+		"Math":    sat_prompts.SATMathGeneralPrompt,
+		"Reading": sat_prompts.SATReadingGeneralPrompt,
 	},
 	"LSAT": {
 		"Logical":    lsat_prompts.LSATLogicalPrompt,
@@ -46,4 +42,17 @@ var PromptMap = map[string]map[string]string{
 		"Psychological": mcat_prompts.MCATPsychologicalPrompt,
 	},
 	"Default_Prompt": {},
+}
+
+var SATReadingPromptExtensions = map[string]string{
+	"Literature": sat_prompts.SATReadingLiteraturePrompt,
+	"Science":    sat_prompts.SATReadingSciencePrompt,
+	"Social":     sat_prompts.SATReadingSocialSciencePrompt,
+	"Paired":     sat_prompts.SATReadingPairedPrompt,
+}
+
+var SATMathPromptExtensions = map[string]string{
+	"NoCalc": sat_prompts.SATMathNoCalcPrompt,
+	"Calc":   sat_prompts.SATMathCalcPrompt,
+	"GridIn": sat_prompts.SATMathGridInPrompt,
 }
