@@ -35,7 +35,7 @@ func NewQueryController(db *gorm.DB, agent *agent.Agent) *QueryController {
 func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
 	var req struct {
 		TestTopicData models.TestTopicData `json:"test_topic_data"`
-		UserId   string `json:"user_id"`
+		UserId        string               `json:"user_id"`
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -43,7 +43,7 @@ func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
 		return
 	}
 
-	question, err := ctrl.GenerateNewQuestionWithTopicData(req., rand.Float64())
+	question, err := ctrl.GenerateNewQuestionWithTopicData(req.TestTopicData, rand.Float64())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
