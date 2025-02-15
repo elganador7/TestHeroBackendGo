@@ -8,7 +8,6 @@ import (
 	"os"
 
 	"github.com/google/uuid"
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
@@ -60,11 +59,11 @@ func ParseJsonData(db *gorm.DB) {
 			ID:           uuid.New().String(),
 			QuestionText: q.Question.QuestionText,
 			Difficulty:   difficulty,
-			Options: datatypes.JSONMap{
-				"A": q.Question.Choices.A,
-				"B": q.Question.Choices.B,
-				"C": q.Question.Choices.C,
-				"D": q.Question.Choices.D,
+			Options: []string{
+				q.Question.Choices.A,
+				q.Question.Choices.B,
+				q.Question.Choices.C,
+				q.Question.Choices.D,
 			},
 			EstimatedTime: 60, // Example estimated time
 			Paragraph:     q.Question.Paragraph,
@@ -74,10 +73,16 @@ func ParseJsonData(db *gorm.DB) {
 			log.Printf("Failed to insert question %s: %v", q.ID, err)
 		}
 
+		correctIndex, err := parseCorrectAnswer(q.Question.CorrectAnswer)
+		if err != nil {
+			log.Printf("Skipping question %s due to correct answer parse error: %v", q.ID, err)
+			continue
+		}
+
 		answer := models.QuestionAnswer{
 			ID:            uuid.New().String(),
 			QuestionID:    question.ID,
-			CorrectAnswer: q.Question.CorrectAnswer,
+			CorrectAnswer: question.Options[correctIndex],
 			Explanation:   q.Question.Explanation,
 		}
 
@@ -87,6 +92,21 @@ func ParseJsonData(db *gorm.DB) {
 	}
 
 	fmt.Println("Questions added successfully!")
+}
+
+func parseCorrectAnswer(correctAnswer string) (int, error) {
+	switch correctAnswer {
+	case "A":
+		return 0, nil
+	case "B":
+		return 1, nil
+	case "C":
+		return 2, nil
+	case "D":
+		return 3, nil
+	default:
+		return 0, fmt.Errorf("invalid correct answer: %s", correctAnswer)
+	}
 }
 
 // parseDifficulty converts difficulty from string to float64

@@ -168,7 +168,7 @@ func (a *Agent) GenerateNewQuestionWithTopicData(testTopicData models.TestTopicD
 	answer := models.QuestionAnswer{
 		ID:            uuid.NewString(),
 		QuestionID:    question.ID,
-		CorrectAnswer: optionsResponse.CorrectOption,
+		CorrectAnswer: optionsResponse.CorrectAnswer,
 		Explanation:   answerResponse.Explanation,
 	}
 

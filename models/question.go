@@ -3,30 +3,29 @@ package models
 import (
 	"time"
 
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
 )
 
 type Question struct {
-	ID            string            `json:"id" gorm:"type:uuid;primaryKey"`
-	CreatedAt     time.Time         `json:"created_at"`
-	UpdatedAt     time.Time         `json:"updated_at"`
-	DeletedAt     gorm.DeletedAt    `json:"-" gorm:"index"`
-	QuestionText  string            `json:"question_text"`
-	TestTopicID   string            `json:"test_topic_id" gorm:"type:uuid;not null"`  // Foreign key reference
-	TestTopic     TestTopicData     `json:"test_topic" gorm:"foreignKey:TestTopicID"` // Relation to TestTopicData
-	Difficulty    float64           `json:"difficulty"`
-	Options       datatypes.JSONMap `json:"options" gorm:"type:jsonb"`
-	EstimatedTime int               `json:"estimated_time"`
-	Paragraph     string            `json:"paragraph"`
+	ID            string         `json:"id" gorm:"type:uuid;primaryKey"`
+	CreatedAt     time.Time      `json:"created_at"`
+	UpdatedAt     time.Time      `json:"updated_at"`
+	DeletedAt     gorm.DeletedAt `json:"-" gorm:"index"`
+	QuestionText  string         `json:"question_text"`
+	TestTopicID   string         `json:"test_topic_id" gorm:"type:uuid;not null"`  // Foreign key reference
+	TestTopic     TestTopicData  `json:"test_topic" gorm:"foreignKey:TestTopicID"` // Relation to TestTopicData
+	Difficulty    float64        `json:"difficulty"`
+	Options       []string       `json:"options" gorm:"serializer:json"`
+	EstimatedTime int            `json:"estimated_time"`
+	Paragraph     string         `json:"paragraph"`
 }
 
 type QuestionOutputSchema struct {
-	QuestionText  string            `json:"question_text"`
-	Difficulty    float64           `json:"difficulty"`
-	Options       datatypes.JSONMap `json:"options,omitempty" jsonschema_description:"The options for the new question"`
-	EstimatedTime int               `json:"estimated_time"`
-	Paragraph     string            `json:"paragraph"`
+	QuestionText  string   `json:"question_text"`
+	Difficulty    float64  `json:"difficulty"`
+	Options       []string `json:"options" jsonschema_description:"The options for the new question as an array"`
+	EstimatedTime int      `json:"estimated_time"`
+	Paragraph     string   `json:"paragraph"`
 }
 
 func (question Question) TranslateQuestionToQuestionOutputSchema() QuestionOutputSchema {
