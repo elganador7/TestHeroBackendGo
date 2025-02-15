@@ -69,7 +69,7 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 		QuestionText: originalQuestion.QuestionText,
 	}
 
-	systemPrompt, ok := prompts.PromptMap[originalQuestion.TestTopic.TestType][originalQuestion.TestTopic.Subject]
+	systemPrompt, ok := prompts.SubjectTopicPromptMap[originalQuestion.TestTopic.TestType][originalQuestion.TestTopic.Subject]
 	if !ok {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid test type or subject in original question"})
 		return
@@ -240,7 +240,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 		PreviousQuestions: previousQuestionTexts,
 	}
 
-	systemPrompt, ok := prompts.PromptMap[testTopicData.TestType][testTopicData.Subject]
+	systemPrompt, ok := prompts.SubjectTopicPromptMap[testTopicData.TestType][testTopicData.Subject]
 	if !ok {
 		return models.Question{}, fmt.Errorf("no prompt found for test type %s and subject %s", testTopicData.TestType, testTopicData.Subject)
 	}

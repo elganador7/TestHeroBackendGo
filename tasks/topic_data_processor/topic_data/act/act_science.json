@@ -1,0 +1,146 @@
+{
+  "test_type": "ACT",
+  "subject": "Science",
+  "topics": [
+    {
+      "topic": "Data Interpretation",
+      "subtopics": [
+        {
+          "subtopic": "Graph Analysis",
+          "specific_topics": [
+            "Line Graphs and Trends",
+            "Bar Graphs and Comparisons",
+            "Scatter Plots and Correlations",
+            "Multiple Variable Relationships",
+            "Interpolation and Extrapolation"
+          ]
+        },
+        {
+          "subtopic": "Table Analysis",
+          "specific_topics": [
+            "Data Pattern Recognition",
+            "Numerical Relationships",
+            "Variable Dependencies",
+            "Data Comparison",
+            "Unit Conversion"
+          ]
+        },
+        {
+          "subtopic": "Figure Analysis",
+          "specific_topics": [
+            "Scientific Diagrams",
+            "Experimental Setups",
+            "Process Flow Charts",
+            "Model Interpretation",
+            "Scale and Measurement"
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "Research Summaries",
+      "subtopics": [
+        {
+          "subtopic": "Experimental Design",
+          "specific_topics": [
+            "Control Variables",
+            "Independent Variables",
+            "Dependent Variables",
+            "Experimental Controls",
+            "Sample Size and Groups"
+          ]
+        },
+        {
+          "subtopic": "Data Collection",
+          "specific_topics": [
+            "Measurement Techniques",
+            "Data Recording Methods",
+            "Error Analysis",
+            "Precision and Accuracy",
+            "Sampling Methods"
+          ]
+        },
+        {
+          "subtopic": "Results Analysis",
+          "specific_topics": [
+            "Data Trends",
+            "Statistical Analysis",
+            "Cause and Effect",
+            "Experimental Error",
+            "Results Interpretation"
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "Conflicting Viewpoints",
+      "subtopics": [
+        {
+          "subtopic": "Theory Comparison",
+          "specific_topics": [
+            "Competing Hypotheses",
+            "Evidence Evaluation",
+            "Assumption Identification",
+            "Prediction Comparison",
+            "Model Strengths and Weaknesses"
+          ]
+        },
+        {
+          "subtopic": "Scientific Arguments",
+          "specific_topics": [
+            "Supporting Evidence",
+            "Counterarguments",
+            "Experimental Support",
+            "Logical Reasoning",
+            "Conclusion Validity"
+          ]
+        },
+        {
+          "subtopic": "Scientific Method",
+          "specific_topics": [
+            "Hypothesis Testing",
+            "Experimental Design",
+            "Data Analysis",
+            "Result Interpretation",
+            "Theory Modification"
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "Scientific Investigation",
+      "subtopics": [
+        {
+          "subtopic": "Laboratory Techniques",
+          "specific_topics": [
+            "Equipment Usage",
+            "Measurement Methods",
+            "Safety Procedures",
+            "Data Collection",
+            "Error Prevention"
+          ]
+        },
+        {
+          "subtopic": "Scientific Reasoning",
+          "specific_topics": [
+            "Hypothesis Formation",
+            "Variable Identification",
+            "Procedure Analysis",
+            "Result Prediction",
+            "Conclusion Drawing"
+          ]
+        },
+        {
+          "subtopic": "Data Reporting",
+          "specific_topics": [
+            "Data Organization",
+            "Graph Creation",
+            "Table Construction",
+            "Result Summary",
+            "Error Analysis"
+          ]
+        }
+      ]
+    }
+  ]
+} 

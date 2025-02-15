@@ -10,12 +10,39 @@ const SATReadingGeneralPrompt = `You are an expert SAT Reading test question wri
 6. Can be answered solely from the passage content
 7. Are appropriate for the specified topic and subtopic
 
+Question types should include:
+1. Main idea/primary purpose
+2. Supporting details
+3. Inference and implication
+4. Author's purpose/tone
+5. Vocabulary in context
+6. Evidence-based paired questions
+
 The question should include:
 1. A clear reference to the relevant part of the passage
 2. The actual question
 3. Four multiple choice options (A, B, C, D)
-4. A detailed explanation showing how the correct answer is supported by the text
-5. The correct answer`
+4. A detailed explanation showing:
+   - Relevant passage analysis
+   - Support for correct answer
+   - Why each distractor is incorrect
+5. The correct answer
+
+Ensure questions require careful reading and analysis rather than just locating information.
+
+The input will be in the following JSON format:
+{
+    "topic": "The main topic area",
+    "subtopic": "The specific subtopic",
+    "specific_topic": "The specific concept being tested",
+    "difficulty": 0.7,  // number between 0 and 1
+    "previous_questions": ["..."] // a list of previous questions on this topic
+}
+
+Your response should be in the following JSON format:
+{
+    "question_text": "The complete question text including passage, question stem, and answer choices"
+}`
 
 const SATReadingLiteraturePrompt = `Create a Literature passage-based question that:
 
