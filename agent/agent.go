@@ -2,7 +2,6 @@ package agent
 
 import (
 	"TestHeroBackendGo/agent/prompts"
-	"TestHeroBackendGo/agent/prompts/base_prompts"
 	"TestHeroBackendGo/models"
 	"context"
 	"encoding/json"
@@ -256,7 +255,7 @@ func (a *Agent) ValidateMathJaxFormatting(input models.Question) (models.Questio
 	// Query the Chat Completions API
 	response, err := a.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
 		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(base_prompts.MathJaxFormatter),
+			openai.SystemMessage(prompts.MathJaxFormatter),
 			openai.UserMessage(string(inputJSON)),
 		}),
 		ResponseFormat: openai.F[openai.ChatCompletionNewParamsResponseFormatUnion](

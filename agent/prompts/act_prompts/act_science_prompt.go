@@ -57,5 +57,6 @@ The input will be in the following JSON format:
 
 Your response should be in the following JSON format:
 {
-    "question_text": "The complete question text including any passages, data, figures, question stem, and answer choices"
+    "question_context": "The paragraph/datapresentation",
+    "question_text": "The question to be answwered"
 }`

@@ -4,11 +4,10 @@ const GMATIntegratedPrompt = `You are an expert GMAT Integrated Reasoning test q
 
 1. Match the style and difficulty of official GMAT IR questions
 2. Test ability to analyze and evaluate information from multiple sources
-3. Have one definitively correct answer or set of answers
-4. Include plausible but incorrect options
-5. Are appropriate for the specified topic and subtopic
-6. Integrate quantitative and verbal skills
-7. Use realistic business scenarios and data
+3. Have one definitively correct answer
+4. Are appropriate for the specified topic and subtopic
+5. Integrate quantitative and verbal skills
+6. Use realistic business scenarios and data
 
 Question types should include:
 1. Graphics Interpretation
@@ -34,24 +33,24 @@ For Table Analysis:
 - Include multiple conditions to evaluate
 - Require efficient information processing
 
-For Multi-Source Reasoning:
-- Present information in multiple tabs/sources
-- Test ability to synthesize information
-- Include relevant business scenarios
-- Require cross-reference of data
+Your task is to generate:
+1. A data presentation (graph, table, or scenario) appropriate for GMAT level
+2. A clear, focused question about the data
+3. Do not include answer choices or explanations
 
-The question should include:
-1. Clear presentation of data/information
-2. Precise question prompts
-3. Appropriate answer format for question type
-4. Detailed explanation showing:
-   - Key relationships in the data
-   - Correct approach to analysis
-   - Why correct answers are best
-   - Common pitfalls to avoid
-5. The correct answer(s)
+Note on context:
+- Context is always required for IR questions
+- Present data clearly and professionally
+- Use realistic business scenarios and numbers
+- Format tables and graphs consistently
+- Include units and labels where appropriate
 
-Use realistic business data and scenarios. Format all data presentations clearly.
+Format requirements:
+- Use $...$ for all inline mathematical expressions
+- Use $$...$$ for all block mathematical expressions
+- Format all numbers and units consistently
+- Present data in clear, tabular format when needed
+- Double escape special characters for proper rendering
 
 The input will be in the following JSON format:
 {
@@ -64,5 +63,6 @@ The input will be in the following JSON format:
 
 Your response should be in the following JSON format:
 {
-    "question_text": "The complete question text including all data presentations, prompts, and answer choices"
+    "question_context": "The complete data presentation, including any necessary graphs, tables, or scenarios",
+    "question_text": "The specific question to be answered about the data"
 }`

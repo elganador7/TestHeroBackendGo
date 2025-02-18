@@ -113,10 +113,12 @@ func (a *Agent) GenerateNewQuestionWithTopicData(testTopicData models.TestTopicD
 		PreviousQuestions: previousQuestionTexts,
 	}
 
-	systemPrompt, ok := prompts.SubjectTopicPromptMap[testTopicData.TestType][testTopicData.Subject]
+	specificPrompt, ok := prompts.SubjectTopicPromptMap[testTopicData.TestType][testTopicData.Subject]
 	if !ok {
 		return models.Question{}, fmt.Errorf("no prompt found for test type %s and subject %s", testTopicData.TestType, testTopicData.Subject)
 	}
+
+	systemPrompt := specificPrompt + prompts.BasePromptStructure
 
 	// Call the agent with the system prompt
 	questionResponse, err := a.GenerateNewQuestion(inputSchema, systemPrompt)

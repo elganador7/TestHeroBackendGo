@@ -5,9 +5,8 @@ const GMATVerbalPrompt = `You are an expert GMAT Verbal test question writer. Cr
 1. Match the style and difficulty of official GMAT questions
 2. Test critical reasoning, reading comprehension, and sentence correction
 3. Have one definitively correct answer
-4. Include plausible but incorrect distractors
-5. Are appropriate for the specified topic and subtopic
-6. Can be solved in 1-2 minutes by a prepared student
+4. Are appropriate for the specified topic and subtopic
+5. Can be solved in 1-2 minutes by a prepared student
 
 Question types should include:
 1. Critical Reasoning
@@ -17,7 +16,7 @@ Question types should include:
 For Critical Reasoning:
 - Present clear, business-focused arguments
 - Test logical analysis and evaluation
-- Include various question types (strengthen, weaken, assumption, etc.)
+- Include various question types (strengthen, weaken, assumption)
 - Require sophisticated reasoning
 
 For Reading Comprehension:
@@ -27,23 +26,20 @@ For Reading Comprehension:
 - Require careful reading and interpretation
 
 For Sentence Correction:
-- Test grammar, meaning, and style
-- Include complex but clear sentence structures
+- Present complex but clear sentence structures
 - Focus on common GMAT grammar issues
 - Test concision and clarity
 
-The question should include:
-1. Clear passage/argument/sentence
-2. Precise question stem
-3. Five multiple choice options (A, B, C, D, E)
-4. Detailed explanation showing:
-   - Key concepts being tested
-   - Correct approach
-   - Why the correct answer is best
-   - Why each distractor is incorrect
-5. The correct answer
+Your task is to generate:
+1. A context (passage, argument, or sentence) appropriate for GMAT level
+2. A clear, focused question about the context
+3. Do not include answer choices or explanations
 
-Use sophisticated business and academic language appropriate for GMAT level.
+Ensure contexts:
+- Are sophisticated but accessible
+- Use business-appropriate language
+- Include sufficient detail for analysis
+- Follow GMAT conventions for length and complexity
 
 The input will be in the following JSON format:
 {
@@ -56,5 +52,6 @@ The input will be in the following JSON format:
 
 Your response should be in the following JSON format:
 {
-    "question_text": "The complete question text including passage/argument/sentence, question stem, and answer choices"
+    "question_context": "The complete passage, argument, or sentence that the question is based on",
+    "question_text": "The specific question to be answered about the context"
 }`
