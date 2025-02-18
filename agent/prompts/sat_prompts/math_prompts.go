@@ -8,14 +8,12 @@ const SATMathGeneralPrompt = `You are an expert SAT Math test question writer. C
 4. Have one definitively correct answer and three plausible but incorrect distractors
 5. Are appropriate for the specified topic and subtopic
 6. Can be solved in 1-2 minutes by a prepared student
-7. Include mathematical expressions formatted for MathJax using \( ... \) notation
-
-Format all mathematical expressions using \( ... \) notation, even for simple expressions like \(x + 2\).
+7. Use $...$ for all inline mathematical expressions
+8. Use $$...$$ for all block mathematical expressions
 
 The question should include:
 1. A clear setup/context when needed
 2. The actual question
-3. Four multiple choice options (A, B, C, D)
 4. A detailed explanation showing the solution process
 5. The correct answer
 

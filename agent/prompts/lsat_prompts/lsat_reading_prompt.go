@@ -3,52 +3,44 @@ package lsat_prompts
 const LSATReadingPrompt = `You are an expert LSAT Reading Comprehension test question writer. Create questions that:
 
 1. Match the style and difficulty of official LSAT Reading Comprehension questions
-2. Test advanced reading comprehension and analysis skills
-3. Are based on sophisticated passage content
-4. Have one definitively correct answer supported by the text
-5. Include plausible but incorrect distractors
-6. Are appropriate for the specified topic and subtopic
-7. Require careful analysis rather than mere fact-finding
+2. Test advanced reading and analytical skills
+3. Have one definitively correct answer
+4. Are appropriate for the specified topic and subtopic
+5. Can be solved in 3-4 minutes by a prepared student
+
+Passage types should include:
+1. Law and Legal Theory
+2. Natural Sciences
+3. Social Sciences
+4. Humanities
+5. Comparative Passages (paired readings)
 
 Question types should include:
 1. Main idea/primary purpose
-2. Author's attitude/tone
-3. Specific detail/fact
-4. Inference
-5. Analogical reasoning
-6. Passage structure/organization
-7. Comparative reading (for paired passages)
+2. Specific detail/fact
+3. Inference and implication
+4. Author's attitude/tone
+5. Argument structure
+6. Analogous application
 
-Passages should:
-1. Be complex and sophisticated
-2. Cover topics from law, humanities, sciences, or social sciences
-3. Present detailed arguments or explanations
-4. Include author viewpoints and reasoning
-5. Be 450-500 words in length
-6. Maintain advanced reading level
+Your task is to generate:
+1. A sophisticated passage appropriate for LSAT level
+2. A clear, focused question about the passage
+3. Do not include answer choices or explanations
 
-The question should include:
-1. A clear reference to the relevant part of the passage
-2. A precise question stem
-3. Five multiple choice options (A, B, C, D, E)
-4. A detailed explanation showing:
-   - Relevant passage analysis
-   - Support for the correct answer
-   - Why each distractor is incorrect
-5. The correct answer
+Note on context:
+- Context is always required as the reading passage
+- Passages should be 450-500 words
+- For paired passages, each should be 300-350 words
+- Include sufficient detail for analysis
+- Use sophisticated academic language
+- Present clear argumentative structure
+- Include author's perspective/opinion
 
-For comparative reading questions, ensure they test relationships between passages rather than just individual comprehension.
-
-The input will be in the following JSON format:
-{
-    "topic": "The main topic area",
-    "subtopic": "The specific subtopic",
-    "specific_topic": "The specific concept being tested",
-    "difficulty": 0.7,  // number between 0 and 1
-    "previous_questions": ["..."] // a list of previous questions on this topic
-}
-
-Your response should be in the following JSON format:
-{
-    "question_text": "The complete question text including passage(s), question stem, and answer choices"
-}`
+Format requirements:
+- Use formal academic language
+- Present complex ideas clearly
+- Include clear paragraph structure
+- Maintain consistent tone
+- For paired passages, ensure meaningful contrast or comparison
+`

@@ -16,7 +16,8 @@ type NewQuestionGeneratorInputSchema struct {
 
 // OutputSchema defines the structured output for a new question and its answer.
 type QuestionGeneratorOutputSchema struct {
-	QuestionText string `json:"question_text" jsonschema_description:"The new question text"`
+	QuestionText    string `json:"question_text" jsonschema_description:"The new question text"`
+	QuestionContext string `json:"question_context" jsonschema_description:"The context for the new question"`
 }
 
 type AnswerGeneratorOutputSchema struct {

@@ -18,17 +18,22 @@ Question types should include:
 5. Vocabulary in context
 6. Evidence-based paired questions
 
-The question should include:
-1. A clear reference to the relevant part of the passage
-2. The actual question
-3. Four multiple choice options (A, B, C, D)
-4. A detailed explanation showing:
-   - Relevant passage analysis
-   - Support for correct answer
-   - Why each distractor is incorrect
-5. The correct answer
+Your task is to generate:
+1. A passage appropriate for SAT Reading level
+2. A clear, focused question about the passage
+3. Do not include answer choices or explanations
 
-Ensure questions require careful reading and analysis rather than just locating information.
+Ensure passages:
+- Are sophisticated but accessible
+- Cover topics appropriate for SAT
+- Include sufficient detail for analysis
+- Are 400-700 words in length
+
+Ensure questions:
+- Reference specific parts of the passage
+- Require careful reading and analysis
+- Test higher-order thinking skills
+- Can be answered definitively from the passage
 
 The input will be in the following JSON format:
 {
@@ -41,7 +46,8 @@ The input will be in the following JSON format:
 
 Your response should be in the following JSON format:
 {
-    "question_text": "The complete question text including passage, question stem, and answer choices"
+    "question_context": "The complete passage text that the question is based on",
+    "question_text": "The specific question to be answered about the passage"
 }`
 
 const SATReadingLiteraturePrompt = `Create a Literature passage-based question that:
