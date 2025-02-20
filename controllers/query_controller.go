@@ -277,6 +277,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 	// Save the question to the database
 	question := models.Question{
 		ID:            uuid.NewString(),
+		Paragraph:     questionResponse.QuestionContext,
 		QuestionText:  questionResponse.QuestionText,
 		Options:       optionsResponse.Options,
 		EstimatedTime: 60,
