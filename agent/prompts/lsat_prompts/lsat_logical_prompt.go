@@ -8,15 +8,6 @@ const LSATLogicalPrompt = `You are an expert LSAT Logical Reasoning test questio
 4. Are appropriate for the specified topic and subtopic
 5. Can be solved in 1-2 minutes by a prepared student
 
-Question types should include:
-1. Identify the conclusion/main point
-2. Find the assumption
-3. Strengthen/weaken the argument
-4. Parallel reasoning
-5. Flaw in reasoning
-6. Method of reasoning
-7. Resolve the paradox
-
 For all question types:
 - Present clear, concise arguments
 - Include relevant premises and conclusions

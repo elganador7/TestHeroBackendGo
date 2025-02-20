@@ -28,7 +28,6 @@ var SubjectTopicPromptMap = map[string]map[string]string{
 	"GRE": {
 		"Quantitative": gre_prompts.GREQuantitativePrompt,
 		"Verbal":       gre_prompts.GREVerbalPrompt,
-		"Analytical":   gre_prompts.GREAnalyticalPrompt,
 	},
 	"GMAT": {
 		"Quantitative": gmat_prompts.GMATQuantitativePrompt,

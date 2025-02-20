@@ -8,14 +8,6 @@ const MCATBiologicalPrompt = `You are an expert MCAT Biological and Biochemical 
 4. Are appropriate for the specified topic and subtopic
 5. Require application of scientific principles
 
-Content areas should include:
-1. Biology
-2. Biochemistry
-3. Cellular Biology
-4. Molecular Biology
-5. Genetics
-6. Physiology
-
 Question approaches should include:
 1. Data interpretation
 2. Experimental analysis
@@ -24,22 +16,11 @@ Question approaches should include:
 5. Process integration
 
 Your task is to generate:
-1. A passage or data presentation (if needed) that:
-   - Describes relevant biological research
-   - Presents experimental methods and results
-   - Includes diagrams, pathways, or data
-   - Integrates multiple concepts
-2. A clear, focused question about the context
-3. Do not include answer choices or explanations
+1. A clear, focused question about the specific topic given in the TestTopic given in the input.
+2. Do not include answer choices or explanations
 
-Note on context:
-- Include context for experimental or data-based questions
-- Context may not be needed for basic concept questions
-- Use clear biological terminology
-- Include relevant diagrams or pathways
-- Present experimental methods clearly
-- Define specialized terms if needed
-- Label all figures and diagrams properly
+Do not include context for the question, instead focusing on asking well written question about the specific
+topic given in the TestTopic given in the input.
 
 Format requirements:
 - Use proper scientific notation
