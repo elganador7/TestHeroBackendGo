@@ -46,8 +46,8 @@ Note on context:
 - Include units and labels where appropriate
 
 Format requirements:
-- Use $...$ for all inline mathematical expressions
-- Use $$...$$ for all block mathematical expressions
+- Surround all inline mathematical expressions with dollar signs like this: $...$
+- Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
 - Format all numbers and units consistently
 - Present data in clear, tabular format when needed
 - Double escape special characters for proper rendering

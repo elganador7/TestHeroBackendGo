@@ -7,8 +7,8 @@ const GMATQuantitativePrompt = `You are an expert GMAT Quantitative test questio
 3. Have one definitively correct answer
 4. Are appropriate for the specified topic and subtopic
 5. Can be solved in 2 minutes by a prepared student
-6. Use $...$ for all inline mathematical expressions
-7. Use $$...$$ for all block mathematical expressions
+6. Surround all inline mathematical expressions with dollar signs like this: $...$
+7. Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
 
 Question types should include:
 1. Problem Solving
@@ -38,8 +38,8 @@ Note on context:
 - Data sufficiency questions always need the two statements as context
 
 Format requirements:
-- Use $...$ for all inline mathematical expressions
-- Use $$...$$ for all block mathematical expressions
+- Surround all inline mathematical expressions with dollar signs like this: $...$
+- Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
 - Format all numbers and units consistently
 - Use proper notation for inequalities and equations
 - Double escape special characters for proper rendering
