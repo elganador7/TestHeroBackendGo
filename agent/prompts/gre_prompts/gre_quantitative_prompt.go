@@ -33,12 +33,7 @@ Your task is to generate:
 3. For Quantitative Comparison, always include both quantities to compare
 4. Do not include answer choices or explanations
 
-Note on context:
-- Only include context when necessary to frame the question
-- For pure mathematical questions, context may not be needed
-- When used, context should be brief and clear
-- Quantitative Comparison questions must include both quantities as context
-- For geometry questions, include any necessary figures or diagrams
+Do not include context
 
 Format requirements:
 - Use $...$ for all inline mathematical expressions
