@@ -28,6 +28,5 @@ Format requirements:
 - Include units with measurements
 - Use standard biological nomenclature
 - Present pathways with clear directionality
-- Label all components in diagrams
 - Double escape special characters
 `
