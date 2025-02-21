@@ -19,8 +19,8 @@ var (
 		   - Tables (use | and -)
 		   - Line breaks (use double space)
 		2. LaTeX for all mathematical expressions:
-		   - Use $...$ for inline math formulas
-		   - Use $$...$$ for block math formulas
+		   - Surround all inline mathematical expressions with dollar signs like this: $...$
+  		   - Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
 		   - Ensure all mathematical symbols are properly formatted
 
 		{
@@ -54,8 +54,8 @@ var (
 		   - Tables (use | and -)
 		   - Line breaks (use double space)
 		2. LaTeX for all mathematical expressions:
-		   - Use $...$ for inline math formulas (e.g., $x + y = 5$)
-		   - Use $$...$$ for block math formulas (e.g., $$\frac{d}{dx}(x^2) = 2x$$)
+		   - Surround all inline mathematical expressions with dollar signs like this: $...$
+		   - Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
 		   - Ensure all mathematical symbols are properly formatted
 
 		{
@@ -81,8 +81,8 @@ var (
 		   - Tables (use | and -)
 		   - Line breaks (use double space)
 		2. LaTeX for all mathematical expressions:
-		   - Use $...$ for inline math formulas (e.g., $x + y = 5$)
-		   - Use $$...$$ for block math formulas (e.g., $$\frac{d}{dx}(x^2) = 2x$$)
+		   - Surround all inline mathematical expressions with dollar signs like this: $...$
+		   - Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
 		   - Ensure all mathematical symbols are properly formatted
 		
 		Take the information from above and output json like the following:
@@ -114,8 +114,8 @@ var (
 		   - Tables (use | and -)
 		   - Line breaks (use double space)
 		2. LaTeX for all mathematical expressions:
-		   - Use $...$ for inline math formulas (e.g., $x + y = 5$)
-		   - Use $$...$$ for block math formulas (e.g., $$\frac{d}{dx}(x^2) = 2x$$)
+		   - Surround all inline mathematical expressions with dollar signs like this: $...$
+		   - Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
 		   - Ensure all mathematical symbols are properly formatted
 
 		You should output the question in the following JSON Object format:

@@ -2,18 +2,7 @@ package act_prompts
 
 var (
 	ActEnglishPrompt = `
-		You are an assistant assigned to create ACT English questions. Expect a JSON input with the following structure:
-		{
-			"topic": "..."
-			"subtopic": "..."
-			"specific_topic": "..."
-			"difficulty": {number between 0 and 1}
-			"previous_questions": ["..."] // a list of previous questions on this topic
-		}
-
-		Write a question that specifically addresses the given topic and subtopic. The difficulty will range from 0.0 to 1.0,
-		where 0.0 represents the easiest possible question and 1.0 represents the most challenging. Ensure your question matches
-		the requested difficulty level while testing the specific topic effectively.
+		You are an expert ACT English question writer.
 
 		For Production of Writing questions:
 		- Topic Development questions should test understanding of purpose, relevance, and focus
@@ -39,23 +28,7 @@ var (
 			- Make questions clear and unambiguous
 			- Ensure only one correct answer
 
-		Difficulty Guidelines:
-		- 0.0-0.3: Basic rules (simple punctuation, obvious grammar errors)
-		- 0.3-0.6: Intermediate concepts (complex punctuation, clarity, organization)
-		- 0.6-0.8: Advanced usage (rhetoric, style, sophisticated grammar)
-		- 0.8-1.0: Expert level (multiple concepts, subtle errors, complex style choices)
-
-		You should output the question in the following JSON Object format:
-		{
-			"question_text": "..."
-		}
-
 		For passage-based questions, use underscores to indicate the portion being tested:
 		Example: "The committee members _was_ divided on the issue."
-
-		Avoid questions too similar to those in "previous_questions". While formats may be similar,
-		ensure content and specific examples are unique.
-
-		Do not respond with anything other than JSON.
 	`
 )

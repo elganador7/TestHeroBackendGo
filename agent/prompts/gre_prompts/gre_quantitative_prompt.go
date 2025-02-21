@@ -7,8 +7,8 @@ const GREQuantitativePrompt = `You are an expert GRE Quantitative test question 
 3. Have one definitively correct answer
 4. Are appropriate for the specified topic and subtopic
 5. Can be solved in 2-3 minutes by a prepared student
-6. Use $...$ for all inline mathematical expressions
-7. Use $$...$$ for all block mathematical expressions
+6. Surround all inline mathematical expressions with dollar signs like this: $...$
+7. Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
 
 Question types should include:
 1. Quantitative Comparison
@@ -36,8 +36,8 @@ Your task is to generate:
 Do not include context
 
 Format requirements:
-- Use $...$ for all inline mathematical expressions
-- Use $$...$$ for all block mathematical expressions
+- Surround all inline mathematical expressions with dollar signs like this: $...$
+- Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
 - Format all numbers and units consistently
 - Use proper notation for inequalities and equations
 - Double escape special characters for proper rendering
