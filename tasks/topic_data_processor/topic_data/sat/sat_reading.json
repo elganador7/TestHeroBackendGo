@@ -1,0 +1,168 @@
+{
+  "test_type": "SAT",
+  "subjects": [
+    {
+      "subject": "Reading",
+      "topics": [
+        {
+          "topic": "Command of Evidence",
+          "subtopics": [
+            {
+              "subtopic": "Text Evidence",
+              "specific_topics": [
+                {
+                  "specific_topic": "Finding Text Evidence",
+                  "description": "Identifying specific portions of text that support given conclusions or answers"
+                },
+                {
+                  "specific_topic": "Data Interpretation",
+                  "description": "Analyzing information presented in graphs, tables, and other visual formats"
+                },
+                {
+                  "specific_topic": "Multiple Text Analysis",
+                  "description": "Finding connections and evidence across paired passages"
+                }
+              ],
+              "description": "Questions focused on identifying and using evidence from the text"
+            },
+            {
+              "subtopic": "Central Ideas",
+              "specific_topics": [
+                {
+                  "specific_topic": "Main Idea Identification",
+                  "description": "Determining central ideas and themes in passages"
+                },
+                {
+                  "specific_topic": "Supporting Ideas",
+                  "description": "Understanding how details support and develop central ideas"
+                }
+              ],
+              "description": "Questions about main ideas and their development"
+            }
+          ]
+        },
+        {
+          "topic": "Words in Context",
+          "subtopics": [
+            {
+              "subtopic": "Vocabulary in Context",
+              "specific_topics": [
+                {
+                  "specific_topic": "Word Meaning",
+                  "description": "Determining the meaning of words based on context"
+                },
+                {
+                  "specific_topic": "Word Choice Impact",
+                  "description": "Analyzing how word choice affects meaning, tone, and style"
+                }
+              ],
+              "description": "Questions about vocabulary and word usage in context"
+            },
+            {
+              "subtopic": "Text Structure",
+              "specific_topics": [
+                {
+                  "specific_topic": "Organization Analysis",
+                  "description": "Understanding how parts of text are organized and related"
+                },
+                {
+                  "specific_topic": "Function Analysis",
+                  "description": "Determining the function of specific portions of text"
+                }
+              ],
+              "description": "Questions about text structure and organization"
+            }
+          ]
+        },
+        {
+          "topic": "Analysis",
+          "subtopics": [
+            {
+              "subtopic": "Author's Purpose",
+              "specific_topics": [
+                {
+                  "specific_topic": "Purpose Identification",
+                  "description": "Determining the author's purpose and point of view"
+                },
+                {
+                  "specific_topic": "Rhetorical Strategy",
+                  "description": "Analyzing the author's use of rhetorical devices and strategies"
+                }
+              ],
+              "description": "Questions about author's purpose and techniques"
+            },
+            {
+              "subtopic": "Argument Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Claim Evaluation",
+                  "description": "Analyzing claims and counterclaims in argumentative passages"
+                },
+                {
+                  "specific_topic": "Evidence Assessment",
+                  "description": "Evaluating evidence used to support arguments"
+                },
+                {
+                  "specific_topic": "Reasoning Analysis",
+                  "description": "Analyzing the logic and reasoning in arguments"
+                }
+              ],
+              "description": "Questions about analyzing arguments and evidence"
+            }
+          ]
+        },
+        {
+          "topic": "Information and Ideas",
+          "subtopics": [
+            {
+              "subtopic": "Scientific Passages",
+              "specific_topics": [
+                {
+                  "specific_topic": "Scientific Concepts",
+                  "description": "Understanding scientific concepts and relationships"
+                },
+                {
+                  "specific_topic": "Experimental Design",
+                  "description": "Analyzing scientific procedures and methodology"
+                }
+              ],
+              "description": "Questions about scientific passages and concepts"
+            },
+            {
+              "subtopic": "Social Studies",
+              "specific_topics": [
+                {
+                  "specific_topic": "Historical Analysis",
+                  "description": "Understanding historical documents and perspectives"
+                },
+                {
+                  "specific_topic": "Social Science Concepts",
+                  "description": "Analyzing social science theories and relationships"
+                }
+              ],
+              "description": "Questions about social studies passages"
+            },
+            {
+              "subtopic": "Literature Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Character Analysis",
+                  "description": "Understanding character development and relationships"
+                },
+                {
+                  "specific_topic": "Plot Development",
+                  "description": "Analyzing plot structure and development"
+                },
+                {
+                  "specific_topic": "Literary Devices",
+                  "description": "Identifying and analyzing literary techniques and devices"
+                }
+              ],
+              "description": "Questions about literary passages and elements"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

@@ -1,0 +1,125 @@
+{
+  "test_type": "LSAT",
+  "subjects": [
+    {
+      "subject": "Logical",
+      "topics": [
+        {
+          "topic": "Argument Analysis",
+          "subtopics": [
+            {
+              "subtopic": "Argument Structure",
+              "specific_topics": [
+                {
+                  "specific_topic": "Conclusion Identification",
+                  "description": "Identifying main conclusions in arguments"
+                },
+                {
+                  "specific_topic": "Premise Analysis",
+                  "description": "Identifying and evaluating supporting premises"
+                },
+                {
+                  "specific_topic": "Assumption Recognition",
+                  "description": "Identifying unstated assumptions in arguments"
+                }
+              ],
+              "description": "Questions about identifying and analyzing argument components"
+            },
+            {
+              "subtopic": "Reasoning Methods",
+              "specific_topics": [
+                {
+                  "specific_topic": "Deductive Reasoning",
+                  "description": "Analyzing validity of deductive arguments"
+                },
+                {
+                  "specific_topic": "Inductive Reasoning",
+                  "description": "Evaluating strength of inductive arguments"
+                },
+                {
+                  "specific_topic": "Analogical Reasoning",
+                  "description": "Analyzing arguments based on analogies"
+                }
+              ],
+              "description": "Questions about different types of reasoning"
+            }
+          ]
+        },
+        {
+          "topic": "Argument Evaluation",
+          "subtopics": [
+            {
+              "subtopic": "Logical Flaws",
+              "specific_topics": [
+                {
+                  "specific_topic": "Common Fallacies",
+                  "description": "Identifying logical fallacies in arguments"
+                },
+                {
+                  "specific_topic": "Circular Reasoning",
+                  "description": "Recognizing circular arguments"
+                },
+                {
+                  "specific_topic": "Causal Reasoning",
+                  "description": "Evaluating cause-and-effect relationships"
+                }
+              ],
+              "description": "Questions about identifying flaws in arguments"
+            },
+            {
+              "subtopic": "Evidence Evaluation",
+              "specific_topics": [
+                {
+                  "specific_topic": "Evidence Quality",
+                  "description": "Assessing strength and relevance of evidence"
+                },
+                {
+                  "specific_topic": "Counter Evidence",
+                  "description": "Identifying evidence that weakens arguments"
+                },
+                {
+                  "specific_topic": "Supporting Evidence",
+                  "description": "Identifying evidence that strengthens arguments"
+                }
+              ],
+              "description": "Questions about evaluating evidence in arguments"
+            }
+          ]
+        },
+        {
+          "topic": "Argument Manipulation",
+          "subtopics": [
+            {
+              "subtopic": "Argument Strengthening",
+              "specific_topics": [
+                {
+                  "specific_topic": "Gap Filling",
+                  "description": "Identifying information that bridges logical gaps"
+                },
+                {
+                  "specific_topic": "Support Enhancement",
+                  "description": "Strengthening connections between premises and conclusions"
+                }
+              ],
+              "description": "Questions about improving arguments"
+            },
+            {
+              "subtopic": "Argument Weakening",
+              "specific_topics": [
+                {
+                  "specific_topic": "Assumption Challenge",
+                  "description": "Challenging key assumptions in arguments"
+                },
+                {
+                  "specific_topic": "Alternative Explanations",
+                  "description": "Identifying alternative explanations that weaken arguments"
+                }
+              ],
+              "description": "Questions about weakening arguments"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

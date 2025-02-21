@@ -13,7 +13,7 @@ func setupTestTopicDataRoutes(router *gin.Engine, db *gorm.DB, isTest bool) {
 		DB: db,
 	}
 
-	testTopicApi := router.Group("/api/test-topic-data")
+	testTopicApi := router.Group("/api/test_topics")
 
 	// Protected routes (Require authentication)
 	testTopicApi.Use(utils.GenerateHandlers(isTest)...)

@@ -1,0 +1,188 @@
+{
+  "test_type": "SAT",
+  "subjects": [
+    {
+      "subject": "Math",
+      "topics": [
+        {
+          "topic": "Heart of Algebra",
+          "subtopics": [
+            {
+              "subtopic": "Linear Equations and Systems",
+              "specific_topics": [
+                {
+                  "specific_topic": "Linear Equations",
+                  "description": "Creating and solving linear equations in one or more variables"
+                },
+                {
+                  "specific_topic": "Linear Systems",
+                  "description": "Solving systems of linear equations, including word problems"
+                },
+                {
+                  "specific_topic": "Linear Inequalities",
+                  "description": "Creating and solving linear inequalities and systems of inequalities"
+                }
+              ],
+              "description": "Questions focused on creating and solving linear equations, systems, and inequalities"
+            },
+            {
+              "subtopic": "Linear Functions",
+              "specific_topics": [
+                {
+                  "specific_topic": "Interpreting Linear Functions",
+                  "description": "Understanding and interpreting linear functions in various forms"
+                },
+                {
+                  "specific_topic": "Graphing Linear Functions",
+                  "description": "Creating and analyzing graphs of linear functions"
+                },
+                {
+                  "specific_topic": "Linear Function Word Problems",
+                  "description": "Solving real-world problems involving linear relationships"
+                }
+              ],
+              "description": "Questions involving understanding, graphing, and applying linear functions"
+            }
+          ]
+        },
+        {
+          "topic": "Problem Solving and Data Analysis",
+          "subtopics": [
+            {
+              "subtopic": "Quantitative Methods",
+              "specific_topics": [
+                {
+                  "specific_topic": "Ratios and Proportions",
+                  "description": "Solving problems involving ratios, rates, and proportional relationships"
+                },
+                {
+                  "specific_topic": "Units and Unit Conversion",
+                  "description": "Working with units and converting between different measurement systems"
+                },
+                {
+                  "specific_topic": "Percentages",
+                  "description": "Solving percentage problems, including percent change and interest"
+                }
+              ],
+              "description": "Questions focused on ratios, proportions, units, and percentages"
+            },
+            {
+              "subtopic": "Data Analysis and Statistics",
+              "specific_topics": [
+                {
+                  "specific_topic": "Statistical Measures",
+                  "description": "Calculating and interpreting mean, median, mode, range, and standard deviation"
+                },
+                {
+                  "specific_topic": "Data Interpretation",
+                  "description": "Analyzing and drawing conclusions from tables, graphs, and charts"
+                },
+                {
+                  "specific_topic": "Probability",
+                  "description": "Calculating probability and expected value"
+                }
+              ],
+              "description": "Questions involving statistical analysis and probability"
+            },
+            {
+              "subtopic": "Scatterplots and Graphs",
+              "specific_topics": [
+                {
+                  "specific_topic": "Two-Variable Data",
+                  "description": "Analyzing relationships between variables using scatterplots"
+                },
+                {
+                  "specific_topic": "Lines of Best Fit",
+                  "description": "Creating and interpreting lines of best fit"
+                }
+              ],
+              "description": "Questions focused on analyzing relationships in two-variable data"
+            }
+          ]
+        },
+        {
+          "topic": "Passport to Advanced Math",
+          "subtopics": [
+            {
+              "subtopic": "Quadratic and Nonlinear Expressions",
+              "specific_topics": [
+                {
+                  "specific_topic": "Quadratic Equations",
+                  "description": "Solving quadratic equations using various methods"
+                },
+                {
+                  "specific_topic": "Nonlinear Expressions",
+                  "description": "Working with polynomial and rational expressions"
+                },
+                {
+                  "specific_topic": "Function Operations",
+                  "description": "Performing operations with functions and finding compositions"
+                }
+              ],
+              "description": "Questions involving quadratic and other nonlinear expressions"
+            },
+            {
+              "subtopic": "Advanced Function Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Exponential Functions",
+                  "description": "Working with exponential growth and decay"
+                },
+                {
+                  "specific_topic": "Rational and Radical Functions",
+                  "description": "Analyzing and solving problems with rational and radical functions"
+                },
+                {
+                  "specific_topic": "Function Transformations",
+                  "description": "Understanding how changes to functions affect their graphs"
+                }
+              ],
+              "description": "Questions focused on analyzing and transforming various function types"
+            }
+          ]
+        },
+        {
+          "topic": "Additional Topics",
+          "subtopics": [
+            {
+              "subtopic": "Geometry and Trigonometry",
+              "specific_topics": [
+                {
+                  "specific_topic": "Geometry Fundamentals",
+                  "description": "Working with lines, angles, triangles, and other geometric shapes"
+                },
+                {
+                  "specific_topic": "Circle Properties",
+                  "description": "Solving problems involving circles, including arc measures and equations"
+                },
+                {
+                  "specific_topic": "Trigonometric Ratios",
+                  "description": "Using sine, cosine, and tangent in right triangles"
+                },
+                {
+                  "specific_topic": "Volume and Surface Area",
+                  "description": "Calculating volume and surface area of 3D shapes"
+                }
+              ],
+              "description": "Questions involving geometry and basic trigonometry concepts"
+            },
+            {
+              "subtopic": "Complex Numbers",
+              "specific_topics": [
+                {
+                  "specific_topic": "Complex Number Operations",
+                  "description": "Performing operations with complex numbers"
+                },
+                {
+                  "specific_topic": "Complex Solutions",
+                  "description": "Finding complex solutions to quadratic equations"
+                }
+              ],
+              "description": "Questions focused on operations with complex numbers"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

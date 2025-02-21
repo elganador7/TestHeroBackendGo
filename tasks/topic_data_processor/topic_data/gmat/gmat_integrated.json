@@ -1,0 +1,142 @@
+{
+  "test_type": "GMAT",
+  "subjects": [
+    {
+      "subject": "Integrated",
+      "topics": [
+        {
+          "topic": "Multi-Source Reasoning",
+          "subtopics": [
+            {
+              "subtopic": "Data Integration",
+              "specific_topics": [
+                {
+                  "specific_topic": "Information Synthesis",
+                  "description": "Combining information from multiple sources"
+                },
+                {
+                  "specific_topic": "Data Comparison",
+                  "description": "Comparing and contrasting information across sources"
+                }
+              ],
+              "description": "Questions requiring integration of multiple data sources"
+            },
+            {
+              "subtopic": "Logical Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Inference Drawing",
+                  "description": "Making logical conclusions from multiple sources"
+                },
+                {
+                  "specific_topic": "Consistency Evaluation",
+                  "description": "Evaluating consistency across different sources"
+                }
+              ],
+              "description": "Questions about analyzing relationships between sources"
+            }
+          ]
+        },
+        {
+          "topic": "Graphics Interpretation",
+          "subtopics": [
+            {
+              "subtopic": "Visual Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Graph Analysis",
+                  "description": "Interpreting graphs and charts"
+                },
+                {
+                  "specific_topic": "Trend Identification",
+                  "description": "Identifying patterns and trends in visual data"
+                }
+              ],
+              "description": "Questions about interpreting visual information"
+            },
+            {
+              "subtopic": "Data Application",
+              "specific_topics": [
+                {
+                  "specific_topic": "Calculations",
+                  "description": "Performing calculations using graphical data"
+                },
+                {
+                  "specific_topic": "Predictions",
+                  "description": "Making predictions based on visual trends"
+                }
+              ],
+              "description": "Questions requiring application of visual data"
+            }
+          ]
+        },
+        {
+          "topic": "Table Analysis",
+          "subtopics": [
+            {
+              "subtopic": "Data Organization",
+              "specific_topics": [
+                {
+                  "specific_topic": "Sorting and Filtering",
+                  "description": "Using sorting and filtering to analyze data"
+                },
+                {
+                  "specific_topic": "Pattern Recognition",
+                  "description": "Identifying patterns in tabular data"
+                }
+              ],
+              "description": "Questions about analyzing organized data"
+            },
+            {
+              "subtopic": "Data Interpretation",
+              "specific_topics": [
+                {
+                  "specific_topic": "Condition Application",
+                  "description": "Applying conditions to analyze data"
+                },
+                {
+                  "specific_topic": "Relationship Analysis",
+                  "description": "Analyzing relationships between data points"
+                }
+              ],
+              "description": "Questions about interpreting tabular data"
+            }
+          ]
+        },
+        {
+          "topic": "Two-Part Analysis",
+          "subtopics": [
+            {
+              "subtopic": "Complex Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Multiple Variables",
+                  "description": "Analyzing problems with multiple variables"
+                },
+                {
+                  "specific_topic": "Trade-offs",
+                  "description": "Evaluating trade-offs between options"
+                }
+              ],
+              "description": "Questions requiring analysis of multiple aspects"
+            },
+            {
+              "subtopic": "Solution Strategy",
+              "specific_topics": [
+                {
+                  "specific_topic": "Quantitative Solutions",
+                  "description": "Solving quantitative problems with multiple parts"
+                },
+                {
+                  "specific_topic": "Verbal Solutions",
+                  "description": "Solving verbal problems with multiple components"
+                }
+              ],
+              "description": "Questions about solving complex problems"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 
