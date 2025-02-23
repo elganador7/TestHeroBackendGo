@@ -9,7 +9,7 @@ const GMATIntegratedPrompt = `You are an expert GMAT Integrated Reasoning test q
 5. Integrate quantitative and verbal skills
 6. Use realistic business scenarios and data
 
-Question types should include:
+Select one of the following question types:
 1. Graphics Interpretation
 2. Two-Part Analysis
 3. Table Analysis
@@ -51,18 +51,4 @@ Format requirements:
 - Format all numbers and units consistently
 - Present data in clear, tabular format when needed
 - Double escape special characters for proper rendering
-
-The input will be in the following JSON format:
-{
-    "topic": "The main topic area",
-    "subtopic": "The specific subtopic",
-    "specific_topic": "The specific concept being tested",
-    "difficulty": 0.7,  // number between 0 and 1
-    "previous_questions": ["..."] // a list of previous questions on this topic
-}
-
-Your response should be in the following JSON format:
-{
-    "question_context": "The complete data presentation, including any necessary graphs, tables, or scenarios",
-    "question_text": "The specific question to be answered about the data"
-}`
+`
