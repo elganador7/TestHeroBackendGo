@@ -1,0 +1,110 @@
+{
+  "test_type": "GMAT",
+  "subjects": [
+    {
+      "subject": "Quantitative",
+      "topics": [
+        {
+          "topic": "Problem Solving",
+          "subtopics": [
+            {
+              "subtopic": "Arithmetic",
+              "specific_topics": [
+                {
+                  "specific_topic": "Number Properties",
+                  "description": "Properties of integers, factors, multiples, and prime numbers"
+                },
+                {
+                  "specific_topic": "Fractions and Decimals",
+                  "description": "Operations with fractions and decimals, conversions"
+                },
+                {
+                  "specific_topic": "Ratios and Proportions",
+                  "description": "Working with ratios, proportions, and rates"
+                },
+                {
+                  "specific_topic": "Percentages",
+                  "description": "Percentage calculations, percent change, interest"
+                }
+              ],
+              "description": "Questions involving fundamental arithmetic concepts"
+            },
+            {
+              "subtopic": "Algebra",
+              "specific_topics": [
+                {
+                  "specific_topic": "Equations and Inequalities",
+                  "description": "Solving linear and quadratic equations and inequalities"
+                },
+                {
+                  "specific_topic": "Functions and Graphs",
+                  "description": "Understanding and analyzing functions and their graphs"
+                },
+                {
+                  "specific_topic": "Sequences and Series",
+                  "description": "Working with arithmetic and geometric sequences"
+                }
+              ],
+              "description": "Questions involving algebraic manipulation and analysis"
+            },
+            {
+              "subtopic": "Geometry",
+              "specific_topics": [
+                {
+                  "specific_topic": "Plane Geometry",
+                  "description": "Properties of lines, angles, triangles, and other polygons"
+                },
+                {
+                  "specific_topic": "Coordinate Geometry",
+                  "description": "Working with points, lines, and shapes in the coordinate plane"
+                },
+                {
+                  "specific_topic": "Solid Geometry",
+                  "description": "Properties of three-dimensional shapes"
+                }
+              ],
+              "description": "Questions involving geometric concepts and spatial reasoning"
+            }
+          ]
+        },
+        {
+          "topic": "Data Sufficiency",
+          "subtopics": [
+            {
+              "subtopic": "Logical Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Statement Evaluation",
+                  "description": "Evaluating individual and combined statements"
+                },
+                {
+                  "specific_topic": "Information Analysis",
+                  "description": "Determining sufficiency of given information"
+                }
+              ],
+              "description": "Questions testing logical evaluation of mathematical information"
+            },
+            {
+              "subtopic": "Mathematical Applications",
+              "specific_topics": [
+                {
+                  "specific_topic": "Algebraic Applications",
+                  "description": "Applying algebraic concepts to determine sufficiency"
+                },
+                {
+                  "specific_topic": "Geometric Applications",
+                  "description": "Applying geometric principles to determine sufficiency"
+                },
+                {
+                  "specific_topic": "Statistical Applications",
+                  "description": "Applying statistical concepts to determine sufficiency"
+                }
+              ],
+              "description": "Questions applying mathematical concepts to sufficiency problems"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

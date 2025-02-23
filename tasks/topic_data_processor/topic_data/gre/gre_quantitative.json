@@ -1,0 +1,154 @@
+{
+  "test_type": "GRE",
+  "subjects": [
+    {
+      "subject": "Quantitative",
+      "topics": [
+        {
+          "topic": "Arithmetic",
+          "subtopics": [
+            {
+              "subtopic": "Number Properties",
+              "specific_topics": [
+                {
+                  "specific_topic": "Integers",
+                  "description": "Properties of integers, including divisibility, factorization, prime numbers, and remainders"
+                },
+                {
+                  "specific_topic": "Fractions and Decimals",
+                  "description": "Operations with fractions and decimals, conversion between forms"
+                },
+                {
+                  "specific_topic": "Exponents and Roots",
+                  "description": "Properties of exponents and roots, scientific notation"
+                }
+              ],
+              "description": "Questions testing understanding of fundamental number properties"
+            },
+            {
+              "subtopic": "Ratio and Proportion",
+              "specific_topics": [
+                {
+                  "specific_topic": "Ratios and Proportions",
+                  "description": "Working with ratios, proportions, and variation"
+                },
+                {
+                  "specific_topic": "Percentages",
+                  "description": "Percentage problems, including percent change and interest"
+                }
+              ],
+              "description": "Questions involving relationships between quantities"
+            }
+          ]
+        },
+        {
+          "topic": "Algebra",
+          "subtopics": [
+            {
+              "subtopic": "Equations and Expressions",
+              "specific_topics": [
+                {
+                  "specific_topic": "Linear Equations",
+                  "description": "Solving linear equations and inequalities"
+                },
+                {
+                  "specific_topic": "Quadratic Equations",
+                  "description": "Solving quadratic equations, factoring, and completing the square"
+                },
+                {
+                  "specific_topic": "Systems of Equations",
+                  "description": "Solving systems of linear equations and inequalities"
+                }
+              ],
+              "description": "Questions testing equation solving and manipulation"
+            },
+            {
+              "subtopic": "Functions and Graphs",
+              "specific_topics": [
+                {
+                  "specific_topic": "Function Properties",
+                  "description": "Understanding domain, range, and function operations"
+                },
+                {
+                  "specific_topic": "Graph Analysis",
+                  "description": "Interpreting and analyzing graphs of functions"
+                }
+              ],
+              "description": "Questions about functions and their graphical representations"
+            }
+          ]
+        },
+        {
+          "topic": "Geometry",
+          "subtopics": [
+            {
+              "subtopic": "Plane Geometry",
+              "specific_topics": [
+                {
+                  "specific_topic": "Lines and Angles",
+                  "description": "Properties of parallel and perpendicular lines, angle relationships"
+                },
+                {
+                  "specific_topic": "Polygons",
+                  "description": "Properties of triangles, quadrilaterals, and other polygons"
+                },
+                {
+                  "specific_topic": "Circles",
+                  "description": "Properties of circles, including arcs, angles, and areas"
+                }
+              ],
+              "description": "Questions about two-dimensional geometric figures"
+            },
+            {
+              "subtopic": "Coordinate Geometry",
+              "specific_topics": [
+                {
+                  "specific_topic": "Distance and Midpoint",
+                  "description": "Finding distances and midpoints in the coordinate plane"
+                },
+                {
+                  "specific_topic": "Equations of Lines",
+                  "description": "Working with slopes and equations of lines"
+                }
+              ],
+              "description": "Questions involving the coordinate plane"
+            }
+          ]
+        },
+        {
+          "topic": "Data Analysis",
+          "subtopics": [
+            {
+              "subtopic": "Descriptive Statistics",
+              "specific_topics": [
+                {
+                  "specific_topic": "Statistical Measures",
+                  "description": "Mean, median, mode, range, and standard deviation"
+                },
+                {
+                  "specific_topic": "Data Interpretation",
+                  "description": "Interpreting data from tables, graphs, and charts"
+                }
+              ],
+              "description": "Questions about statistical analysis and interpretation"
+            },
+            {
+              "subtopic": "Probability",
+              "specific_topics": [
+                {
+                  "specific_topic": "Basic Probability",
+                  "description": "Calculating probabilities of simple and compound events"
+                },
+                {
+                  "specific_topic": "Counting Methods",
+                  "description": "Using permutations and combinations"
+                }
+              ],
+              "description": "Questions involving probability and counting principles"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

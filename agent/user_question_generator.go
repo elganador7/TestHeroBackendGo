@@ -109,14 +109,17 @@ func (a *Agent) GenerateNewQuestionWithTopicData(testTopicData models.TestTopicD
 		Topic:             testTopicData.Topic,
 		Subtopic:          testTopicData.Subtopic,
 		SpecificTopic:     testTopicData.SpecificTopic,
+		Description:       testTopicData.Description,
 		Difficulty:        difficulty,
 		PreviousQuestions: previousQuestionTexts,
 	}
 
-	systemPrompt, ok := prompts.PromptMap[testTopicData.TestType][testTopicData.Subject]
+	specificPrompt, ok := prompts.SubjectTopicPromptMap[testTopicData.TestType][testTopicData.Subject]
 	if !ok {
 		return models.Question{}, fmt.Errorf("no prompt found for test type %s and subject %s", testTopicData.TestType, testTopicData.Subject)
 	}
+
+	systemPrompt := prompts.BasePromptStructure + specificPrompt
 
 	// Call the agent with the system prompt
 	questionResponse, err := a.GenerateNewQuestion(inputSchema, systemPrompt)
@@ -146,6 +149,7 @@ func (a *Agent) GenerateNewQuestionWithTopicData(testTopicData models.TestTopicD
 	// Save the question to the database
 	question := models.Question{
 		ID:            uuid.NewString(),
+		Paragraph:     questionResponse.QuestionContext,
 		QuestionText:  questionResponse.QuestionText,
 		Options:       optionsResponse.Options,
 		EstimatedTime: 60,

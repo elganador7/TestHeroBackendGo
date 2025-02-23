@@ -1,0 +1,121 @@
+{
+  "test_type": "LSAT",
+  "subjects": [
+    {
+      "subject": "Reading",
+      "topics": [
+        {
+          "topic": "Main Idea and Structure",
+          "subtopics": [
+            {
+              "subtopic": "Primary Purpose",
+              "specific_topics": [
+                {
+                  "specific_topic": "Main Idea Identification",
+                  "description": "Identifying the central theme or main argument of passages"
+                },
+                {
+                  "specific_topic": "Author's Purpose",
+                  "description": "Understanding the author's primary goal or intention"
+                },
+                {
+                  "specific_topic": "Passage Organization",
+                  "description": "Understanding how information is structured within passages"
+                }
+              ],
+              "description": "Questions about overall passage understanding"
+            },
+            {
+              "subtopic": "Argument Structure",
+              "specific_topics": [
+                {
+                  "specific_topic": "Supporting Evidence",
+                  "description": "Identifying evidence used to support main arguments"
+                },
+                {
+                  "specific_topic": "Counterarguments",
+                  "description": "Recognizing and analyzing opposing viewpoints"
+                }
+              ],
+              "description": "Questions about how arguments are constructed"
+            }
+          ]
+        },
+        {
+          "topic": "Detailed Analysis",
+          "subtopics": [
+            {
+              "subtopic": "Specific Information",
+              "specific_topics": [
+                {
+                  "specific_topic": "Fact Location",
+                  "description": "Finding specific details within passages"
+                },
+                {
+                  "specific_topic": "Context Understanding",
+                  "description": "Understanding how details fit into larger context"
+                },
+                {
+                  "specific_topic": "Reference Tracking",
+                  "description": "Following references and connections within text"
+                }
+              ],
+              "description": "Questions about specific passage details"
+            },
+            {
+              "subtopic": "Inference",
+              "specific_topics": [
+                {
+                  "specific_topic": "Logical Inference",
+                  "description": "Drawing logical conclusions from passage content"
+                },
+                {
+                  "specific_topic": "Author's Attitude",
+                  "description": "Inferring author's perspective or tone"
+                }
+              ],
+              "description": "Questions requiring drawing conclusions"
+            }
+          ]
+        },
+        {
+          "topic": "Comparative Reading",
+          "subtopics": [
+            {
+              "subtopic": "Passage Relationships",
+              "specific_topics": [
+                {
+                  "specific_topic": "Theme Comparison",
+                  "description": "Comparing themes across multiple passages"
+                },
+                {
+                  "specific_topic": "Argument Comparison",
+                  "description": "Analyzing different approaches to similar arguments"
+                },
+                {
+                  "specific_topic": "Perspective Analysis",
+                  "description": "Comparing different viewpoints on similar topics"
+                }
+              ],
+              "description": "Questions comparing multiple passages"
+            },
+            {
+              "subtopic": "Synthesis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Information Integration",
+                  "description": "Combining information from multiple passages"
+                },
+                {
+                  "specific_topic": "Cross-Reference",
+                  "description": "Understanding how passages reference or relate to each other"
+                }
+              ],
+              "description": "Questions requiring integration of multiple passages"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 

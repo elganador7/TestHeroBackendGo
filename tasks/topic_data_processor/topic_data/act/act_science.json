@@ -1,0 +1,266 @@
+{
+  "test_type": "ACT",
+  "subject": "Science",
+  "topics": [
+    {
+      "topic": "Data Interpretation",
+      "subtopics": [
+        {
+          "subtopic": "Graph Analysis",
+          "specific_topics": [
+            {
+              "specific_topic": "Line Graphs and Trends",
+              "description": "Interpreting trends, slopes, and relationships in line graphs; identifying direct and inverse relationships"
+            },
+            {
+              "specific_topic": "Bar Graphs and Comparisons",
+              "description": "Comparing quantities across categories, analyzing distributions, identifying patterns in grouped data"
+            },
+            {
+              "specific_topic": "Scatter Plots and Correlations",
+              "description": "Analyzing relationships between variables, identifying correlation strength and direction"
+            },
+            {
+              "specific_topic": "Multiple Variable Relationships",
+              "description": "Interpreting graphs with multiple dependent or independent variables, understanding complex relationships"
+            },
+            {
+              "specific_topic": "Interpolation and Extrapolation",
+              "description": "Predicting values within and beyond given data points, understanding limitations of predictions"
+            }
+          ]
+        },
+        {
+          "subtopic": "Table Analysis",
+          "specific_topics": [
+            {
+              "specific_topic": "Data Pattern Recognition",
+              "description": "Identifying trends and patterns in tabulated data, recognizing relationships across rows and columns"
+            },
+            {
+              "specific_topic": "Numerical Relationships",
+              "description": "Understanding mathematical relationships between values, calculating ratios and proportions"
+            },
+            {
+              "specific_topic": "Variable Dependencies",
+              "description": "Analyzing how changes in one variable affect others, identifying dependent and independent variables"
+            },
+            {
+              "specific_topic": "Data Comparison",
+              "description": "Comparing values across different conditions or trials, identifying similarities and differences"
+            },
+            {
+              "specific_topic": "Unit Conversion",
+              "description": "Converting between different units of measurement, understanding unit relationships"
+            }
+          ]
+        },
+        {
+          "subtopic": "Figure Analysis",
+          "specific_topics": [
+            {
+              "specific_topic": "Scientific Diagrams",
+              "description": "Interpreting labeled diagrams of scientific equipment, processes, or systems"
+            },
+            {
+              "specific_topic": "Experimental Setups",
+              "description": "Understanding laboratory apparatus arrangements and experimental configurations"
+            },
+            {
+              "specific_topic": "Process Flow Charts",
+              "description": "Following sequential steps in scientific processes, understanding cause and effect relationships"
+            },
+            {
+              "specific_topic": "Model Interpretation",
+              "description": "Understanding scientific models, diagrams, and their representations of real phenomena"
+            },
+            {
+              "specific_topic": "Scale and Measurement",
+              "description": "Understanding scale factors, proportions, and measurements in scientific diagrams"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "Research Summaries",
+      "subtopics": [
+        {
+          "subtopic": "Experimental Design",
+          "specific_topics": [
+            {
+              "specific_topic": "Control Variables",
+              "description": "Identifying and understanding the purpose of controlled variables in experiments"
+            },
+            {
+              "specific_topic": "Independent Variables",
+              "description": "Recognizing variables being manipulated by researchers in experiments"
+            },
+            {
+              "specific_topic": "Dependent Variables",
+              "description": "Identifying measured outcomes and understanding how they respond to changes"
+            },
+            {
+              "specific_topic": "Experimental Controls",
+              "description": "Understanding control groups and their role in experimental validity"
+            },
+            {
+              "specific_topic": "Sample Size and Groups",
+              "description": "Analyzing the selection and size of experimental groups and their impact on results"
+            }
+          ]
+        },
+        {
+          "subtopic": "Data Collection",
+          "specific_topics": [
+            {
+              "specific_topic": "Measurement Techniques",
+              "description": "Understanding methods used to collect scientific data and their limitations"
+            },
+            {
+              "specific_topic": "Data Recording Methods",
+              "description": "Analyzing how data is recorded, organized, and documented in experiments"
+            },
+            {
+              "specific_topic": "Error Analysis",
+              "description": "Identifying sources of experimental error and their impact on results"
+            },
+            {
+              "specific_topic": "Precision and Accuracy",
+              "description": "Understanding the difference between precise and accurate measurements"
+            },
+            {
+              "specific_topic": "Sampling Methods",
+              "description": "Analyzing different approaches to collecting representative samples"
+            }
+          ]
+        },
+        {
+          "subtopic": "Results Analysis",
+          "specific_topics": [
+            {
+              "specific_topic": "Data Trends",
+              "description": "Identifying patterns and trends in experimental results"
+            },
+            {
+              "specific_topic": "Statistical Analysis",
+              "description": "Understanding basic statistical concepts and their application to data"
+            },
+            {
+              "specific_topic": "Cause and Effect",
+              "description": "Determining relationships between variables and experimental outcomes"
+            },
+            {
+              "specific_topic": "Experimental Error",
+              "description": "Evaluating the impact of errors on experimental conclusions"
+            },
+            {
+              "specific_topic": "Results Interpretation",
+              "description": "Drawing valid conclusions from experimental data and observations"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "Conflicting Viewpoints",
+      "subtopics": [
+        {
+          "subtopic": "Theory Comparison",
+          "specific_topics": [
+            {
+              "specific_topic": "Competing Hypotheses",
+              "description": "Analyzing different explanations for scientific phenomena"
+            },
+            {
+              "specific_topic": "Evidence Evaluation",
+              "description": "Assessing the strength of evidence supporting different theories"
+            },
+            {
+              "specific_topic": "Assumption Identification",
+              "description": "Recognizing underlying assumptions in different scientific theories"
+            },
+            {
+              "specific_topic": "Prediction Comparison",
+              "description": "Comparing predictions made by different scientific models or theories"
+            },
+            {
+              "specific_topic": "Model Strengths and Weaknesses",
+              "description": "Evaluating the advantages and limitations of different scientific models"
+            }
+          ]
+        },
+        {
+          "subtopic": "Scientific Arguments",
+          "specific_topics": [
+            {
+              "specific_topic": "Supporting Evidence",
+              "description": "Analyzing evidence used to support scientific claims and arguments"
+            },
+            {
+              "specific_topic": "Counterarguments",
+              "description": "Understanding opposing viewpoints and their supporting evidence"
+            },
+            {
+              "specific_topic": "Experimental Support",
+              "description": "Evaluating how experimental results support different theories"
+            },
+            {
+              "specific_topic": "Logical Reasoning",
+              "description": "Analyzing the logic and validity of scientific arguments"
+            },
+            {
+              "specific_topic": "Conclusion Validity",
+              "description": "Assessing whether conclusions are supported by available evidence"
+            }
+          ]
+        },
+        {
+          "subtopic": "Scientific Method",
+          "specific_topics": [
+            "Hypothesis Testing",
+            "Experimental Design",
+            "Data Analysis",
+            "Result Interpretation",
+            "Theory Modification"
+          ]
+        }
+      ]
+    },
+    {
+      "topic": "Scientific Investigation",
+      "subtopics": [
+        {
+          "subtopic": "Laboratory Techniques",
+          "specific_topics": [
+            "Equipment Usage",
+            "Measurement Methods",
+            "Safety Procedures",
+            "Data Collection",
+            "Error Prevention"
+          ]
+        },
+        {
+          "subtopic": "Scientific Reasoning",
+          "specific_topics": [
+            "Hypothesis Formation",
+            "Variable Identification",
+            "Procedure Analysis",
+            "Result Prediction",
+            "Conclusion Drawing"
+          ]
+        },
+        {
+          "subtopic": "Data Reporting",
+          "specific_topics": [
+            "Data Organization",
+            "Graph Creation",
+            "Table Construction",
+            "Result Summary",
+            "Error Analysis"
+          ]
+        }
+      ]
+    }
+  ]
+} 
