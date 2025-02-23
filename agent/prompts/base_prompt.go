@@ -42,7 +42,7 @@ const (
 
         Your response should be in the following JSON format:
         {
-            "question_context": "Any necessary context for the question (leave empty if not needed)",
+            "question_context": "Any necessary context for the question. If the question and the context needed to answer it is longer than 50 words, split it up into context and question sections",
             "question_text": "The specific question to be answered"
         }
         
