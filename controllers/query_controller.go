@@ -33,14 +33,17 @@ func NewQueryController(db *gorm.DB, agent *agent.Agent) *QueryController {
 }
 
 func (ctrl *QueryController) GenerateNewQuestionHandler(c *gin.Context) {
-	var testTopicData models.TestTopicData
+	var req struct {
+		TestTopicData models.TestTopicData `json:"test_topic_data"`
+		UserId        string               `json:"user_id"`
+	}
 
-	if err := c.ShouldBindJSON(&testTopicData); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	question, err := ctrl.GenerateNewQuestionWithTopicData(testTopicData, rand.Float64())
+	question, err := ctrl.GenerateNewQuestionWithTopicData(req.TestTopicData, rand.Float64())
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -70,9 +73,7 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 		QuestionText: originalQuestion.QuestionText,
 	}
 
-	log.Printf("Original question: %+v", originalQuestion)
-
-	systemPrompt, ok := prompts.PromptMap[originalQuestion.TestTopic.TestType][originalQuestion.TestTopic.Subject]
+	systemPrompt, ok := prompts.SubjectTopicPromptMap[originalQuestion.TestTopic.TestType][originalQuestion.TestTopic.Subject]
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid test type or subject in original question"})
 		return
@@ -243,7 +244,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 		PreviousQuestions: previousQuestionTexts,
 	}
 
-	systemPrompt, ok := prompts.PromptMap[testTopicData.TestType][testTopicData.Subject]
+	systemPrompt, ok := prompts.SubjectTopicPromptMap[testTopicData.TestType][testTopicData.Subject]
 	if !ok {
 		return models.Question{}, fmt.Errorf("no prompt found for test type %s and subject %s", testTopicData.TestType, testTopicData.Subject)
 	}
@@ -276,6 +277,7 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 	// Save the question to the database
 	question := models.Question{
 		ID:            uuid.NewString(),
+		Paragraph:     questionResponse.QuestionContext,
 		QuestionText:  questionResponse.QuestionText,
 		Options:       optionsResponse.Options,
 		EstimatedTime: 60,

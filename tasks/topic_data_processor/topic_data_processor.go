@@ -32,7 +32,7 @@ type Subject struct {
 	Topics  []Topic `json:"topics"`
 }
 
-type ACTData struct {
+type TestData struct {
 	TestType string    `json:"test_type"`
 	Subjects []Subject `json:"subjects"`
 }
@@ -54,23 +54,23 @@ func processFile(filePath string, db *gorm.DB) error {
 	}
 
 	// Parse the JSON data into Go structure
-	var actData ACTData
-	if err := json.Unmarshal(data, &actData); err != nil {
+	var testData TestData
+	if err := json.Unmarshal(data, &testData); err != nil {
 		return fmt.Errorf("failed to unmarshal JSON from %s: %v", filePath, err)
 	}
 
 	// Insert data into the database
-	for _, subject := range actData.Subjects {
+	for _, subject := range testData.Subjects {
 		for _, topic := range subject.Topics {
 			for _, subtopic := range topic.Subtopics {
 				for _, specificTopic := range subtopic.SpecificTopics {
-					if exists := checkIfExists(db, actData.TestType, subject.Subject, topic.Topic, subtopic.Subtopic, specificTopic.SpecificTopic); exists {
+					if exists := checkIfExists(db, testData.TestType, subject.Subject, topic.Topic, subtopic.Subtopic, specificTopic.SpecificTopic); exists {
 						continue
 					}
 
 					testTopic := models.TestTopicData{
 						ID:            uuid.New().String(),
-						TestType:      actData.TestType,
+						TestType:      testData.TestType,
 						Subject:       subject.Subject,
 						Topic:         topic.Topic,
 						Subtopic:      subtopic.Subtopic,

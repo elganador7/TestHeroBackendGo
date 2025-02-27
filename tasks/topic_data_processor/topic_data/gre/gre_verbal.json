@@ -1,0 +1,113 @@
+{
+  "test_type": "GRE",
+  "subjects": [
+    {
+      "subject": "Verbal",
+      "topics": [
+        {
+          "topic": "Reading Comprehension",
+          "subtopics": [
+            {
+              "subtopic": "Single Passage Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Main Ideas and Themes",
+                  "description": "Identifying central ideas, themes, and purpose of passages"
+                },
+                {
+                  "specific_topic": "Supporting Details",
+                  "description": "Analyzing specific information and details that support main ideas"
+                },
+                {
+                  "specific_topic": "Inference",
+                  "description": "Drawing logical conclusions based on passage content"
+                }
+              ],
+              "description": "Questions based on understanding and analyzing single passages"
+            },
+            {
+              "subtopic": "Paired Passage Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Comparison and Contrast",
+                  "description": "Analyzing relationships between paired passages"
+                },
+                {
+                  "specific_topic": "Multiple Viewpoints",
+                  "description": "Understanding different perspectives on the same topic"
+                }
+              ],
+              "description": "Questions involving analysis of multiple related passages"
+            }
+          ]
+        },
+        {
+          "topic": "Text Completion",
+          "subtopics": [
+            {
+              "subtopic": "Sentence Completion",
+              "specific_topics": [
+                {
+                  "specific_topic": "Single-Blank Sentences",
+                  "description": "Completing sentences with one missing word"
+                },
+                {
+                  "specific_topic": "Multiple-Blank Sentences",
+                  "description": "Completing sentences with two or three missing words"
+                }
+              ],
+              "description": "Questions involving completing sentences with appropriate words"
+            },
+            {
+              "subtopic": "Context Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Contextual Clues",
+                  "description": "Using context to determine appropriate word choices"
+                },
+                {
+                  "specific_topic": "Logical Relationships",
+                  "description": "Understanding relationships between sentence parts"
+                }
+              ],
+              "description": "Questions about using context to determine meaning"
+            }
+          ]
+        },
+        {
+          "topic": "Sentence Equivalence",
+          "subtopics": [
+            {
+              "subtopic": "Vocabulary in Context",
+              "specific_topics": [
+                {
+                  "specific_topic": "Synonym Recognition",
+                  "description": "Identifying words with similar meanings in context"
+                },
+                {
+                  "specific_topic": "Semantic Precision",
+                  "description": "Selecting words that create similar meanings in context"
+                }
+              ],
+              "description": "Questions about selecting equivalent sentence completions"
+            },
+            {
+              "subtopic": "Sentence Analysis",
+              "specific_topics": [
+                {
+                  "specific_topic": "Meaning Analysis",
+                  "description": "Analyzing how different words affect sentence meaning"
+                },
+                {
+                  "specific_topic": "Context Clues",
+                  "description": "Using context to identify appropriate word pairs"
+                }
+              ],
+              "description": "Questions about analyzing sentence structure and meaning"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 
