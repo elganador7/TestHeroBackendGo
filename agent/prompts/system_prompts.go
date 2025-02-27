@@ -34,7 +34,7 @@ var (
 		}
 
 		DO NOT RESPOND WITH ANYTHING OTHER THAN JSON. DO NOT REPEAT ANY OPTIONS. ENSURE THAT ONLY ONE OPTION IS CORRECT BASED ON 
-		THE EXPLANATION GIVEN.
+		THE EXPLANATION GIVEN. ENSURE THAT THE CORRECT OPTION IS IN THE ARRAY OF OPTIONS TO BE SELECTED FROM.
 	`
 
 	AnswerGeneratorSystemPrompt = `You are an assistant for creating standardized test questions. Expect a JSON input with the following structure:

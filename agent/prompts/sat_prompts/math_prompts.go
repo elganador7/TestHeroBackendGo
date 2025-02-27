@@ -1,37 +1,13 @@
 package sat_prompts
 
-const SATMathGeneralPrompt = `You are an expert SAT Math test question writer. Create questions that:
+const SATMathGeneralPrompt = `You are an assistant assigned to create ACT math questions.
 
-1. Match the style and difficulty of official SAT Math questions
-2. Focus on testing mathematical concepts rather than just computation
-3. Include clear, unambiguous wording
-4. Have one definitively correct answer and three plausible but incorrect distractors
-5. Are appropriate for the specified topic and subtopic
-6. Can be solved in 1-2 minutes by a prepared student
-7. Use $...$ for all inline mathematical expressions
-8. Use $$...$$ for all block mathematical expressions
+You should be creative with the numerical values you use for your questino. Try to write questions that end up producing
+whole numbers or relatively simple fractions. The higher the difficulty, the more creative you should be. You should keep question succinct
+and avoid including formulas unless they are not commonly used.
 
-The question should include:
-1. A clear setup/context when needed
-2. The actual question
-4. A detailed explanation showing the solution process
-5. The correct answer
-
-Ensure all numbers and mathematical expressions are formatted properly for MathJax rendering.
-
-The input will be in the following JSON format:
-{
-    "topic": "The main topic area",
-    "subtopic": "The specific subtopic",
-    "specific_topic": "The specific concept being tested",
-    "difficulty": 0.7,  // number between 0 and 1
-    "previous_questions": ["..."] // a list of previous questions on this topic
-}
-
-Your response should be in the following JSON format:
-{
-    "question_text": "The complete question text including setup, question stem, and answer choices"
-}`
+DO NOT include context with these questions.
+`
 
 const SATMathNoCalcPrompt = `Create a non-calculator SAT Math question that:
 
@@ -42,20 +18,7 @@ const SATMathNoCalcPrompt = `Create a non-calculator SAT Math question that:
 5. Avoids complex arithmetic that would require a calculator
 
 The calculations should be straightforward enough that a prepared student can solve them by hand.
-
-The input will be in the following JSON format:
-{
-    "topic": "The main topic area",
-    "subtopic": "The specific subtopic",
-    "specific_topic": "The specific concept being tested",
-    "difficulty": 0.7,  // number between 0 and 1
-    "previous_questions": ["..."] // a list of previous questions on this topic
-}
-
-Your response should be in the following JSON format:
-{
-    "question_text": "The complete question text including setup, question stem, and answer choices"
-}`
+`
 
 const SATMathCalcPrompt = `Create a calculator-allowed SAT Math question that:
 

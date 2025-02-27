@@ -34,21 +34,7 @@ Ensure questions:
 - Require careful reading and analysis
 - Test higher-order thinking skills
 - Can be answered definitively from the passage
-
-The input will be in the following JSON format:
-{
-    "topic": "The main topic area",
-    "subtopic": "The specific subtopic",
-    "specific_topic": "The specific concept being tested",
-    "difficulty": 0.7,  // number between 0 and 1
-    "previous_questions": ["..."] // a list of previous questions on this topic
-}
-
-Your response should be in the following JSON format:
-{
-    "question_context": "The complete passage text that the question is based on",
-    "question_text": "The specific question to be answered about the passage"
-}`
+`
 
 const SATReadingLiteraturePrompt = `Create a Literature passage-based question that:
 
