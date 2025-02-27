@@ -38,7 +38,7 @@ var (
 			- Test both explicit and implicit understanding
 			- Require critical thinking and analysis
 			- Can be answered solely from the passage
-
+		3.	Return the passage as the context field of the response JSON object.
 
 		For line references, use:
 		"In line X, the word/phrase '___' most nearly means..."

@@ -21,7 +21,8 @@ Question types should include:
 Your task is to generate:
 1. A passage appropriate for SAT Reading level
 2. A clear, focused question about the passage
-3. Do not include answer choices or explanations
+3.	Return the passage as the context field of the response JSON object.
+4. Do not include answer choices or explanations
 
 Ensure passages:
 - Are sophisticated but accessible
