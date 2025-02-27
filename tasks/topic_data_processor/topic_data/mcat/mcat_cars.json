@@ -1,0 +1,117 @@
+{
+  "test_type": "MCAT",
+  "subjects": [
+    {
+      "subject": "CARS",
+      "topics": [
+        {
+          "topic": "Foundations of Comprehension",
+          "subtopics": [
+            {
+              "subtopic": "Main Ideas",
+              "specific_topics": [
+                {
+                  "specific_topic": "Central Theme",
+                  "description": "Identifying main themes and arguments in passages"
+                },
+                {
+                  "specific_topic": "Author's Purpose",
+                  "description": "Understanding the author's goals and intentions"
+                },
+                {
+                  "specific_topic": "Passage Structure",
+                  "description": "Analyzing how information is organized and presented"
+                }
+              ],
+              "description": "Understanding core concepts and organization of passages"
+            },
+            {
+              "subtopic": "Reasoning Within Text",
+              "specific_topics": [
+                {
+                  "specific_topic": "Evidence Analysis",
+                  "description": "Evaluating support for arguments and claims"
+                },
+                {
+                  "specific_topic": "Inference",
+                  "description": "Drawing logical conclusions from passage content"
+                }
+              ],
+              "description": "Analyzing arguments and drawing conclusions"
+            }
+          ]
+        },
+        {
+          "topic": "Critical Analysis",
+          "subtopics": [
+            {
+              "subtopic": "Argument Evaluation",
+              "specific_topics": [
+                {
+                  "specific_topic": "Logic Assessment",
+                  "description": "Evaluating the strength of arguments"
+                },
+                {
+                  "specific_topic": "Assumptions",
+                  "description": "Identifying underlying assumptions"
+                },
+                {
+                  "specific_topic": "Counterarguments",
+                  "description": "Recognizing and evaluating opposing viewpoints"
+                }
+              ],
+              "description": "Evaluating the strength and validity of arguments"
+            },
+            {
+              "subtopic": "Application and Integration",
+              "specific_topics": [
+                {
+                  "specific_topic": "New Information",
+                  "description": "Applying passage concepts to new situations"
+                },
+                {
+                  "specific_topic": "Interdisciplinary Analysis",
+                  "description": "Connecting ideas across different fields"
+                }
+              ],
+              "description": "Applying passage concepts to new contexts"
+            }
+          ]
+        },
+        {
+          "topic": "Reading Strategy",
+          "subtopics": [
+            {
+              "subtopic": "Comprehension Techniques",
+              "specific_topics": [
+                {
+                  "specific_topic": "Active Reading",
+                  "description": "Engaging with text effectively"
+                },
+                {
+                  "specific_topic": "Context Analysis",
+                  "description": "Understanding meaning through context"
+                }
+              ],
+              "description": "Strategies for effective reading comprehension"
+            },
+            {
+              "subtopic": "Time Management",
+              "specific_topics": [
+                {
+                  "specific_topic": "Passage Prioritization",
+                  "description": "Managing time across multiple passages"
+                },
+                {
+                  "specific_topic": "Question Strategy",
+                  "description": "Approaching questions efficiently"
+                }
+              ],
+              "description": "Managing time effectively during the exam"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+} 
