@@ -24,3 +24,6 @@ go.work.sum
 # env file
 .env
 oauth_keys.json
+
+# terraform
+terraform.tfvars
