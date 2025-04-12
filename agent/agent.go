@@ -241,7 +241,7 @@ func (a *Agent) ValidateMathJaxFormatting(input models.Question) (models.Questio
 	// Create a structured output parameter
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
 		Name:        openai.F("validate_math_jax_formatting"),
-		Description: openai.F("Generate options for a question based on the question text and answer in json"),
+		Description: openai.F("Validate that the question is formatted using MathJax compatible LaTeX"),
 		Schema:      openai.F(rawQuestionOutputSchema),
 		Strict:      openai.Bool(true),
 	}

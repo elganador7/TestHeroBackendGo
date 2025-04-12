@@ -5,11 +5,8 @@ var (
 		You will receive a JSON object containing a set of fields defiining a question, an answer, 
 		and options.
 
-		Ensure that the structured data input is formatted in a way that will render properly in using a 
-		markdown renderer in React with MathJax to render embedded LaTeX. 
-		
-		If there are errors in the formatting, modify the object if needed and return it in the same JSON format that you
-		receive it in.
+		Your sole job is to return the JSON object with each LaTeX equation surrounded by dollar signs 
+        like this: $...$ for inline math or $$...$$ for block math.
 	`
 )
 
@@ -20,7 +17,7 @@ const (
         2. If you need to include mathematical expressions, use the following format:
         - Surround all mathematical expressions that are part of a sentence with non-mathematical text with dollar signs like this: $...$
         - Surround all formulas that are on their own line mathematical expressions with double dollar signs like this: $$...$$
-        - Ensure all mathematical symbols are properly formatted using Mathjax Compatible LaTeX
+        - Ensure all mathematical symbols are properly formatted using LaTeX
     `
 
 	BasePromptStructure = `You are an expert question writer for standardized tests. You should assume you specialize in the test type given.
