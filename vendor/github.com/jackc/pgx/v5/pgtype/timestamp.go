@@ -46,7 +46,7 @@ func (ts *Timestamp) Scan(src any) error {
 
 	switch src := src.(type) {
 	case string:
-		return (&scanPlanTextTimestampToTimestampScanner{}).Scan([]byte(src), ts)
+		return scanPlanTextTimestampToTimestampScanner{}.Scan([]byte(src), ts)
 	case time.Time:
 		*ts = Timestamp{Time: src, Valid: true}
 		return nil
@@ -104,8 +104,8 @@ func (ts *Timestamp) UnmarshalJSON(b []byte) error {
 	case "-infinity":
 		*ts = Timestamp{Valid: true, InfinityModifier: -Infinity}
 	default:
-		// PostgreSQL uses ISO 8601 wihout timezone for to_json function and casting from a string to timestampt
-		tim, err := time.Parse(time.RFC3339Nano, *s+"Z")
+		// PostgreSQL uses ISO 8601 for to_json function and casting from a string to timestamptz
+		tim, err := time.Parse(time.RFC3339Nano, *s)
 		if err != nil {
 			return err
 		}
@@ -116,21 +116,17 @@ func (ts *Timestamp) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-type TimestampCodec struct {
-	// ScanLocation is the location that the time is assumed to be in for scanning. This is different from
-	// TimestamptzCodec.ScanLocation in that this setting does change the instant in time that the timestamp represents.
-	ScanLocation *time.Location
-}
+type TimestampCodec struct{}
 
-func (*TimestampCodec) FormatSupported(format int16) bool {
+func (TimestampCodec) FormatSupported(format int16) bool {
 	return format == TextFormatCode || format == BinaryFormatCode
 }
 
-func (*TimestampCodec) PreferredFormat() int16 {
+func (TimestampCodec) PreferredFormat() int16 {
 	return BinaryFormatCode
 }
 
-func (*TimestampCodec) PlanEncode(m *Map, oid uint32, format int16, value any) EncodePlan {
+func (TimestampCodec) PlanEncode(m *Map, oid uint32, format int16, value any) EncodePlan {
 	if _, ok := value.(TimestampValuer); !ok {
 		return nil
 	}
@@ -224,26 +220,27 @@ func discardTimeZone(t time.Time) time.Time {
 	return t
 }
 
-func (c *TimestampCodec) PlanScan(m *Map, oid uint32, format int16, target any) ScanPlan {
+func (TimestampCodec) PlanScan(m *Map, oid uint32, format int16, target any) ScanPlan {
+
 	switch format {
 	case BinaryFormatCode:
 		switch target.(type) {
 		case TimestampScanner:
-			return &scanPlanBinaryTimestampToTimestampScanner{location: c.ScanLocation}
+			return scanPlanBinaryTimestampToTimestampScanner{}
 		}
 	case TextFormatCode:
 		switch target.(type) {
 		case TimestampScanner:
-			return &scanPlanTextTimestampToTimestampScanner{location: c.ScanLocation}
+			return scanPlanTextTimestampToTimestampScanner{}
 		}
 	}
 
 	return nil
 }
 
-type scanPlanBinaryTimestampToTimestampScanner struct{ location *time.Location }
+type scanPlanBinaryTimestampToTimestampScanner struct{}
 
-func (plan *scanPlanBinaryTimestampToTimestampScanner) Scan(src []byte, dst any) error {
+func (scanPlanBinaryTimestampToTimestampScanner) Scan(src []byte, dst any) error {
 	scanner := (dst).(TimestampScanner)
 
 	if src == nil {
@@ -267,18 +264,15 @@ func (plan *scanPlanBinaryTimestampToTimestampScanner) Scan(src []byte, dst any)
 			microsecFromUnixEpochToY2K/1000000+microsecSinceY2K/1000000,
 			(microsecFromUnixEpochToY2K%1000000*1000)+(microsecSinceY2K%1000000*1000),
 		).UTC()
-		if plan.location != nil {
-			tim = time.Date(tim.Year(), tim.Month(), tim.Day(), tim.Hour(), tim.Minute(), tim.Second(), tim.Nanosecond(), plan.location)
-		}
 		ts = Timestamp{Time: tim, Valid: true}
 	}
 
 	return scanner.ScanTimestamp(ts)
 }
 
-type scanPlanTextTimestampToTimestampScanner struct{ location *time.Location }
+type scanPlanTextTimestampToTimestampScanner struct{}
 
-func (plan *scanPlanTextTimestampToTimestampScanner) Scan(src []byte, dst any) error {
+func (scanPlanTextTimestampToTimestampScanner) Scan(src []byte, dst any) error {
 	scanner := (dst).(TimestampScanner)
 
 	if src == nil {
@@ -308,17 +302,13 @@ func (plan *scanPlanTextTimestampToTimestampScanner) Scan(src []byte, dst any) e
 			tim = time.Date(year, tim.Month(), tim.Day(), tim.Hour(), tim.Minute(), tim.Second(), tim.Nanosecond(), tim.Location())
 		}
 
-		if plan.location != nil {
-			tim = time.Date(tim.Year(), tim.Month(), tim.Day(), tim.Hour(), tim.Minute(), tim.Second(), tim.Nanosecond(), plan.location)
-		}
-
 		ts = Timestamp{Time: tim, Valid: true}
 	}
 
 	return scanner.ScanTimestamp(ts)
 }
 
-func (c *TimestampCodec) DecodeDatabaseSQLValue(m *Map, oid uint32, format int16, src []byte) (driver.Value, error) {
+func (c TimestampCodec) DecodeDatabaseSQLValue(m *Map, oid uint32, format int16, src []byte) (driver.Value, error) {
 	if src == nil {
 		return nil, nil
 	}
@@ -336,7 +326,7 @@ func (c *TimestampCodec) DecodeDatabaseSQLValue(m *Map, oid uint32, format int16
 	return ts.Time, nil
 }
 
-func (c *TimestampCodec) DecodeValue(m *Map, oid uint32, format int16, src []byte) (any, error) {
+func (c TimestampCodec) DecodeValue(m *Map, oid uint32, format int16, src []byte) (any, error) {
 	if src == nil {
 		return nil, nil
 	}

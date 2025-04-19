@@ -7,9 +7,6 @@ import (
 	"strings"
 
 	"github.com/jinzhu/inflection"
-	"golang.org/x/text/cases"
-	"golang.org/x/text/language"
-
 	"gorm.io/gorm/clause"
 )
 
@@ -153,12 +150,12 @@ func (schema *Schema) setRelation(relation *Relationship) {
 	}
 
 	// set embedded relation
-	if len(relation.Field.EmbeddedBindNames) <= 1 {
+	if len(relation.Field.BindNames) <= 1 {
 		return
 	}
 	relationships := &schema.Relationships
-	for i, name := range relation.Field.EmbeddedBindNames {
-		if i < len(relation.Field.EmbeddedBindNames)-1 {
+	for i, name := range relation.Field.BindNames {
+		if i < len(relation.Field.BindNames)-1 {
 			if relationships.EmbeddedRelations == nil {
 				relationships.EmbeddedRelations = map[string]*Relationships{}
 			}
@@ -304,9 +301,9 @@ func (schema *Schema) buildMany2ManyRelation(relation *Relationship, field *Fiel
 	}
 
 	for idx, ownField := range ownForeignFields {
-		joinFieldName := cases.Title(language.Und, cases.NoLower).String(schema.Name) + ownField.Name
+		joinFieldName := strings.Title(schema.Name) + ownField.Name
 		if len(joinForeignKeys) > idx {
-			joinFieldName = cases.Title(language.Und, cases.NoLower).String(joinForeignKeys[idx])
+			joinFieldName = strings.Title(joinForeignKeys[idx])
 		}
 
 		ownFieldsMap[joinFieldName] = ownField
@@ -321,7 +318,7 @@ func (schema *Schema) buildMany2ManyRelation(relation *Relationship, field *Fiel
 	}
 
 	for idx, relField := range refForeignFields {
-		joinFieldName := cases.Title(language.Und, cases.NoLower).String(relation.FieldSchema.Name) + relField.Name
+		joinFieldName := strings.Title(relation.FieldSchema.Name) + relField.Name
 
 		if _, ok := ownFieldsMap[joinFieldName]; ok {
 			if field.Name != relation.FieldSchema.Name {
@@ -332,7 +329,7 @@ func (schema *Schema) buildMany2ManyRelation(relation *Relationship, field *Fiel
 		}
 
 		if len(joinReferences) > idx {
-			joinFieldName = cases.Title(language.Und, cases.NoLower).String(joinReferences[idx])
+			joinFieldName = strings.Title(joinReferences[idx])
 		}
 
 		referFieldsMap[joinFieldName] = relField
@@ -350,7 +347,7 @@ func (schema *Schema) buildMany2ManyRelation(relation *Relationship, field *Fiel
 	}
 
 	joinTableFields = append(joinTableFields, reflect.StructField{
-		Name: cases.Title(language.Und, cases.NoLower).String(schema.Name) + field.Name,
+		Name: strings.Title(schema.Name) + field.Name,
 		Type: schema.ModelType,
 		Tag:  `gorm:"-"`,
 	})

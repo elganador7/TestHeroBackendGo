@@ -111,23 +111,19 @@ func Create(config *Config) func(db *gorm.DB) {
 			pkField     *schema.Field
 			pkFieldName = "@id"
 		)
-
-		insertID, err := result.LastInsertId()
-		insertOk := err == nil && insertID > 0
-
-		if !insertOk {
-			if !supportReturning {
-				db.AddError(err)
-			}
-			return
-		}
-
 		if db.Statement.Schema != nil {
 			if db.Statement.Schema.PrioritizedPrimaryField == nil || !db.Statement.Schema.PrioritizedPrimaryField.HasDefaultValue {
 				return
 			}
 			pkField = db.Statement.Schema.PrioritizedPrimaryField
 			pkFieldName = db.Statement.Schema.PrioritizedPrimaryField.DBName
+		}
+
+		insertID, err := result.LastInsertId()
+		insertOk := err == nil && insertID > 0
+		if !insertOk {
+			db.AddError(err)
+			return
 		}
 
 		// append @id column with value for auto-increment primary key
@@ -146,11 +142,6 @@ func Create(config *Config) func(db *gorm.DB) {
 					}
 				}
 			}
-
-			if config.LastInsertIDReversed {
-				insertID -= int64(len(mapValues)-1) * schema.DefaultAutoIncrementIncrement
-			}
-
 			for _, mapValue := range mapValues {
 				if mapValue != nil {
 					mapValue[pkFieldName] = insertID
@@ -302,15 +293,13 @@ func ConvertToCreateValues(stmt *gorm.Statement) (values clause.Values) {
 				}
 			}
 
-			for _, field := range stmt.Schema.FieldsWithDefaultDBValue {
-				if vs, ok := defaultValueFieldsHavingValue[field]; ok {
-					values.Columns = append(values.Columns, clause.Column{Name: field.DBName})
-					for idx := range values.Values {
-						if vs[idx] == nil {
-							values.Values[idx] = append(values.Values[idx], stmt.DefaultValueOf(field))
-						} else {
-							values.Values[idx] = append(values.Values[idx], vs[idx])
-						}
+			for field, vs := range defaultValueFieldsHavingValue {
+				values.Columns = append(values.Columns, clause.Column{Name: field.DBName})
+				for idx := range values.Values {
+					if vs[idx] == nil {
+						values.Values[idx] = append(values.Values[idx], stmt.Dialector.DefaultValueOf(field))
+					} else {
+						values.Values[idx] = append(values.Values[idx], vs[idx])
 					}
 				}
 			}
@@ -333,7 +322,7 @@ func ConvertToCreateValues(stmt *gorm.Statement) (values clause.Values) {
 			}
 
 			for _, field := range stmt.Schema.FieldsWithDefaultDBValue {
-				if v, ok := selectColumns[field.DBName]; (ok && v) || (!ok && !restricted) && field.DefaultValueInterface == nil {
+				if v, ok := selectColumns[field.DBName]; (ok && v) || (!ok && !restricted) {
 					if rvOfvalue, isZero := field.ValueOf(stmt.Context, stmt.ReflectValue); !isZero {
 						values.Columns = append(values.Columns, clause.Column{Name: field.DBName})
 						values.Values[0] = append(values.Values[0], rvOfvalue)
@@ -362,7 +351,7 @@ func ConvertToCreateValues(stmt *gorm.Statement) (values clause.Values) {
 									case schema.UnixNanosecond:
 										assignment.Value = curTime.UnixNano()
 									case schema.UnixMillisecond:
-										assignment.Value = curTime.UnixMilli()
+										assignment.Value = curTime.UnixNano() / 1e6
 									case schema.UnixSecond:
 										assignment.Value = curTime.Unix()
 									}

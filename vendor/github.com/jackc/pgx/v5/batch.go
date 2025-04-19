@@ -10,9 +10,9 @@ import (
 
 // QueuedQuery is a query that has been queued for execution via a Batch.
 type QueuedQuery struct {
-	SQL       string
-	Arguments []any
-	Fn        batchItemFunc
+	query     string
+	arguments []any
+	fn        batchItemFunc
 	sd        *pgconn.StatementDescription
 }
 
@@ -20,7 +20,7 @@ type batchItemFunc func(br BatchResults) error
 
 // Query sets fn to be called when the response to qq is received.
 func (qq *QueuedQuery) Query(fn func(rows Rows) error) {
-	qq.Fn = func(br BatchResults) error {
+	qq.fn = func(br BatchResults) error {
 		rows, _ := br.Query()
 		defer rows.Close()
 
@@ -36,7 +36,7 @@ func (qq *QueuedQuery) Query(fn func(rows Rows) error) {
 
 // Query sets fn to be called when the response to qq is received.
 func (qq *QueuedQuery) QueryRow(fn func(row Row) error) {
-	qq.Fn = func(br BatchResults) error {
+	qq.fn = func(br BatchResults) error {
 		row := br.QueryRow()
 		return fn(row)
 	}
@@ -44,7 +44,7 @@ func (qq *QueuedQuery) QueryRow(fn func(row Row) error) {
 
 // Exec sets fn to be called when the response to qq is received.
 func (qq *QueuedQuery) Exec(fn func(ct pgconn.CommandTag) error) {
-	qq.Fn = func(br BatchResults) error {
+	qq.fn = func(br BatchResults) error {
 		ct, err := br.Exec()
 		if err != nil {
 			return err
@@ -57,28 +57,22 @@ func (qq *QueuedQuery) Exec(fn func(ct pgconn.CommandTag) error) {
 // Batch queries are a way of bundling multiple queries together to avoid
 // unnecessary network round trips. A Batch must only be sent once.
 type Batch struct {
-	QueuedQueries []*QueuedQuery
+	queuedQueries []*QueuedQuery
 }
 
-// Queue queues a query to batch b. query can be an SQL query or the name of a prepared statement. The only pgx option
-// argument that is supported is QueryRewriter. Queries are executed using the connection's DefaultQueryExecMode.
-//
-// While query can contain multiple statements if the connection's DefaultQueryExecMode is QueryModeSimple, this should
-// be avoided. QueuedQuery.Fn must not be set as it will only be called for the first query. That is, QueuedQuery.Query,
-// QueuedQuery.QueryRow, and QueuedQuery.Exec must not be called. In addition, any error messages or tracing that
-// include the current query may reference the wrong query.
+// Queue queues a query to batch b. query can be an SQL query or the name of a prepared statement.
 func (b *Batch) Queue(query string, arguments ...any) *QueuedQuery {
 	qq := &QueuedQuery{
-		SQL:       query,
-		Arguments: arguments,
+		query:     query,
+		arguments: arguments,
 	}
-	b.QueuedQueries = append(b.QueuedQueries, qq)
+	b.queuedQueries = append(b.queuedQueries, qq)
 	return qq
 }
 
 // Len returns number of queries that have been queued so far.
 func (b *Batch) Len() int {
-	return len(b.QueuedQueries)
+	return len(b.queuedQueries)
 }
 
 type BatchResults interface {
@@ -132,7 +126,7 @@ func (br *batchResults) Exec() (pgconn.CommandTag, error) {
 	if !br.mrr.NextResult() {
 		err := br.mrr.Close()
 		if err == nil {
-			err = errors.New("no more results in batch")
+			err = errors.New("no result")
 		}
 		if br.conn.batchTracer != nil {
 			br.conn.batchTracer.TraceBatchQuery(br.ctx, br.conn, TraceBatchQueryData{
@@ -184,7 +178,7 @@ func (br *batchResults) Query() (Rows, error) {
 	if !br.mrr.NextResult() {
 		rows.err = br.mrr.Close()
 		if rows.err == nil {
-			rows.err = errors.New("no more results in batch")
+			rows.err = errors.New("no result")
 		}
 		rows.closed = true
 
@@ -231,9 +225,9 @@ func (br *batchResults) Close() error {
 	}
 
 	// Read and run fn for all remaining items
-	for br.err == nil && !br.closed && br.b != nil && br.qqIdx < len(br.b.QueuedQueries) {
-		if br.b.QueuedQueries[br.qqIdx].Fn != nil {
-			err := br.b.QueuedQueries[br.qqIdx].Fn(br)
+	for br.err == nil && !br.closed && br.b != nil && br.qqIdx < len(br.b.queuedQueries) {
+		if br.b.queuedQueries[br.qqIdx].fn != nil {
+			err := br.b.queuedQueries[br.qqIdx].fn(br)
 			if err != nil {
 				br.err = err
 			}
@@ -257,10 +251,10 @@ func (br *batchResults) earlyError() error {
 }
 
 func (br *batchResults) nextQueryAndArgs() (query string, args []any, ok bool) {
-	if br.b != nil && br.qqIdx < len(br.b.QueuedQueries) {
-		bi := br.b.QueuedQueries[br.qqIdx]
-		query = bi.SQL
-		args = bi.Arguments
+	if br.b != nil && br.qqIdx < len(br.b.queuedQueries) {
+		bi := br.b.queuedQueries[br.qqIdx]
+		query = bi.query
+		args = bi.arguments
 		ok = true
 		br.qqIdx++
 	}
@@ -291,10 +285,7 @@ func (br *pipelineBatchResults) Exec() (pgconn.CommandTag, error) {
 		return pgconn.CommandTag{}, br.err
 	}
 
-	query, arguments, err := br.nextQueryAndArgs()
-	if err != nil {
-		return pgconn.CommandTag{}, err
-	}
+	query, arguments, _ := br.nextQueryAndArgs()
 
 	results, err := br.pipeline.GetResults()
 	if err != nil {
@@ -337,9 +328,9 @@ func (br *pipelineBatchResults) Query() (Rows, error) {
 		return &baseRows{err: br.err, closed: true}, br.err
 	}
 
-	query, arguments, err := br.nextQueryAndArgs()
-	if err != nil {
-		return &baseRows{err: err, closed: true}, err
+	query, arguments, ok := br.nextQueryAndArgs()
+	if !ok {
+		query = "batch query"
 	}
 
 	rows := br.conn.getRows(br.ctx, query, arguments)
@@ -403,9 +394,9 @@ func (br *pipelineBatchResults) Close() error {
 	}
 
 	// Read and run fn for all remaining items
-	for br.err == nil && !br.closed && br.b != nil && br.qqIdx < len(br.b.QueuedQueries) {
-		if br.b.QueuedQueries[br.qqIdx].Fn != nil {
-			err := br.b.QueuedQueries[br.qqIdx].Fn(br)
+	for br.err == nil && !br.closed && br.b != nil && br.qqIdx < len(br.b.queuedQueries) {
+		if br.b.queuedQueries[br.qqIdx].fn != nil {
+			err := br.b.queuedQueries[br.qqIdx].fn(br)
 			if err != nil {
 				br.err = err
 			}
@@ -428,16 +419,13 @@ func (br *pipelineBatchResults) earlyError() error {
 	return br.err
 }
 
-func (br *pipelineBatchResults) nextQueryAndArgs() (query string, args []any, err error) {
-	if br.b == nil {
-		return "", nil, errors.New("no reference to batch")
+func (br *pipelineBatchResults) nextQueryAndArgs() (query string, args []any, ok bool) {
+	if br.b != nil && br.qqIdx < len(br.b.queuedQueries) {
+		bi := br.b.queuedQueries[br.qqIdx]
+		query = bi.query
+		args = bi.arguments
+		ok = true
+		br.qqIdx++
 	}
-
-	if br.qqIdx >= len(br.b.QueuedQueries) {
-		return "", nil, errors.New("no more results in batch")
-	}
-
-	bi := br.b.QueuedQueries[br.qqIdx]
-	br.qqIdx++
-	return bi.SQL, bi.Arguments, nil
+	return
 }
