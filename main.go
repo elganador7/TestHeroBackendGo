@@ -36,7 +36,7 @@ func main() {
 			cors.Config{
 				AllowOrigins:     []string{"http://localhost:5173", "https://app.testscorehero.com", "https://testherobackendgo-production.up.railway.app"},
 				AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-				AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
+				AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Access-Control-Allow-Origin"},
 				ExposeHeaders:    []string{"Content-Length"},
 				AllowCredentials: true,
 				MaxAge:           12 * 60 * 60,
