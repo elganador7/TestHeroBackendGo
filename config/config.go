@@ -16,7 +16,7 @@ type Config struct {
 
 func LoadConfig() *Config {
 	return &Config{
-		DBHost:     os.Getenv("PRGHOST"),
+		DBHost:     os.Getenv("PGHOST"),
 		DBPort:     os.Getenv("PGPORT"),
 		DBUser:     os.Getenv("PGUSER"),
 		DBPassword: os.Getenv("PGPASSWORD"),
