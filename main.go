@@ -34,10 +34,11 @@ func main() {
 	router.Use(
 		cors.New(
 			cors.Config{
-				// AllowOrigins:     []string{"http://localhost:5173", "https://app.testscorehero.com", "https://testherobackendgo-production.up.railway.app"},
+				AllowOrigins:     []string{"http://localhost:5173/*", "https://app.testscorehero.com/*", "https://testherobackendgo-production.up.railway.app/*"},
 				AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 				AllowCredentials: true,
 				MaxAge:           12 * 60 * 60,
+				AllowWildcard:    true,
 				AllowHeaders: []string{
 					"Origin",
 					"Content-Type",
@@ -46,8 +47,8 @@ func main() {
 					"Accept",
 					"X-Requested-With",
 				},
-				ExposeHeaders:   []string{"Content-Length", "Content-Type"},
-				AllowAllOrigins: true,
+				ExposeHeaders: []string{"Content-Length", "Content-Type"},
+				// AllowAllOrigins: true,
 			},
 		),
 	)
