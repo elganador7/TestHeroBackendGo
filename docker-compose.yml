@@ -21,11 +21,11 @@ services:
     depends_on:
       - db
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_USER: youruser
-      DB_PASSWORD: yourpassword
-      DB_NAME: TestHeroBackendGo
+      PGHOST: db
+      PGPORT: 5432
+      PGUSER: youruser
+      PGPASSWORD: yourpassword
+      PGDATABASE: TestHeroBackendGo
     ports:
       - "8080:8080"
     networks:
