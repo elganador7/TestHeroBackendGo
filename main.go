@@ -90,9 +90,11 @@ func corsMiddleware() gin.HandlerFunc {
 
 		// Get the Origin header from the request
 		origin := c.Request.Header.Get("Origin")
+		log.Printf("Origin: %s", origin)
 
 		// Check if the origin is allowed
 		if isOriginAllowed(origin, allowedOrigins) {
+			log.Println("Origin is allowed")
 			// If the origin is allowed, set CORS headers in the response
 			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
