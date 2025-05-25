@@ -19,6 +19,7 @@ require (
 	gorm.io/driver/postgres v1.5.11
 	gorm.io/driver/sqlite v1.5.6
 	gorm.io/gorm v1.25.12
+	github.com/stripe/stripe-go/v78 v78.12.0
 )
 
 require (

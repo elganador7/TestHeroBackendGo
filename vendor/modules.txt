@@ -87,7 +87,6 @@ github.com/gabriel-vasile/mimetype/internal/json
 github.com/gabriel-vasile/mimetype/internal/magic
 # github.com/gin-contrib/cors v1.7.3
 ## explicit; go 1.21.0
-github.com/gin-contrib/cors
 # github.com/gin-contrib/sse v1.0.0
 ## explicit; go 1.13
 github.com/gin-contrib/sse
@@ -261,6 +260,8 @@ github.com/robfig/cron/v3
 ## explicit; go 1.17
 github.com/stretchr/testify/assert
 github.com/stretchr/testify/assert/yaml
+# github.com/stripe/stripe-go/v78 v78.12.0
+## explicit; go 1.13
 # github.com/tidwall/gjson v1.18.0
 ## explicit; go 1.12
 github.com/tidwall/gjson

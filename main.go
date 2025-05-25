@@ -3,6 +3,7 @@ package main
 import (
 	"TestHeroBackendGo/agent"
 	"TestHeroBackendGo/config"
+	"TestHeroBackendGo/controllers"
 	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
 	"TestHeroBackendGo/routes"
@@ -11,6 +12,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/stripe/stripe-go/v78"
 )
 
 func main() {
@@ -20,6 +22,11 @@ func main() {
 	}
 
 	cfg := config.LoadConfig()
+
+	if cfg.StripeSecretKey == "" {
+		log.Println("Warning: STRIPE_SECRET_KEY is not set in config.")
+	}
+	stripe.Key = cfg.StripeSecretKey
 
 	database.ConnectDatabase(cfg)
 
@@ -62,7 +69,8 @@ func main() {
 	// Start Tasks
 	tasks.RunTasks(database.DB, agent, userIdGenerationQuestionChannel)
 
-	routes.SetupRoutes(router, database.DB, agent, false)
+	paymentController := controllers.NewPaymentController()
+	routes.SetupRoutes(router, database.DB, agent, paymentController, false)
 
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "healthy"})
