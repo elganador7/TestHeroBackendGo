@@ -139,11 +139,7 @@ func (ctrl *QueryController) GenerateSimilarQuestionHandler(c *gin.Context) {
 
 // GenerateQuestion generates a question tailored to the current user's performance
 func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
-	var req struct {
-		TestType string `json:"test_type"`
-		Subject  string `json:"subject"`
-		UserId   string `json:"user_id"`
-	}
+	req := models.QuestionGeneratorTopicInput{}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -151,74 +147,80 @@ func (ctrl *QueryController) GenerateRelevantQuestion(c *gin.Context) {
 	}
 
 	// Check if testType and subject are provided
-	if req.TestType == "" || req.Subject == "" || req.UserId == "" {
+	if req.TestType == "" || req.Subject == "" || req.UserID == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "req.TestType, Subject, and UserID are required"})
 		return
 	}
 
-	// Query for all topics, subtopics, and specific topics under the req.TestType and subject
-	var testTopics []models.TestTopicData
-	if err := ctrl.DB.Where("test_type = ? AND subject = ?", req.TestType, req.Subject).Find(&testTopics).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch test topics"})
-		return
-	}
-
-	// Query the user performance summary
-	var userPerformance []models.UserPerformanceSummary
-	if err := ctrl.DB.Where("user_id = ? AND test_type = ? AND subject = ?", req.UserId, req.TestType, req.Subject).Find(&userPerformance).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user performance"})
-		return
-	}
-
-	// Create a map of specific topics to performance
-	performanceMap := make(map[string]float64)
-	questionDifficultyMap := make(map[string]float64)
-	for _, performance := range userPerformance {
-		if performance.TotalPointsPossible == 0 {
-			performanceMap[performance.SpecificTopic] = DEFAULT_CORRECT_SCORE
-			questionDifficultyMap[performance.SpecificTopic] = DEFAULT_QUESTION_DIFFICULTY
-		} else {
-			difficulty := performance.TotalPoints / performance.TotalPointsPossible
-			performanceMap[performance.SpecificTopic] = difficulty * performance.TotalPoints
-			questionDifficultyMap[performance.SpecificTopic] = difficulty
-		}
-	}
-
-	// Create a list of topics with their weights
-	var selectedTopic models.TestTopicData
-	minWeight := 1000000000000000.0 // Very big number
-	difficulty := 0.5
-
-	for _, topic := range testTopics {
-		// Get the correct rate for the specific topic
-		score, ok := performanceMap[topic.SpecificTopic]
-		if !ok {
-			// If no data available for this topic, treat it as 50% correct rate
-			score = DEFAULT_CORRECT_SCORE
-			performanceMap[topic.SpecificTopic] = score
-			questionDifficultyMap[topic.SpecificTopic] = DEFAULT_QUESTION_DIFFICULTY
-		}
-
-		// Calculate weight: lower correct rate means higher weight
-		weight := score * rand.Float64()
-		if weight < minWeight {
-			minWeight = weight
-			if questionDifficultyMap[topic.SpecificTopic] > MINIMUM_QUESTION_DIFFICULTY {
-				difficulty = questionDifficultyMap[topic.SpecificTopic]
-			} else {
-				difficulty = MINIMUM_QUESTION_DIFFICULTY
-			}
-			selectedTopic = topic
-		}
-	}
-
-	// Query for a question based on the selected topic
-	question, err := ctrl.GenerateNewQuestionWithTopicData(selectedTopic, difficulty)
+	question, err := ctrl.Agent.GenerateRelevantQuestion(req)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Errorf("failed to generate question: %v", err)})
-		log.Printf("Failed to generate question: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
+
+	// // Query for all topics, subtopics, and specific topics under the req.TestType and subject
+	// var testTopics []models.TestTopicData
+	// if err := ctrl.DB.Where("test_type = ? AND subject = ?", req.TestType, req.Subject).Find(&testTopics).Error; err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch test topics"})
+	// 	return
+	// }
+
+	// // Query the user performance summary
+	// var userPerformance []models.UserPerformanceSummary
+	// if err := ctrl.DB.Where("user_id = ? AND test_type = ? AND subject = ?", req.UserID, req.TestType, req.Subject).Find(&userPerformance).Error; err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user performance"})
+	// 	return
+	// }
+
+	// // Create a map of specific topics to performance
+	// performanceMap := make(map[string]float64)
+	// questionDifficultyMap := make(map[string]float64)
+	// for _, performance := range userPerformance {
+	// 	if performance.TotalPointsPossible == 0 {
+	// 		performanceMap[performance.SpecificTopic] = DEFAULT_CORRECT_SCORE
+	// 		questionDifficultyMap[performance.SpecificTopic] = DEFAULT_QUESTION_DIFFICULTY
+	// 	} else {
+	// 		difficulty := performance.TotalPoints / performance.TotalPointsPossible
+	// 		performanceMap[performance.SpecificTopic] = difficulty * performance.TotalPoints
+	// 		questionDifficultyMap[performance.SpecificTopic] = difficulty
+	// 	}
+	// }
+
+	// // Create a list of topics with their weights
+	// var selectedTopic models.TestTopicData
+	// minWeight := 1000000000000000.0 // Very big number
+	// difficulty := 0.5
+
+	// for _, topic := range testTopics {
+	// 	// Get the correct rate for the specific topic
+	// 	score, ok := performanceMap[topic.SpecificTopic]
+	// 	if !ok {
+	// 		// If no data available for this topic, treat it as 50% correct rate
+	// 		score = DEFAULT_CORRECT_SCORE
+	// 		performanceMap[topic.SpecificTopic] = score
+	// 		questionDifficultyMap[topic.SpecificTopic] = DEFAULT_QUESTION_DIFFICULTY
+	// 	}
+
+	// 	// Calculate weight: lower correct rate means higher weight
+	// 	weight := score * rand.Float64()
+	// 	if weight < minWeight {
+	// 		minWeight = weight
+	// 		if questionDifficultyMap[topic.SpecificTopic] > MINIMUM_QUESTION_DIFFICULTY {
+	// 			difficulty = questionDifficultyMap[topic.SpecificTopic]
+	// 		} else {
+	// 			difficulty = MINIMUM_QUESTION_DIFFICULTY
+	// 		}
+	// 		selectedTopic = topic
+	// 	}
+	// }
+
+	// // Query for a question based on the selected topic
+	// question, err := ctrl.GenerateNewQuestionWithTopicData(selectedTopic, difficulty)
+	// if err != nil {
+	// 	c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Errorf("failed to generate question: %v", err)})
+	// 	log.Printf("Failed to generate question: %v", err)
+	// 	return
+	// }
 
 	// Return the selected question
 	c.JSON(http.StatusOK, question)
@@ -286,12 +288,12 @@ func (ctrl *QueryController) GenerateNewQuestionWithTopicData(testTopicData mode
 		TestTopic:     testTopicData,
 	}
 
-	formattedQuestion, err := ctrl.Agent.ValidateMathJaxFormatting(question)
-	if err != nil {
-		return models.Question{}, err
-	}
+	// formattedQuestion, err := ctrl.Agent.ValidateMathJaxFormatting(question)
+	// if err != nil {
+	// 	return models.Question{}, err
+	// }
 
-	question = formattedQuestion.TranslateQuestionOutputSchemaToQuestion(question)
+	// question = formattedQuestion.TranslateQuestionOutputSchemaToQuestion(question)
 
 	if err := ctrl.DB.Create(&question).Error; err != nil {
 		return models.Question{}, err
