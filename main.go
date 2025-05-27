@@ -3,7 +3,6 @@ package main
 import (
 	"TestHeroBackendGo/agent"
 	"TestHeroBackendGo/config"
-	"TestHeroBackendGo/controllers"
 	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
 	"TestHeroBackendGo/routes"
@@ -69,8 +68,7 @@ func main() {
 	// Start Tasks
 	tasks.RunTasks(database.DB, agent, userIdGenerationQuestionChannel)
 
-	paymentController := controllers.NewPaymentController()
-	routes.SetupRoutes(router, database.DB, agent, paymentController, false)
+	routes.SetupRoutes(router, database.DB, agent, false)
 
 	router.GET("/health", func(c *gin.Context) {
 		c.JSON(200, gin.H{"status": "healthy"})

@@ -2,14 +2,13 @@ package routes
 
 import (
 	"TestHeroBackendGo/agent"
-	"TestHeroBackendGo/controllers" // Import the controllers package
-
+	// Import the controllers package
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
 // Updated function signature to include paymentController
-func SetupRoutes(router *gin.Engine, db *gorm.DB, agent *agent.Agent, paymentController *controllers.PaymentController, isTest bool) {
+func SetupRoutes(router *gin.Engine, db *gorm.DB, agent *agent.Agent, isTest bool) {
 	setupAuthRoutes(router, db)
 	setupUserAnswerRoutes(router, db, isTest)
 	setupQuestionRoutes(router, db, isTest)
@@ -18,5 +17,5 @@ func SetupRoutes(router *gin.Engine, db *gorm.DB, agent *agent.Agent, paymentCon
 	setupTestTopicDataRoutes(router, db, isTest)
 
 	// Setup payment routes
-	SetupPaymentRoutes(router, paymentController) // Call the new function to setup payment routes
+	setupPaymentRoutes(router, db) // Call the new function to setup payment routes
 }

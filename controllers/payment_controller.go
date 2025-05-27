@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stripe/stripe-go/v78"
 	"github.com/stripe/stripe-go/v78/paymentintent"
+	"gorm.io/gorm"
 )
 
 // PaymentController holds the Stripe client and handles payment-related requests.
@@ -18,7 +19,7 @@ type PaymentController struct {
 
 // NewPaymentController creates a new PaymentController.
 // In a real app, you might pass a pre-configured Stripe client here.
-func NewPaymentController() *PaymentController {
+func NewPaymentController(db *gorm.DB) *PaymentController {
 	// Initialize Stripe API key from environment variable for now.
 	// Ideally, this should come from a config struct passed down from main.go
 	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
