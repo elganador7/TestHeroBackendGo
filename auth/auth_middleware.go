@@ -4,9 +4,32 @@ import (
 	"net/http"
 	"strings"
 
+	"TestHeroBackendGo/models"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"gorm.io/gorm"
 )
+
+var db *gorm.DB
+
+// InitializeDB sets the database connection for the auth package
+func InitializeDB(database *gorm.DB) {
+	db = database
+}
+
+// IsPayingCustomer checks if a user with the given email is a paying customer
+func IsPayingCustomer(email string) (bool, error) {
+	var customer models.StripeCustomer
+	result := db.Where("email = ? AND delinquent = ?", email, false).First(&customer)
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return false, nil
+		}
+		return false, result.Error
+	}
+	return true, nil
+}
 
 func JWTAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {

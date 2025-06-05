@@ -2,6 +2,7 @@ package main
 
 import (
 	"TestHeroBackendGo/agent"
+	"TestHeroBackendGo/auth"
 	"TestHeroBackendGo/config"
 	"TestHeroBackendGo/database"
 	"TestHeroBackendGo/models"
@@ -22,6 +23,9 @@ func main() {
 	cfg := config.LoadConfig()
 
 	database.ConnectDatabase(cfg)
+
+	// Initialize auth package with database connection
+	auth.InitializeDB(database.DB)
 
 	for _, model := range models.AllModels {
 		database.DB.AutoMigrate(model)
