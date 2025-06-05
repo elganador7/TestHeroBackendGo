@@ -52,6 +52,7 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 		}
 
 		claims := token.Claims.(jwt.MapClaims)
+		log.Printf("Claims: %v", claims["email"])
 		c.Set("userID", claims["userID"])
 		c.Set("email", claims["email"])
 		c.Next()

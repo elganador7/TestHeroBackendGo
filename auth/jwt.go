@@ -8,11 +8,12 @@ import (
 
 var jwtSecret = []byte("your-secure-secret") // Use environment variable in production
 
-func GenerateJWT(userID string) (string, int64, error) {
+func GenerateJWT(userID string, username string) (string, int64, error) {
 	expTime := time.Now().Add(time.Hour * 12).Unix()
 	claims := jwt.MapClaims{
-		"userID": userID,
-		"exp":    expTime,
+		"userID":   userID,
+		"username": username,
+		"exp":      expTime,
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	signedString, err := token.SignedString(jwtSecret)
