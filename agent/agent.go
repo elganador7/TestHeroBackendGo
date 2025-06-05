@@ -76,6 +76,7 @@ func (a *Agent) GenerateSimilarQuestion(input models.SimilarQuestionGeneratorInp
 		},
 		Model:       openai.ChatModelO4Mini,
 		Temperature: openai.Float(0.4),
+		ServiceTier: openai.ChatCompletionNewParamsServiceTier(openai.ChatCompletionServiceTierFlex),
 	})
 	if err != nil {
 		return models.QuestionGeneratorOutputSchema{}, fmt.Errorf("API call failed: %w", err)
