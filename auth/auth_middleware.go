@@ -53,6 +53,36 @@ func JWTAuthMiddleware() gin.HandlerFunc {
 
 		claims := token.Claims.(jwt.MapClaims)
 		c.Set("userID", claims["userID"])
+		c.Set("email", claims["email"])
+		c.Next()
+	}
+}
+
+// PayingCustomerMiddleware checks if the authenticated user is a paying customer
+func PayingCustomerMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Get email from context (set by JWTAuthMiddleware)
+		email, exists := c.Get("email")
+		if !exists {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "User email not found in token"})
+			c.Abort()
+			return
+		}
+
+		// Check if user is a paying customer
+		isPaying, err := IsPayingCustomer(email.(string))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error checking payment status"})
+			c.Abort()
+			return
+		}
+
+		if !isPaying {
+			c.JSON(http.StatusForbidden, gin.H{"error": "This feature requires an active subscription"})
+			c.Abort()
+			return
+		}
+
 		c.Next()
 	}
 }
