@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -23,11 +24,13 @@ func IsPayingCustomer(email string) (bool, error) {
 	var customer models.StripeCustomer
 	result := db.Where("email = ? AND delinquent = ?", email, false).First(&customer)
 	if result.Error != nil {
+		log.Printf("Error checking if user is paying customer: %v", result.Error)
 		if result.Error == gorm.ErrRecordNotFound {
 			return false, nil
 		}
 		return false, result.Error
 	}
+	log.Printf("User is paying customer: %v", customer)
 	return true, nil
 }
 
