@@ -8,7 +8,7 @@ import (
 
 func GenerateHandlers(isTest bool) []gin.HandlerFunc {
 	if !isTest {
-		return []gin.HandlerFunc{auth.JWTAuthMiddleware()}
+		return []gin.HandlerFunc{auth.JWTAuthMiddleware(), auth.PayingCustomerMiddleware()}
 	}
 	return []gin.HandlerFunc{}
 }
