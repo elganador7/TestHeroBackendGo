@@ -79,7 +79,7 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	token, expTime, err := GenerateJWT(user.ID)
+	token, expTime, err := GenerateJWT(user.ID, user.Username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		return
@@ -122,8 +122,14 @@ func RefreshToken(c *gin.Context) {
 		return
 	}
 
+	username, ok := claims["email"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid username in token"})
+		return
+	}
+
 	// Issue a new token
-	newToken, expTime, err := GenerateJWT(userID)
+	newToken, expTime, err := GenerateJWT(userID, username)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate new token"})
 		return
@@ -168,7 +174,7 @@ func (ctrl *AuthController) HandleGoogleAuth(c *gin.Context) {
 		}
 	}
 
-	token, expTime, err := GenerateJWT(tokenInfo.UserId)
+	token, expTime, err := GenerateJWT(tokenInfo.UserId, tokenInfo.Email)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
 		log.Print(err.Error())
