@@ -13,19 +13,18 @@ import (
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewBetaService] method instead.
 type BetaService struct {
-	Options      []option.RequestOption
-	VectorStores *BetaVectorStoreService
-	Assistants   *BetaAssistantService
-	Threads      *BetaThreadService
+	Options    []option.RequestOption
+	Assistants BetaAssistantService
+	// Deprecated: The Assistants API is deprecated in favor of the Responses API
+	Threads BetaThreadService
 }
 
 // NewBetaService generates a new service that applies the given options to each
 // request. These options are applied after the parent client's options (if there
 // is one), and before any request-specific options.
-func NewBetaService(opts ...option.RequestOption) (r *BetaService) {
-	r = &BetaService{}
+func NewBetaService(opts ...option.RequestOption) (r BetaService) {
+	r = BetaService{}
 	r.Options = opts
-	r.VectorStores = NewBetaVectorStoreService(opts...)
 	r.Assistants = NewBetaAssistantService(opts...)
 	r.Threads = NewBetaThreadService(opts...)
 	return

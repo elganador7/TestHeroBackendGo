@@ -15,10 +15,12 @@ import (
 	"github.com/openai/openai-go/internal/apiform"
 	"github.com/openai/openai-go/internal/apijson"
 	"github.com/openai/openai-go/internal/apiquery"
-	"github.com/openai/openai-go/internal/param"
 	"github.com/openai/openai-go/internal/requestconfig"
 	"github.com/openai/openai-go/option"
 	"github.com/openai/openai-go/packages/pagination"
+	"github.com/openai/openai-go/packages/param"
+	"github.com/openai/openai-go/packages/respjson"
+	"github.com/openai/openai-go/shared/constant"
 )
 
 // FileService contains methods and other services that help with interacting with
@@ -34,8 +36,8 @@ type FileService struct {
 // NewFileService generates a new service that applies the given options to each
 // request. These options are applied after the parent client's options (if there
 // is one), and before any request-specific options.
-func NewFileService(opts ...option.RequestOption) (r *FileService) {
-	r = &FileService{}
+func NewFileService(opts ...option.RequestOption) (r FileService) {
+	r = FileService{}
 	r.Options = opts
 	return
 }
@@ -129,41 +131,23 @@ func (r *FileService) Content(ctx context.Context, fileID string, opts ...option
 }
 
 type FileDeleted struct {
-	ID      string            `json:"id,required"`
-	Deleted bool              `json:"deleted,required"`
-	Object  FileDeletedObject `json:"object,required"`
-	JSON    fileDeletedJSON   `json:"-"`
+	ID      string        `json:"id,required"`
+	Deleted bool          `json:"deleted,required"`
+	Object  constant.File `json:"object,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Deleted     respjson.Field
+		Object      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-// fileDeletedJSON contains the JSON metadata for the struct [FileDeleted]
-type fileDeletedJSON struct {
-	ID          apijson.Field
-	Deleted     apijson.Field
-	Object      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *FileDeleted) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r FileDeleted) RawJSON() string { return r.JSON.raw }
+func (r *FileDeleted) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r fileDeletedJSON) RawJSON() string {
-	return r.raw
-}
-
-type FileDeletedObject string
-
-const (
-	FileDeletedObjectFile FileDeletedObject = "file"
-)
-
-func (r FileDeletedObject) IsKnown() bool {
-	switch r {
-	case FileDeletedObjectFile:
-		return true
-	}
-	return false
 }
 
 // The `File` object represents a document that has been uploaded to OpenAI.
@@ -177,59 +161,48 @@ type FileObject struct {
 	// The name of the file.
 	Filename string `json:"filename,required"`
 	// The object type, which is always `file`.
-	Object FileObjectObject `json:"object,required"`
+	Object constant.File `json:"object,required"`
 	// The intended purpose of the file. Supported values are `assistants`,
 	// `assistants_output`, `batch`, `batch_output`, `fine-tune`, `fine-tune-results`
 	// and `vision`.
+	//
+	// Any of "assistants", "assistants_output", "batch", "batch_output", "fine-tune",
+	// "fine-tune-results", "vision".
 	Purpose FileObjectPurpose `json:"purpose,required"`
 	// Deprecated. The current status of the file, which can be either `uploaded`,
 	// `processed`, or `error`.
 	//
+	// Any of "uploaded", "processed", "error".
+	//
 	// Deprecated: deprecated
 	Status FileObjectStatus `json:"status,required"`
+	// The Unix timestamp (in seconds) for when the file will expire.
+	ExpiresAt int64 `json:"expires_at"`
 	// Deprecated. For details on why a fine-tuning training file failed validation,
 	// see the `error` field on `fine_tuning.job`.
 	//
 	// Deprecated: deprecated
-	StatusDetails string         `json:"status_details"`
-	JSON          fileObjectJSON `json:"-"`
+	StatusDetails string `json:"status_details"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID            respjson.Field
+		Bytes         respjson.Field
+		CreatedAt     respjson.Field
+		Filename      respjson.Field
+		Object        respjson.Field
+		Purpose       respjson.Field
+		Status        respjson.Field
+		ExpiresAt     respjson.Field
+		StatusDetails respjson.Field
+		ExtraFields   map[string]respjson.Field
+		raw           string
+	} `json:"-"`
 }
 
-// fileObjectJSON contains the JSON metadata for the struct [FileObject]
-type fileObjectJSON struct {
-	ID            apijson.Field
-	Bytes         apijson.Field
-	CreatedAt     apijson.Field
-	Filename      apijson.Field
-	Object        apijson.Field
-	Purpose       apijson.Field
-	Status        apijson.Field
-	StatusDetails apijson.Field
-	raw           string
-	ExtraFields   map[string]apijson.Field
-}
-
-func (r *FileObject) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r FileObject) RawJSON() string { return r.JSON.raw }
+func (r *FileObject) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r fileObjectJSON) RawJSON() string {
-	return r.raw
-}
-
-// The object type, which is always `file`.
-type FileObjectObject string
-
-const (
-	FileObjectObjectFile FileObjectObject = "file"
-)
-
-func (r FileObjectObject) IsKnown() bool {
-	switch r {
-	case FileObjectObjectFile:
-		return true
-	}
-	return false
 }
 
 // The intended purpose of the file. Supported values are `assistants`,
@@ -247,14 +220,6 @@ const (
 	FileObjectPurposeVision           FileObjectPurpose = "vision"
 )
 
-func (r FileObjectPurpose) IsKnown() bool {
-	switch r {
-	case FileObjectPurposeAssistants, FileObjectPurposeAssistantsOutput, FileObjectPurposeBatch, FileObjectPurposeBatchOutput, FileObjectPurposeFineTune, FileObjectPurposeFineTuneResults, FileObjectPurposeVision:
-		return true
-	}
-	return false
-}
-
 // Deprecated. The current status of the file, which can be either `uploaded`,
 // `processed`, or `error`.
 type FileObjectStatus string
@@ -265,22 +230,10 @@ const (
 	FileObjectStatusError     FileObjectStatus = "error"
 )
 
-func (r FileObjectStatus) IsKnown() bool {
-	switch r {
-	case FileObjectStatusUploaded, FileObjectStatusProcessed, FileObjectStatusError:
-		return true
-	}
-	return false
-}
-
-// The intended purpose of the uploaded file.
-//
-// Use "assistants" for
-// [Assistants](https://platform.openai.com/docs/api-reference/assistants) and
-// [Message](https://platform.openai.com/docs/api-reference/messages) files,
-// "vision" for Assistants image file inputs, "batch" for
-// [Batch API](https://platform.openai.com/docs/guides/batch), and "fine-tune" for
-// [Fine-tuning](https://platform.openai.com/docs/api-reference/fine-tuning).
+// The intended purpose of the uploaded file. One of: - `assistants`: Used in the
+// Assistants API - `batch`: Used in the Batch API - `fine-tune`: Used for
+// fine-tuning - `vision`: Images used for vision fine-tuning - `user_data`:
+// Flexible file type for any purpose - `evals`: Used for eval data sets
 type FilePurpose string
 
 const (
@@ -288,34 +241,30 @@ const (
 	FilePurposeBatch      FilePurpose = "batch"
 	FilePurposeFineTune   FilePurpose = "fine-tune"
 	FilePurposeVision     FilePurpose = "vision"
+	FilePurposeUserData   FilePurpose = "user_data"
+	FilePurposeEvals      FilePurpose = "evals"
 )
-
-func (r FilePurpose) IsKnown() bool {
-	switch r {
-	case FilePurposeAssistants, FilePurposeBatch, FilePurposeFineTune, FilePurposeVision:
-		return true
-	}
-	return false
-}
 
 type FileNewParams struct {
 	// The File object (not file name) to be uploaded.
-	File param.Field[io.Reader] `json:"file,required" format:"binary"`
-	// The intended purpose of the uploaded file.
+	File io.Reader `json:"file,omitzero,required" format:"binary"`
+	// The intended purpose of the uploaded file. One of: - `assistants`: Used in the
+	// Assistants API - `batch`: Used in the Batch API - `fine-tune`: Used for
+	// fine-tuning - `vision`: Images used for vision fine-tuning - `user_data`:
+	// Flexible file type for any purpose - `evals`: Used for eval data sets
 	//
-	// Use "assistants" for
-	// [Assistants](https://platform.openai.com/docs/api-reference/assistants) and
-	// [Message](https://platform.openai.com/docs/api-reference/messages) files,
-	// "vision" for Assistants image file inputs, "batch" for
-	// [Batch API](https://platform.openai.com/docs/guides/batch), and "fine-tune" for
-	// [Fine-tuning](https://platform.openai.com/docs/api-reference/fine-tuning).
-	Purpose param.Field[FilePurpose] `json:"purpose,required"`
+	// Any of "assistants", "batch", "fine-tune", "vision", "user_data", "evals".
+	Purpose FilePurpose `json:"purpose,omitzero,required"`
+	paramObj
 }
 
 func (r FileNewParams) MarshalMultipart() (data []byte, contentType string, err error) {
 	buf := bytes.NewBuffer(nil)
 	writer := multipart.NewWriter(buf)
 	err = apiform.MarshalRoot(r, writer)
+	if err == nil {
+		err = apiform.WriteExtras(writer, r.ExtraFields())
+	}
 	if err != nil {
 		writer.Close()
 		return nil, "", err
@@ -332,19 +281,22 @@ type FileListParams struct {
 	// in the list. For instance, if you make a list request and receive 100 objects,
 	// ending with obj_foo, your subsequent call can include after=obj_foo in order to
 	// fetch the next page of the list.
-	After param.Field[string] `query:"after"`
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// A limit on the number of objects to be returned. Limit can range between 1 and
 	// 10,000, and the default is 10,000.
-	Limit param.Field[int64] `query:"limit"`
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
+	// Only return files with the given purpose.
+	Purpose param.Opt[string] `query:"purpose,omitzero" json:"-"`
 	// Sort order by the `created_at` timestamp of the objects. `asc` for ascending
 	// order and `desc` for descending order.
-	Order param.Field[FileListParamsOrder] `query:"order"`
-	// Only return files with the given purpose.
-	Purpose param.Field[string] `query:"purpose"`
+	//
+	// Any of "asc", "desc".
+	Order FileListParamsOrder `query:"order,omitzero" json:"-"`
+	paramObj
 }
 
 // URLQuery serializes [FileListParams]'s query parameters as `url.Values`.
-func (r FileListParams) URLQuery() (v url.Values) {
+func (r FileListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -359,11 +311,3 @@ const (
 	FileListParamsOrderAsc  FileListParamsOrder = "asc"
 	FileListParamsOrderDesc FileListParamsOrder = "desc"
 )
-
-func (r FileListParamsOrder) IsKnown() bool {
-	switch r {
-	case FileListParamsOrderAsc, FileListParamsOrderDesc:
-		return true
-	}
-	return false
-}

@@ -11,12 +11,14 @@ import (
 
 	"github.com/openai/openai-go/internal/apijson"
 	"github.com/openai/openai-go/internal/apiquery"
-	"github.com/openai/openai-go/internal/param"
 	"github.com/openai/openai-go/internal/requestconfig"
 	"github.com/openai/openai-go/option"
 	"github.com/openai/openai-go/packages/pagination"
+	"github.com/openai/openai-go/packages/param"
+	"github.com/openai/openai-go/packages/respjson"
 	"github.com/openai/openai-go/packages/ssestream"
 	"github.com/openai/openai-go/shared"
+	"github.com/openai/openai-go/shared/constant"
 )
 
 // BetaThreadRunService contains methods and other services that help with
@@ -25,22 +27,27 @@ import (
 // Note, unlike clients, this service does not read variables from the environment
 // automatically. You should not instantiate this service directly, and instead use
 // the [NewBetaThreadRunService] method instead.
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
 type BetaThreadRunService struct {
 	Options []option.RequestOption
-	Steps   *BetaThreadRunStepService
+	// Deprecated: The Assistants API is deprecated in favor of the Responses API
+	Steps BetaThreadRunStepService
 }
 
 // NewBetaThreadRunService generates a new service that applies the given options
 // to each request. These options are applied after the parent client's options (if
 // there is one), and before any request-specific options.
-func NewBetaThreadRunService(opts ...option.RequestOption) (r *BetaThreadRunService) {
-	r = &BetaThreadRunService{}
+func NewBetaThreadRunService(opts ...option.RequestOption) (r BetaThreadRunService) {
+	r = BetaThreadRunService{}
 	r.Options = opts
 	r.Steps = NewBetaThreadRunStepService(opts...)
 	return
 }
 
 // Create a run.
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
 func (r *BetaThreadRunService) New(ctx context.Context, threadID string, params BetaThreadRunNewParams, opts ...option.RequestOption) (res *Run, err error) {
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithHeader("OpenAI-Beta", "assistants=v2")}, opts...)
@@ -54,7 +61,9 @@ func (r *BetaThreadRunService) New(ctx context.Context, threadID string, params 
 }
 
 // Create a run.
-func (r *BetaThreadRunService) NewStreaming(ctx context.Context, threadID string, params BetaThreadRunNewParams, opts ...option.RequestOption) (stream *ssestream.Stream[AssistantStreamEvent]) {
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
+func (r *BetaThreadRunService) NewStreaming(ctx context.Context, threadID string, params BetaThreadRunNewParams, opts ...option.RequestOption) (stream *ssestream.Stream[AssistantStreamEventUnion]) {
 	var (
 		raw *http.Response
 		err error
@@ -67,20 +76,12 @@ func (r *BetaThreadRunService) NewStreaming(ctx context.Context, threadID string
 	}
 	path := fmt.Sprintf("threads/%s/runs", threadID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, params, &raw, opts...)
-	return ssestream.NewStream[AssistantStreamEvent](ssestream.NewDecoder(raw), err)
-}
-
-// Create a run and poll until task is completed.
-// Pass 0 to pollIntervalMs to use the default polling interval.
-func (r *BetaThreadRunService) NewAndPoll(ctx context.Context, threadID string, params BetaThreadRunNewParams, pollIntervalMs int, opts ...option.RequestOption) (res *Run, err error) {
-	run, err := r.New(ctx, threadID, params, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return r.PollStatus(ctx, threadID, run.ID, pollIntervalMs, opts...)
+	return ssestream.NewStream[AssistantStreamEventUnion](ssestream.NewDecoder(raw), err)
 }
 
 // Retrieves a run.
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
 func (r *BetaThreadRunService) Get(ctx context.Context, threadID string, runID string, opts ...option.RequestOption) (res *Run, err error) {
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithHeader("OpenAI-Beta", "assistants=v2")}, opts...)
@@ -98,6 +99,8 @@ func (r *BetaThreadRunService) Get(ctx context.Context, threadID string, runID s
 }
 
 // Modifies a run.
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
 func (r *BetaThreadRunService) Update(ctx context.Context, threadID string, runID string, body BetaThreadRunUpdateParams, opts ...option.RequestOption) (res *Run, err error) {
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithHeader("OpenAI-Beta", "assistants=v2")}, opts...)
@@ -115,6 +118,8 @@ func (r *BetaThreadRunService) Update(ctx context.Context, threadID string, runI
 }
 
 // Returns a list of runs belonging to a thread.
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
 func (r *BetaThreadRunService) List(ctx context.Context, threadID string, query BetaThreadRunListParams, opts ...option.RequestOption) (res *pagination.CursorPage[Run], err error) {
 	var raw *http.Response
 	opts = append(r.Options[:], opts...)
@@ -137,11 +142,15 @@ func (r *BetaThreadRunService) List(ctx context.Context, threadID string, query 
 }
 
 // Returns a list of runs belonging to a thread.
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
 func (r *BetaThreadRunService) ListAutoPaging(ctx context.Context, threadID string, query BetaThreadRunListParams, opts ...option.RequestOption) *pagination.CursorPageAutoPager[Run] {
 	return pagination.NewCursorPageAutoPager(r.List(ctx, threadID, query, opts...))
 }
 
 // Cancels a run that is `in_progress`.
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
 func (r *BetaThreadRunService) Cancel(ctx context.Context, threadID string, runID string, opts ...option.RequestOption) (res *Run, err error) {
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithHeader("OpenAI-Beta", "assistants=v2")}, opts...)
@@ -162,6 +171,8 @@ func (r *BetaThreadRunService) Cancel(ctx context.Context, threadID string, runI
 // `submit_tool_outputs`, this endpoint can be used to submit the outputs from the
 // tool calls once they're all completed. All outputs must be submitted in a single
 // request.
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
 func (r *BetaThreadRunService) SubmitToolOutputs(ctx context.Context, threadID string, runID string, body BetaThreadRunSubmitToolOutputsParams, opts ...option.RequestOption) (res *Run, err error) {
 	opts = append(r.Options[:], opts...)
 	opts = append([]option.RequestOption{option.WithHeader("OpenAI-Beta", "assistants=v2")}, opts...)
@@ -178,23 +189,13 @@ func (r *BetaThreadRunService) SubmitToolOutputs(ctx context.Context, threadID s
 	return
 }
 
-// A helper to submit a tool output to a run and poll for a terminal run state.
-// Pass 0 to pollIntervalMs to use the default polling interval.
-// More information on Run lifecycles can be found here:
-// https://platform.openai.com/docs/assistants/how-it-works/runs-and-run-steps
-func (r *BetaThreadRunService) SubmitToolOutputsAndPoll(ctx context.Context, threadID string, runID string, body BetaThreadRunSubmitToolOutputsParams, pollIntervalMs int, opts ...option.RequestOption) (*Run, error) {
-	run, err := r.SubmitToolOutputs(ctx, threadID, runID, body, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return r.PollStatus(ctx, threadID, run.ID, pollIntervalMs, opts...)
-}
-
 // When a run has the `status: "requires_action"` and `required_action.type` is
 // `submit_tool_outputs`, this endpoint can be used to submit the outputs from the
 // tool calls once they're all completed. All outputs must be submitted in a single
 // request.
-func (r *BetaThreadRunService) SubmitToolOutputsStreaming(ctx context.Context, threadID string, runID string, body BetaThreadRunSubmitToolOutputsParams, opts ...option.RequestOption) (stream *ssestream.Stream[AssistantStreamEvent]) {
+//
+// Deprecated: The Assistants API is deprecated in favor of the Responses API
+func (r *BetaThreadRunService) SubmitToolOutputsStreaming(ctx context.Context, threadID string, runID string, body BetaThreadRunSubmitToolOutputsParams, opts ...option.RequestOption) (stream *ssestream.Stream[AssistantStreamEventUnion]) {
 	var (
 		raw *http.Response
 		err error
@@ -211,7 +212,7 @@ func (r *BetaThreadRunService) SubmitToolOutputsStreaming(ctx context.Context, t
 	}
 	path := fmt.Sprintf("threads/%s/runs/%s/submit_tool_outputs", threadID, runID)
 	err = requestconfig.ExecuteNewRequest(ctx, http.MethodPost, path, body, &raw, opts...)
-	return ssestream.NewStream[AssistantStreamEvent](ssestream.NewDecoder(raw), err)
+	return ssestream.NewStream[AssistantStreamEventUnion](ssestream.NewDecoder(raw), err)
 }
 
 // Tool call objects
@@ -225,26 +226,21 @@ type RequiredActionFunctionToolCall struct {
 	Function RequiredActionFunctionToolCallFunction `json:"function,required"`
 	// The type of tool call the output is required for. For now, this is always
 	// `function`.
-	Type RequiredActionFunctionToolCallType `json:"type,required"`
-	JSON requiredActionFunctionToolCallJSON `json:"-"`
+	Type constant.Function `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Function    respjson.Field
+		Type        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-// requiredActionFunctionToolCallJSON contains the JSON metadata for the struct
-// [RequiredActionFunctionToolCall]
-type requiredActionFunctionToolCallJSON struct {
-	ID          apijson.Field
-	Function    apijson.Field
-	Type        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RequiredActionFunctionToolCall) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r RequiredActionFunctionToolCall) RawJSON() string { return r.JSON.raw }
+func (r *RequiredActionFunctionToolCall) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r requiredActionFunctionToolCallJSON) RawJSON() string {
-	return r.raw
 }
 
 // The function definition.
@@ -252,41 +248,20 @@ type RequiredActionFunctionToolCallFunction struct {
 	// The arguments that the model expects you to pass to the function.
 	Arguments string `json:"arguments,required"`
 	// The name of the function.
-	Name string                                     `json:"name,required"`
-	JSON requiredActionFunctionToolCallFunctionJSON `json:"-"`
+	Name string `json:"name,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Arguments   respjson.Field
+		Name        respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-// requiredActionFunctionToolCallFunctionJSON contains the JSON metadata for the
-// struct [RequiredActionFunctionToolCallFunction]
-type requiredActionFunctionToolCallFunctionJSON struct {
-	Arguments   apijson.Field
-	Name        apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RequiredActionFunctionToolCallFunction) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r RequiredActionFunctionToolCallFunction) RawJSON() string { return r.JSON.raw }
+func (r *RequiredActionFunctionToolCallFunction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r requiredActionFunctionToolCallFunctionJSON) RawJSON() string {
-	return r.raw
-}
-
-// The type of tool call the output is required for. For now, this is always
-// `function`.
-type RequiredActionFunctionToolCallType string
-
-const (
-	RequiredActionFunctionToolCallTypeFunction RequiredActionFunctionToolCallType = "function"
-)
-
-func (r RequiredActionFunctionToolCallType) IsKnown() bool {
-	switch r {
-	case RequiredActionFunctionToolCallTypeFunction:
-		return true
-	}
-	return false
 }
 
 // Represents an execution run on a
@@ -299,55 +274,79 @@ type Run struct {
 	// execution of this run.
 	AssistantID string `json:"assistant_id,required"`
 	// The Unix timestamp (in seconds) for when the run was cancelled.
-	CancelledAt int64 `json:"cancelled_at,required,nullable"`
+	CancelledAt int64 `json:"cancelled_at,required"`
 	// The Unix timestamp (in seconds) for when the run was completed.
-	CompletedAt int64 `json:"completed_at,required,nullable"`
+	CompletedAt int64 `json:"completed_at,required"`
 	// The Unix timestamp (in seconds) for when the run was created.
 	CreatedAt int64 `json:"created_at,required"`
 	// The Unix timestamp (in seconds) for when the run will expire.
-	ExpiresAt int64 `json:"expires_at,required,nullable"`
+	ExpiresAt int64 `json:"expires_at,required"`
 	// The Unix timestamp (in seconds) for when the run failed.
-	FailedAt int64 `json:"failed_at,required,nullable"`
+	FailedAt int64 `json:"failed_at,required"`
 	// Details on why the run is incomplete. Will be `null` if the run is not
 	// incomplete.
-	IncompleteDetails RunIncompleteDetails `json:"incomplete_details,required,nullable"`
+	IncompleteDetails RunIncompleteDetails `json:"incomplete_details,required"`
 	// The instructions that the
 	// [assistant](https://platform.openai.com/docs/api-reference/assistants) used for
 	// this run.
 	Instructions string `json:"instructions,required"`
 	// The last error associated with this run. Will be `null` if there are no errors.
-	LastError RunLastError `json:"last_error,required,nullable"`
+	LastError RunLastError `json:"last_error,required"`
 	// The maximum number of completion tokens specified to have been used over the
 	// course of the run.
-	MaxCompletionTokens int64 `json:"max_completion_tokens,required,nullable"`
+	MaxCompletionTokens int64 `json:"max_completion_tokens,required"`
 	// The maximum number of prompt tokens specified to have been used over the course
 	// of the run.
-	MaxPromptTokens int64 `json:"max_prompt_tokens,required,nullable"`
+	MaxPromptTokens int64 `json:"max_prompt_tokens,required"`
 	// Set of 16 key-value pairs that can be attached to an object. This can be useful
 	// for storing additional information about the object in a structured format, and
 	// querying for objects via API or the dashboard.
 	//
 	// Keys are strings with a maximum length of 64 characters. Values are strings with
 	// a maximum length of 512 characters.
-	Metadata shared.Metadata `json:"metadata,required,nullable"`
+	Metadata shared.Metadata `json:"metadata,required"`
 	// The model that the
 	// [assistant](https://platform.openai.com/docs/api-reference/assistants) used for
 	// this run.
 	Model string `json:"model,required"`
 	// The object type, which is always `thread.run`.
-	Object RunObject `json:"object,required"`
+	Object constant.ThreadRun `json:"object,required"`
 	// Whether to enable
 	// [parallel function calling](https://platform.openai.com/docs/guides/function-calling#configuring-parallel-function-calling)
 	// during tool use.
 	ParallelToolCalls bool `json:"parallel_tool_calls,required"`
 	// Details on the action required to continue the run. Will be `null` if no action
 	// is required.
-	RequiredAction RunRequiredAction `json:"required_action,required,nullable"`
+	RequiredAction RunRequiredAction `json:"required_action,required"`
+	// Specifies the format that the model must output. Compatible with
+	// [GPT-4o](https://platform.openai.com/docs/models#gpt-4o),
+	// [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-turbo-and-gpt-4),
+	// and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
+	//
+	// Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
+	// Outputs which ensures the model will match your supplied JSON schema. Learn more
+	// in the
+	// [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
+	//
+	// Setting to `{ "type": "json_object" }` enables JSON mode, which ensures the
+	// message the model generates is valid JSON.
+	//
+	// **Important:** when using JSON mode, you **must** also instruct the model to
+	// produce JSON yourself via a system or user message. Without this, the model may
+	// generate an unending stream of whitespace until the generation reaches the token
+	// limit, resulting in a long-running and seemingly "stuck" request. Also note that
+	// the message content may be partially cut off if `finish_reason="length"`, which
+	// indicates the generation exceeded `max_tokens` or the conversation exceeded the
+	// max context length.
+	ResponseFormat AssistantResponseFormatOptionUnion `json:"response_format,required"`
 	// The Unix timestamp (in seconds) for when the run was started.
-	StartedAt int64 `json:"started_at,required,nullable"`
+	StartedAt int64 `json:"started_at,required"`
 	// The status of the run, which can be either `queued`, `in_progress`,
 	// `requires_action`, `cancelling`, `cancelled`, `failed`, `completed`,
 	// `incomplete`, or `expired`.
+	//
+	// Any of "queued", "in_progress", "requires_action", "cancelling", "cancelled",
+	// "failed", "completed", "incomplete", "expired".
 	Status RunStatus `json:"status,required"`
 	// The ID of the [thread](https://platform.openai.com/docs/api-reference/threads)
 	// that was executed on as a part of this run.
@@ -359,62 +358,59 @@ type Run struct {
 	// to the user. Specifying a particular tool like `{"type": "file_search"}` or
 	// `{"type": "function", "function": {"name": "my_function"}}` forces the model to
 	// call that tool.
-	ToolChoice AssistantToolChoiceOptionUnion `json:"tool_choice,required,nullable"`
+	ToolChoice AssistantToolChoiceOptionUnion `json:"tool_choice,required"`
 	// The list of tools that the
 	// [assistant](https://platform.openai.com/docs/api-reference/assistants) used for
 	// this run.
-	Tools []AssistantTool `json:"tools,required"`
+	Tools []AssistantToolUnion `json:"tools,required"`
 	// Controls for how a thread will be truncated prior to the run. Use this to
 	// control the intial context window of the run.
-	TruncationStrategy RunTruncationStrategy `json:"truncation_strategy,required,nullable"`
+	TruncationStrategy RunTruncationStrategy `json:"truncation_strategy,required"`
 	// Usage statistics related to the run. This value will be `null` if the run is not
 	// in a terminal state (i.e. `in_progress`, `queued`, etc.).
-	Usage RunUsage `json:"usage,required,nullable"`
+	Usage RunUsage `json:"usage,required"`
 	// The sampling temperature used for this run. If not set, defaults to 1.
 	Temperature float64 `json:"temperature,nullable"`
 	// The nucleus sampling value used for this run. If not set, defaults to 1.
 	TopP float64 `json:"top_p,nullable"`
-	JSON runJSON `json:"-"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID                  respjson.Field
+		AssistantID         respjson.Field
+		CancelledAt         respjson.Field
+		CompletedAt         respjson.Field
+		CreatedAt           respjson.Field
+		ExpiresAt           respjson.Field
+		FailedAt            respjson.Field
+		IncompleteDetails   respjson.Field
+		Instructions        respjson.Field
+		LastError           respjson.Field
+		MaxCompletionTokens respjson.Field
+		MaxPromptTokens     respjson.Field
+		Metadata            respjson.Field
+		Model               respjson.Field
+		Object              respjson.Field
+		ParallelToolCalls   respjson.Field
+		RequiredAction      respjson.Field
+		ResponseFormat      respjson.Field
+		StartedAt           respjson.Field
+		Status              respjson.Field
+		ThreadID            respjson.Field
+		ToolChoice          respjson.Field
+		Tools               respjson.Field
+		TruncationStrategy  respjson.Field
+		Usage               respjson.Field
+		Temperature         respjson.Field
+		TopP                respjson.Field
+		ExtraFields         map[string]respjson.Field
+		raw                 string
+	} `json:"-"`
 }
 
-// runJSON contains the JSON metadata for the struct [Run]
-type runJSON struct {
-	ID                  apijson.Field
-	AssistantID         apijson.Field
-	CancelledAt         apijson.Field
-	CompletedAt         apijson.Field
-	CreatedAt           apijson.Field
-	ExpiresAt           apijson.Field
-	FailedAt            apijson.Field
-	IncompleteDetails   apijson.Field
-	Instructions        apijson.Field
-	LastError           apijson.Field
-	MaxCompletionTokens apijson.Field
-	MaxPromptTokens     apijson.Field
-	Metadata            apijson.Field
-	Model               apijson.Field
-	Object              apijson.Field
-	ParallelToolCalls   apijson.Field
-	RequiredAction      apijson.Field
-	StartedAt           apijson.Field
-	Status              apijson.Field
-	ThreadID            apijson.Field
-	ToolChoice          apijson.Field
-	Tools               apijson.Field
-	TruncationStrategy  apijson.Field
-	Usage               apijson.Field
-	Temperature         apijson.Field
-	TopP                apijson.Field
-	raw                 string
-	ExtraFields         map[string]apijson.Field
-}
-
-func (r *Run) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r Run) RawJSON() string { return r.JSON.raw }
+func (r *Run) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runJSON) RawJSON() string {
-	return r.raw
 }
 
 // Details on why the run is incomplete. Will be `null` if the run is not
@@ -422,98 +418,44 @@ func (r runJSON) RawJSON() string {
 type RunIncompleteDetails struct {
 	// The reason why the run is incomplete. This will point to which specific token
 	// limit was reached over the course of the run.
-	Reason RunIncompleteDetailsReason `json:"reason"`
-	JSON   runIncompleteDetailsJSON   `json:"-"`
+	//
+	// Any of "max_completion_tokens", "max_prompt_tokens".
+	Reason string `json:"reason"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Reason      respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-// runIncompleteDetailsJSON contains the JSON metadata for the struct
-// [RunIncompleteDetails]
-type runIncompleteDetailsJSON struct {
-	Reason      apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunIncompleteDetails) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r RunIncompleteDetails) RawJSON() string { return r.JSON.raw }
+func (r *RunIncompleteDetails) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runIncompleteDetailsJSON) RawJSON() string {
-	return r.raw
-}
-
-// The reason why the run is incomplete. This will point to which specific token
-// limit was reached over the course of the run.
-type RunIncompleteDetailsReason string
-
-const (
-	RunIncompleteDetailsReasonMaxCompletionTokens RunIncompleteDetailsReason = "max_completion_tokens"
-	RunIncompleteDetailsReasonMaxPromptTokens     RunIncompleteDetailsReason = "max_prompt_tokens"
-)
-
-func (r RunIncompleteDetailsReason) IsKnown() bool {
-	switch r {
-	case RunIncompleteDetailsReasonMaxCompletionTokens, RunIncompleteDetailsReasonMaxPromptTokens:
-		return true
-	}
-	return false
 }
 
 // The last error associated with this run. Will be `null` if there are no errors.
 type RunLastError struct {
 	// One of `server_error`, `rate_limit_exceeded`, or `invalid_prompt`.
-	Code RunLastErrorCode `json:"code,required"`
+	//
+	// Any of "server_error", "rate_limit_exceeded", "invalid_prompt".
+	Code string `json:"code,required"`
 	// A human-readable description of the error.
-	Message string           `json:"message,required"`
-	JSON    runLastErrorJSON `json:"-"`
+	Message string `json:"message,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Code        respjson.Field
+		Message     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-// runLastErrorJSON contains the JSON metadata for the struct [RunLastError]
-type runLastErrorJSON struct {
-	Code        apijson.Field
-	Message     apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunLastError) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r RunLastError) RawJSON() string { return r.JSON.raw }
+func (r *RunLastError) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runLastErrorJSON) RawJSON() string {
-	return r.raw
-}
-
-// One of `server_error`, `rate_limit_exceeded`, or `invalid_prompt`.
-type RunLastErrorCode string
-
-const (
-	RunLastErrorCodeServerError       RunLastErrorCode = "server_error"
-	RunLastErrorCodeRateLimitExceeded RunLastErrorCode = "rate_limit_exceeded"
-	RunLastErrorCodeInvalidPrompt     RunLastErrorCode = "invalid_prompt"
-)
-
-func (r RunLastErrorCode) IsKnown() bool {
-	switch r {
-	case RunLastErrorCodeServerError, RunLastErrorCodeRateLimitExceeded, RunLastErrorCodeInvalidPrompt:
-		return true
-	}
-	return false
-}
-
-// The object type, which is always `thread.run`.
-type RunObject string
-
-const (
-	RunObjectThreadRun RunObject = "thread.run"
-)
-
-func (r RunObject) IsKnown() bool {
-	switch r {
-	case RunObjectThreadRun:
-		return true
-	}
-	return false
 }
 
 // Details on the action required to continue the run. Will be `null` if no action
@@ -522,63 +464,38 @@ type RunRequiredAction struct {
 	// Details on the tool outputs needed for this run to continue.
 	SubmitToolOutputs RunRequiredActionSubmitToolOutputs `json:"submit_tool_outputs,required"`
 	// For now, this is always `submit_tool_outputs`.
-	Type RunRequiredActionType `json:"type,required"`
-	JSON runRequiredActionJSON `json:"-"`
+	Type constant.SubmitToolOutputs `json:"type,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		SubmitToolOutputs respjson.Field
+		Type              respjson.Field
+		ExtraFields       map[string]respjson.Field
+		raw               string
+	} `json:"-"`
 }
 
-// runRequiredActionJSON contains the JSON metadata for the struct
-// [RunRequiredAction]
-type runRequiredActionJSON struct {
-	SubmitToolOutputs apijson.Field
-	Type              apijson.Field
-	raw               string
-	ExtraFields       map[string]apijson.Field
-}
-
-func (r *RunRequiredAction) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r RunRequiredAction) RawJSON() string { return r.JSON.raw }
+func (r *RunRequiredAction) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runRequiredActionJSON) RawJSON() string {
-	return r.raw
 }
 
 // Details on the tool outputs needed for this run to continue.
 type RunRequiredActionSubmitToolOutputs struct {
 	// A list of the relevant tool calls.
-	ToolCalls []RequiredActionFunctionToolCall       `json:"tool_calls,required"`
-	JSON      runRequiredActionSubmitToolOutputsJSON `json:"-"`
+	ToolCalls []RequiredActionFunctionToolCall `json:"tool_calls,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ToolCalls   respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-// runRequiredActionSubmitToolOutputsJSON contains the JSON metadata for the struct
-// [RunRequiredActionSubmitToolOutputs]
-type runRequiredActionSubmitToolOutputsJSON struct {
-	ToolCalls   apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *RunRequiredActionSubmitToolOutputs) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r RunRequiredActionSubmitToolOutputs) RawJSON() string { return r.JSON.raw }
+func (r *RunRequiredActionSubmitToolOutputs) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runRequiredActionSubmitToolOutputsJSON) RawJSON() string {
-	return r.raw
-}
-
-// For now, this is always `submit_tool_outputs`.
-type RunRequiredActionType string
-
-const (
-	RunRequiredActionTypeSubmitToolOutputs RunRequiredActionType = "submit_tool_outputs"
-)
-
-func (r RunRequiredActionType) IsKnown() bool {
-	switch r {
-	case RunRequiredActionTypeSubmitToolOutputs:
-		return true
-	}
-	return false
 }
 
 // Controls for how a thread will be truncated prior to the run. Use this to
@@ -588,47 +505,25 @@ type RunTruncationStrategy struct {
 	// `last_messages`, the thread will be truncated to the n most recent messages in
 	// the thread. When set to `auto`, messages in the middle of the thread will be
 	// dropped to fit the context length of the model, `max_prompt_tokens`.
-	Type RunTruncationStrategyType `json:"type,required"`
+	//
+	// Any of "auto", "last_messages".
+	Type string `json:"type,required"`
 	// The number of most recent messages from the thread when constructing the context
 	// for the run.
-	LastMessages int64                     `json:"last_messages,nullable"`
-	JSON         runTruncationStrategyJSON `json:"-"`
+	LastMessages int64 `json:"last_messages,nullable"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Type         respjson.Field
+		LastMessages respjson.Field
+		ExtraFields  map[string]respjson.Field
+		raw          string
+	} `json:"-"`
 }
 
-// runTruncationStrategyJSON contains the JSON metadata for the struct
-// [RunTruncationStrategy]
-type runTruncationStrategyJSON struct {
-	Type         apijson.Field
-	LastMessages apijson.Field
-	raw          string
-	ExtraFields  map[string]apijson.Field
-}
-
-func (r *RunTruncationStrategy) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r RunTruncationStrategy) RawJSON() string { return r.JSON.raw }
+func (r *RunTruncationStrategy) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runTruncationStrategyJSON) RawJSON() string {
-	return r.raw
-}
-
-// The truncation strategy to use for the thread. The default is `auto`. If set to
-// `last_messages`, the thread will be truncated to the n most recent messages in
-// the thread. When set to `auto`, messages in the middle of the thread will be
-// dropped to fit the context length of the model, `max_prompt_tokens`.
-type RunTruncationStrategyType string
-
-const (
-	RunTruncationStrategyTypeAuto         RunTruncationStrategyType = "auto"
-	RunTruncationStrategyTypeLastMessages RunTruncationStrategyType = "last_messages"
-)
-
-func (r RunTruncationStrategyType) IsKnown() bool {
-	switch r {
-	case RunTruncationStrategyTypeAuto, RunTruncationStrategyTypeLastMessages:
-		return true
-	}
-	return false
 }
 
 // Usage statistics related to the run. This value will be `null` if the run is not
@@ -639,25 +534,21 @@ type RunUsage struct {
 	// Number of prompt tokens used over the course of the run.
 	PromptTokens int64 `json:"prompt_tokens,required"`
 	// Total number of tokens used (prompt + completion).
-	TotalTokens int64        `json:"total_tokens,required"`
-	JSON        runUsageJSON `json:"-"`
+	TotalTokens int64 `json:"total_tokens,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		CompletionTokens respjson.Field
+		PromptTokens     respjson.Field
+		TotalTokens      respjson.Field
+		ExtraFields      map[string]respjson.Field
+		raw              string
+	} `json:"-"`
 }
 
-// runUsageJSON contains the JSON metadata for the struct [RunUsage]
-type runUsageJSON struct {
-	CompletionTokens apijson.Field
-	PromptTokens     apijson.Field
-	TotalTokens      apijson.Field
-	raw              string
-	ExtraFields      map[string]apijson.Field
-}
-
-func (r *RunUsage) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r RunUsage) RawJSON() string { return r.JSON.raw }
+func (r *RunUsage) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r runUsageJSON) RawJSON() string {
-	return r.raw
 }
 
 // The status of the run, which can be either `queued`, `in_progress`,
@@ -677,19 +568,74 @@ const (
 	RunStatusExpired        RunStatus = "expired"
 )
 
-func (r RunStatus) IsKnown() bool {
-	switch r {
-	case RunStatusQueued, RunStatusInProgress, RunStatusRequiresAction, RunStatusCancelling, RunStatusCancelled, RunStatusFailed, RunStatusCompleted, RunStatusIncomplete, RunStatusExpired:
-		return true
-	}
-	return false
-}
-
 type BetaThreadRunNewParams struct {
 	// The ID of the
 	// [assistant](https://platform.openai.com/docs/api-reference/assistants) to use to
 	// execute this run.
-	AssistantID param.Field[string] `json:"assistant_id,required"`
+	AssistantID string `json:"assistant_id,required"`
+	// Appends additional instructions at the end of the instructions for the run. This
+	// is useful for modifying the behavior on a per-run basis without overriding other
+	// instructions.
+	AdditionalInstructions param.Opt[string] `json:"additional_instructions,omitzero"`
+	// Overrides the
+	// [instructions](https://platform.openai.com/docs/api-reference/assistants/createAssistant)
+	// of the assistant. This is useful for modifying the behavior on a per-run basis.
+	Instructions param.Opt[string] `json:"instructions,omitzero"`
+	// The maximum number of completion tokens that may be used over the course of the
+	// run. The run will make a best effort to use only the number of completion tokens
+	// specified, across multiple turns of the run. If the run exceeds the number of
+	// completion tokens specified, the run will end with status `incomplete`. See
+	// `incomplete_details` for more info.
+	MaxCompletionTokens param.Opt[int64] `json:"max_completion_tokens,omitzero"`
+	// The maximum number of prompt tokens that may be used over the course of the run.
+	// The run will make a best effort to use only the number of prompt tokens
+	// specified, across multiple turns of the run. If the run exceeds the number of
+	// prompt tokens specified, the run will end with status `incomplete`. See
+	// `incomplete_details` for more info.
+	MaxPromptTokens param.Opt[int64] `json:"max_prompt_tokens,omitzero"`
+	// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will
+	// make the output more random, while lower values like 0.2 will make it more
+	// focused and deterministic.
+	Temperature param.Opt[float64] `json:"temperature,omitzero"`
+	// An alternative to sampling with temperature, called nucleus sampling, where the
+	// model considers the results of the tokens with top_p probability mass. So 0.1
+	// means only the tokens comprising the top 10% probability mass are considered.
+	//
+	// We generally recommend altering this or temperature but not both.
+	TopP param.Opt[float64] `json:"top_p,omitzero"`
+	// Whether to enable
+	// [parallel function calling](https://platform.openai.com/docs/guides/function-calling#configuring-parallel-function-calling)
+	// during tool use.
+	ParallelToolCalls param.Opt[bool] `json:"parallel_tool_calls,omitzero"`
+	// Adds additional messages to the thread before creating the run.
+	AdditionalMessages []BetaThreadRunNewParamsAdditionalMessage `json:"additional_messages,omitzero"`
+	// Set of 16 key-value pairs that can be attached to an object. This can be useful
+	// for storing additional information about the object in a structured format, and
+	// querying for objects via API or the dashboard.
+	//
+	// Keys are strings with a maximum length of 64 characters. Values are strings with
+	// a maximum length of 512 characters.
+	Metadata shared.Metadata `json:"metadata,omitzero"`
+	// The ID of the [Model](https://platform.openai.com/docs/api-reference/models) to
+	// be used to execute this run. If a value is provided here, it will override the
+	// model associated with the assistant. If not, the model associated with the
+	// assistant will be used.
+	Model shared.ChatModel `json:"model,omitzero"`
+	// **o-series models only**
+	//
+	// Constrains effort on reasoning for
+	// [reasoning models](https://platform.openai.com/docs/guides/reasoning). Currently
+	// supported values are `low`, `medium`, and `high`. Reducing reasoning effort can
+	// result in faster responses and fewer tokens used on reasoning in a response.
+	//
+	// Any of "low", "medium", "high".
+	ReasoningEffort shared.ReasoningEffort `json:"reasoning_effort,omitzero"`
+	// Override the tools the assistant can use for this run. This is useful for
+	// modifying the behavior on a per-run basis.
+	Tools []AssistantToolUnionParam `json:"tools,omitzero"`
+	// Controls for how a thread will be truncated prior to the run. Use this to
+	// control the intial context window of the run.
+	TruncationStrategy BetaThreadRunNewParamsTruncationStrategy `json:"truncation_strategy,omitzero"`
 	// A list of additional fields to include in the response. Currently the only
 	// supported value is `step_details.tool_calls[*].file_search.results[*].content`
 	// to fetch the file search result content.
@@ -697,56 +643,28 @@ type BetaThreadRunNewParams struct {
 	// See the
 	// [file search tool documentation](https://platform.openai.com/docs/assistants/tools/file-search#customizing-file-search-settings)
 	// for more information.
-	Include param.Field[[]RunStepInclude] `query:"include"`
-	// Appends additional instructions at the end of the instructions for the run. This
-	// is useful for modifying the behavior on a per-run basis without overriding other
-	// instructions.
-	AdditionalInstructions param.Field[string] `json:"additional_instructions"`
-	// Adds additional messages to the thread before creating the run.
-	AdditionalMessages param.Field[[]BetaThreadRunNewParamsAdditionalMessage] `json:"additional_messages"`
-	// Overrides the
-	// [instructions](https://platform.openai.com/docs/api-reference/assistants/createAssistant)
-	// of the assistant. This is useful for modifying the behavior on a per-run basis.
-	Instructions param.Field[string] `json:"instructions"`
-	// The maximum number of completion tokens that may be used over the course of the
-	// run. The run will make a best effort to use only the number of completion tokens
-	// specified, across multiple turns of the run. If the run exceeds the number of
-	// completion tokens specified, the run will end with status `incomplete`. See
-	// `incomplete_details` for more info.
-	MaxCompletionTokens param.Field[int64] `json:"max_completion_tokens"`
-	// The maximum number of prompt tokens that may be used over the course of the run.
-	// The run will make a best effort to use only the number of prompt tokens
-	// specified, across multiple turns of the run. If the run exceeds the number of
-	// prompt tokens specified, the run will end with status `incomplete`. See
-	// `incomplete_details` for more info.
-	MaxPromptTokens param.Field[int64] `json:"max_prompt_tokens"`
-	// Set of 16 key-value pairs that can be attached to an object. This can be useful
-	// for storing additional information about the object in a structured format, and
-	// querying for objects via API or the dashboard.
+	Include []RunStepInclude `query:"include,omitzero" json:"-"`
+	// Specifies the format that the model must output. Compatible with
+	// [GPT-4o](https://platform.openai.com/docs/models#gpt-4o),
+	// [GPT-4 Turbo](https://platform.openai.com/docs/models#gpt-4-turbo-and-gpt-4),
+	// and all GPT-3.5 Turbo models since `gpt-3.5-turbo-1106`.
 	//
-	// Keys are strings with a maximum length of 64 characters. Values are strings with
-	// a maximum length of 512 characters.
-	Metadata param.Field[shared.MetadataParam] `json:"metadata"`
-	// The ID of the [Model](https://platform.openai.com/docs/api-reference/models) to
-	// be used to execute this run. If a value is provided here, it will override the
-	// model associated with the assistant. If not, the model associated with the
-	// assistant will be used.
-	Model param.Field[ChatModel] `json:"model"`
-	// Whether to enable
-	// [parallel function calling](https://platform.openai.com/docs/guides/function-calling#configuring-parallel-function-calling)
-	// during tool use.
-	ParallelToolCalls param.Field[bool] `json:"parallel_tool_calls"`
-	// **o1 and o3-mini models only**
+	// Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured
+	// Outputs which ensures the model will match your supplied JSON schema. Learn more
+	// in the
+	// [Structured Outputs guide](https://platform.openai.com/docs/guides/structured-outputs).
 	//
-	// Constrains effort on reasoning for
-	// [reasoning models](https://platform.openai.com/docs/guides/reasoning). Currently
-	// supported values are `low`, `medium`, and `high`. Reducing reasoning effort can
-	// result in faster responses and fewer tokens used on reasoning in a response.
-	ReasoningEffort param.Field[BetaThreadRunNewParamsReasoningEffort] `json:"reasoning_effort"`
-	// What sampling temperature to use, between 0 and 2. Higher values like 0.8 will
-	// make the output more random, while lower values like 0.2 will make it more
-	// focused and deterministic.
-	Temperature param.Field[float64] `json:"temperature"`
+	// Setting to `{ "type": "json_object" }` enables JSON mode, which ensures the
+	// message the model generates is valid JSON.
+	//
+	// **Important:** when using JSON mode, you **must** also instruct the model to
+	// produce JSON yourself via a system or user message. Without this, the model may
+	// generate an unending stream of whitespace until the generation reaches the token
+	// limit, resulting in a long-running and seemingly "stuck" request. Also note that
+	// the message content may be partially cut off if `finish_reason="length"`, which
+	// indicates the generation exceeded `max_tokens` or the conversation exceeded the
+	// max context length.
+	ResponseFormat AssistantResponseFormatOptionUnionParam `json:"response_format,omitzero"`
 	// Controls which (if any) tool is called by the model. `none` means the model will
 	// not call any tools and instead generates a message. `auto` is the default value
 	// and means the model can pick between generating a message or calling one or more
@@ -754,211 +672,201 @@ type BetaThreadRunNewParams struct {
 	// to the user. Specifying a particular tool like `{"type": "file_search"}` or
 	// `{"type": "function", "function": {"name": "my_function"}}` forces the model to
 	// call that tool.
-	ToolChoice param.Field[AssistantToolChoiceOptionUnionParam] `json:"tool_choice"`
-	// Override the tools the assistant can use for this run. This is useful for
-	// modifying the behavior on a per-run basis.
-	Tools param.Field[[]AssistantToolUnionParam] `json:"tools"`
-	// An alternative to sampling with temperature, called nucleus sampling, where the
-	// model considers the results of the tokens with top_p probability mass. So 0.1
-	// means only the tokens comprising the top 10% probability mass are considered.
-	//
-	// We generally recommend altering this or temperature but not both.
-	TopP param.Field[float64] `json:"top_p"`
-	// Controls for how a thread will be truncated prior to the run. Use this to
-	// control the intial context window of the run.
-	TruncationStrategy param.Field[BetaThreadRunNewParamsTruncationStrategy] `json:"truncation_strategy"`
+	ToolChoice AssistantToolChoiceOptionUnionParam `json:"tool_choice,omitzero"`
+	paramObj
 }
 
 func (r BetaThreadRunNewParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow BetaThreadRunNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaThreadRunNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // URLQuery serializes [BetaThreadRunNewParams]'s query parameters as `url.Values`.
-func (r BetaThreadRunNewParams) URLQuery() (v url.Values) {
+func (r BetaThreadRunNewParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
 	})
 }
 
+// The properties Content, Role are required.
 type BetaThreadRunNewParamsAdditionalMessage struct {
-	// An array of content parts with a defined type, each can be of type `text` or
-	// images can be passed with `image_url` or `image_file`. Image types are only
-	// supported on
-	// [Vision-compatible models](https://platform.openai.com/docs/models).
-	Content param.Field[[]MessageContentPartParamUnion] `json:"content,required"`
+	// The text contents of the message.
+	Content BetaThreadRunNewParamsAdditionalMessageContentUnion `json:"content,omitzero,required"`
 	// The role of the entity that is creating the message. Allowed values include:
 	//
 	//   - `user`: Indicates the message is sent by an actual user and should be used in
 	//     most cases to represent user-generated messages.
 	//   - `assistant`: Indicates the message is generated by the assistant. Use this
 	//     value to insert messages from the assistant into the conversation.
-	Role param.Field[BetaThreadRunNewParamsAdditionalMessagesRole] `json:"role,required"`
+	//
+	// Any of "user", "assistant".
+	Role string `json:"role,omitzero,required"`
 	// A list of files attached to the message, and the tools they should be added to.
-	Attachments param.Field[[]BetaThreadRunNewParamsAdditionalMessagesAttachment] `json:"attachments"`
+	Attachments []BetaThreadRunNewParamsAdditionalMessageAttachment `json:"attachments,omitzero"`
 	// Set of 16 key-value pairs that can be attached to an object. This can be useful
 	// for storing additional information about the object in a structured format, and
 	// querying for objects via API or the dashboard.
 	//
 	// Keys are strings with a maximum length of 64 characters. Values are strings with
 	// a maximum length of 512 characters.
-	Metadata param.Field[shared.MetadataParam] `json:"metadata"`
+	Metadata shared.Metadata `json:"metadata,omitzero"`
+	paramObj
 }
 
 func (r BetaThreadRunNewParamsAdditionalMessage) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow BetaThreadRunNewParamsAdditionalMessage
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaThreadRunNewParamsAdditionalMessage) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
-// The role of the entity that is creating the message. Allowed values include:
+func init() {
+	apijson.RegisterFieldValidator[BetaThreadRunNewParamsAdditionalMessage](
+		"role", "user", "assistant",
+	)
+}
+
+// Only one field can be non-zero.
 //
-//   - `user`: Indicates the message is sent by an actual user and should be used in
-//     most cases to represent user-generated messages.
-//   - `assistant`: Indicates the message is generated by the assistant. Use this
-//     value to insert messages from the assistant into the conversation.
-type BetaThreadRunNewParamsAdditionalMessagesRole string
-
-const (
-	BetaThreadRunNewParamsAdditionalMessagesRoleUser      BetaThreadRunNewParamsAdditionalMessagesRole = "user"
-	BetaThreadRunNewParamsAdditionalMessagesRoleAssistant BetaThreadRunNewParamsAdditionalMessagesRole = "assistant"
-)
-
-func (r BetaThreadRunNewParamsAdditionalMessagesRole) IsKnown() bool {
-	switch r {
-	case BetaThreadRunNewParamsAdditionalMessagesRoleUser, BetaThreadRunNewParamsAdditionalMessagesRoleAssistant:
-		return true
-	}
-	return false
+// Use [param.IsOmitted] to confirm if a field is set.
+type BetaThreadRunNewParamsAdditionalMessageContentUnion struct {
+	OfString              param.Opt[string]              `json:",omitzero,inline"`
+	OfArrayOfContentParts []MessageContentPartParamUnion `json:",omitzero,inline"`
+	paramUnion
 }
 
-type BetaThreadRunNewParamsAdditionalMessagesAttachment struct {
+func (u BetaThreadRunNewParamsAdditionalMessageContentUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion[BetaThreadRunNewParamsAdditionalMessageContentUnion](u.OfString, u.OfArrayOfContentParts)
+}
+func (u *BetaThreadRunNewParamsAdditionalMessageContentUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
+
+func (u *BetaThreadRunNewParamsAdditionalMessageContentUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfArrayOfContentParts) {
+		return &u.OfArrayOfContentParts
+	}
+	return nil
+}
+
+type BetaThreadRunNewParamsAdditionalMessageAttachment struct {
 	// The ID of the file to attach to the message.
-	FileID param.Field[string] `json:"file_id"`
+	FileID param.Opt[string] `json:"file_id,omitzero"`
 	// The tools to add this file to.
-	Tools param.Field[[]BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolUnion] `json:"tools"`
+	Tools []BetaThreadRunNewParamsAdditionalMessageAttachmentToolUnion `json:"tools,omitzero"`
+	paramObj
 }
 
-func (r BetaThreadRunNewParamsAdditionalMessagesAttachment) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+func (r BetaThreadRunNewParamsAdditionalMessageAttachment) MarshalJSON() (data []byte, err error) {
+	type shadow BetaThreadRunNewParamsAdditionalMessageAttachment
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaThreadRunNewParamsAdditionalMessageAttachment) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
-type BetaThreadRunNewParamsAdditionalMessagesAttachmentsTool struct {
-	// The type of tool being defined: `code_interpreter`
-	Type param.Field[BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsType] `json:"type,required"`
-}
-
-func (r BetaThreadRunNewParamsAdditionalMessagesAttachmentsTool) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r BetaThreadRunNewParamsAdditionalMessagesAttachmentsTool) implementsBetaThreadRunNewParamsAdditionalMessagesAttachmentsToolUnion() {
-}
-
-// Satisfied by [CodeInterpreterToolParam],
-// [BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearch],
-// [BetaThreadRunNewParamsAdditionalMessagesAttachmentsTool].
-type BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolUnion interface {
-	implementsBetaThreadRunNewParamsAdditionalMessagesAttachmentsToolUnion()
-}
-
-type BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearch struct {
-	// The type of tool being defined: `file_search`
-	Type param.Field[BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearchType] `json:"type,required"`
-}
-
-func (r BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearch) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
-}
-
-func (r BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearch) implementsBetaThreadRunNewParamsAdditionalMessagesAttachmentsToolUnion() {
-}
-
-// The type of tool being defined: `file_search`
-type BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearchType string
-
-const (
-	BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearchTypeFileSearch BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearchType = "file_search"
-)
-
-func (r BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearchType) IsKnown() bool {
-	switch r {
-	case BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsFileSearchTypeFileSearch:
-		return true
-	}
-	return false
-}
-
-// The type of tool being defined: `code_interpreter`
-type BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsType string
-
-const (
-	BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsTypeCodeInterpreter BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsType = "code_interpreter"
-	BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsTypeFileSearch      BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsType = "file_search"
-)
-
-func (r BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsType) IsKnown() bool {
-	switch r {
-	case BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsTypeCodeInterpreter, BetaThreadRunNewParamsAdditionalMessagesAttachmentsToolsTypeFileSearch:
-		return true
-	}
-	return false
-}
-
-// **o1 and o3-mini models only**
+// Only one field can be non-zero.
 //
-// Constrains effort on reasoning for
-// [reasoning models](https://platform.openai.com/docs/guides/reasoning). Currently
-// supported values are `low`, `medium`, and `high`. Reducing reasoning effort can
-// result in faster responses and fewer tokens used on reasoning in a response.
-type BetaThreadRunNewParamsReasoningEffort string
+// Use [param.IsOmitted] to confirm if a field is set.
+type BetaThreadRunNewParamsAdditionalMessageAttachmentToolUnion struct {
+	OfCodeInterpreter *CodeInterpreterToolParam                                        `json:",omitzero,inline"`
+	OfFileSearch      *BetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch `json:",omitzero,inline"`
+	paramUnion
+}
 
-const (
-	BetaThreadRunNewParamsReasoningEffortLow    BetaThreadRunNewParamsReasoningEffort = "low"
-	BetaThreadRunNewParamsReasoningEffortMedium BetaThreadRunNewParamsReasoningEffort = "medium"
-	BetaThreadRunNewParamsReasoningEffortHigh   BetaThreadRunNewParamsReasoningEffort = "high"
-)
+func (u BetaThreadRunNewParamsAdditionalMessageAttachmentToolUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion[BetaThreadRunNewParamsAdditionalMessageAttachmentToolUnion](u.OfCodeInterpreter, u.OfFileSearch)
+}
+func (u *BetaThreadRunNewParamsAdditionalMessageAttachmentToolUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
 
-func (r BetaThreadRunNewParamsReasoningEffort) IsKnown() bool {
-	switch r {
-	case BetaThreadRunNewParamsReasoningEffortLow, BetaThreadRunNewParamsReasoningEffortMedium, BetaThreadRunNewParamsReasoningEffortHigh:
-		return true
+func (u *BetaThreadRunNewParamsAdditionalMessageAttachmentToolUnion) asAny() any {
+	if !param.IsOmitted(u.OfCodeInterpreter) {
+		return u.OfCodeInterpreter
+	} else if !param.IsOmitted(u.OfFileSearch) {
+		return u.OfFileSearch
 	}
-	return false
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u BetaThreadRunNewParamsAdditionalMessageAttachmentToolUnion) GetType() *string {
+	if vt := u.OfCodeInterpreter; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfFileSearch; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[BetaThreadRunNewParamsAdditionalMessageAttachmentToolUnion](
+		"type",
+		apijson.Discriminator[CodeInterpreterToolParam]("code_interpreter"),
+		apijson.Discriminator[BetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch]("file_search"),
+	)
+}
+
+func NewBetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch() BetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch {
+	return BetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch{
+		Type: "file_search",
+	}
+}
+
+// This struct has a constant value, construct it with
+// [NewBetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch].
+type BetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch struct {
+	// The type of tool being defined: `file_search`
+	Type constant.FileSearch `json:"type,required"`
+	paramObj
+}
+
+func (r BetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch) MarshalJSON() (data []byte, err error) {
+	type shadow BetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaThreadRunNewParamsAdditionalMessageAttachmentToolFileSearch) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Controls for how a thread will be truncated prior to the run. Use this to
 // control the intial context window of the run.
+//
+// The property Type is required.
 type BetaThreadRunNewParamsTruncationStrategy struct {
 	// The truncation strategy to use for the thread. The default is `auto`. If set to
 	// `last_messages`, the thread will be truncated to the n most recent messages in
 	// the thread. When set to `auto`, messages in the middle of the thread will be
 	// dropped to fit the context length of the model, `max_prompt_tokens`.
-	Type param.Field[BetaThreadRunNewParamsTruncationStrategyType] `json:"type,required"`
+	//
+	// Any of "auto", "last_messages".
+	Type string `json:"type,omitzero,required"`
 	// The number of most recent messages from the thread when constructing the context
 	// for the run.
-	LastMessages param.Field[int64] `json:"last_messages"`
+	LastMessages param.Opt[int64] `json:"last_messages,omitzero"`
+	paramObj
 }
 
 func (r BetaThreadRunNewParamsTruncationStrategy) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow BetaThreadRunNewParamsTruncationStrategy
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaThreadRunNewParamsTruncationStrategy) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
-// The truncation strategy to use for the thread. The default is `auto`. If set to
-// `last_messages`, the thread will be truncated to the n most recent messages in
-// the thread. When set to `auto`, messages in the middle of the thread will be
-// dropped to fit the context length of the model, `max_prompt_tokens`.
-type BetaThreadRunNewParamsTruncationStrategyType string
-
-const (
-	BetaThreadRunNewParamsTruncationStrategyTypeAuto         BetaThreadRunNewParamsTruncationStrategyType = "auto"
-	BetaThreadRunNewParamsTruncationStrategyTypeLastMessages BetaThreadRunNewParamsTruncationStrategyType = "last_messages"
-)
-
-func (r BetaThreadRunNewParamsTruncationStrategyType) IsKnown() bool {
-	switch r {
-	case BetaThreadRunNewParamsTruncationStrategyTypeAuto, BetaThreadRunNewParamsTruncationStrategyTypeLastMessages:
-		return true
-	}
-	return false
+func init() {
+	apijson.RegisterFieldValidator[BetaThreadRunNewParamsTruncationStrategy](
+		"type", "auto", "last_messages",
+	)
 }
 
 type BetaThreadRunUpdateParams struct {
@@ -968,11 +876,16 @@ type BetaThreadRunUpdateParams struct {
 	//
 	// Keys are strings with a maximum length of 64 characters. Values are strings with
 	// a maximum length of 512 characters.
-	Metadata param.Field[shared.MetadataParam] `json:"metadata"`
+	Metadata shared.Metadata `json:"metadata,omitzero"`
+	paramObj
 }
 
 func (r BetaThreadRunUpdateParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow BetaThreadRunUpdateParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaThreadRunUpdateParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type BetaThreadRunListParams struct {
@@ -980,23 +893,26 @@ type BetaThreadRunListParams struct {
 	// in the list. For instance, if you make a list request and receive 100 objects,
 	// ending with obj_foo, your subsequent call can include after=obj_foo in order to
 	// fetch the next page of the list.
-	After param.Field[string] `query:"after"`
+	After param.Opt[string] `query:"after,omitzero" json:"-"`
 	// A cursor for use in pagination. `before` is an object ID that defines your place
 	// in the list. For instance, if you make a list request and receive 100 objects,
 	// starting with obj_foo, your subsequent call can include before=obj_foo in order
 	// to fetch the previous page of the list.
-	Before param.Field[string] `query:"before"`
+	Before param.Opt[string] `query:"before,omitzero" json:"-"`
 	// A limit on the number of objects to be returned. Limit can range between 1 and
 	// 100, and the default is 20.
-	Limit param.Field[int64] `query:"limit"`
+	Limit param.Opt[int64] `query:"limit,omitzero" json:"-"`
 	// Sort order by the `created_at` timestamp of the objects. `asc` for ascending
 	// order and `desc` for descending order.
-	Order param.Field[BetaThreadRunListParamsOrder] `query:"order"`
+	//
+	// Any of "asc", "desc".
+	Order BetaThreadRunListParamsOrder `query:"order,omitzero" json:"-"`
+	paramObj
 }
 
 // URLQuery serializes [BetaThreadRunListParams]'s query parameters as
 // `url.Values`.
-func (r BetaThreadRunListParams) URLQuery() (v url.Values) {
+func (r BetaThreadRunListParams) URLQuery() (v url.Values, err error) {
 	return apiquery.MarshalWithSettings(r, apiquery.QuerySettings{
 		ArrayFormat:  apiquery.ArrayQueryFormatBrackets,
 		NestedFormat: apiquery.NestedQueryFormatBrackets,
@@ -1012,31 +928,33 @@ const (
 	BetaThreadRunListParamsOrderDesc BetaThreadRunListParamsOrder = "desc"
 )
 
-func (r BetaThreadRunListParamsOrder) IsKnown() bool {
-	switch r {
-	case BetaThreadRunListParamsOrderAsc, BetaThreadRunListParamsOrderDesc:
-		return true
-	}
-	return false
-}
-
 type BetaThreadRunSubmitToolOutputsParams struct {
 	// A list of tools for which the outputs are being submitted.
-	ToolOutputs param.Field[[]BetaThreadRunSubmitToolOutputsParamsToolOutput] `json:"tool_outputs,required"`
+	ToolOutputs []BetaThreadRunSubmitToolOutputsParamsToolOutput `json:"tool_outputs,omitzero,required"`
+	paramObj
 }
 
 func (r BetaThreadRunSubmitToolOutputsParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow BetaThreadRunSubmitToolOutputsParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaThreadRunSubmitToolOutputsParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type BetaThreadRunSubmitToolOutputsParamsToolOutput struct {
 	// The output of the tool call to be submitted to continue the run.
-	Output param.Field[string] `json:"output"`
+	Output param.Opt[string] `json:"output,omitzero"`
 	// The ID of the tool call in the `required_action` object within the run object
 	// the output is being submitted for.
-	ToolCallID param.Field[string] `json:"tool_call_id"`
+	ToolCallID param.Opt[string] `json:"tool_call_id,omitzero"`
+	paramObj
 }
 
 func (r BetaThreadRunSubmitToolOutputsParamsToolOutput) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow BetaThreadRunSubmitToolOutputsParamsToolOutput
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *BetaThreadRunSubmitToolOutputsParamsToolOutput) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }

@@ -25,7 +25,7 @@ func NewAgent(apiKey string, db *gorm.DB) *Agent {
 	)
 
 	return &Agent{
-		client: client,
+		client: &client,
 		DB:     db,
 	}
 }
@@ -51,9 +51,9 @@ func (a *Agent) GenerateSimilarQuestion(input models.SimilarQuestionGeneratorInp
 
 	// Create a structured output parameter
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
-		Name:        openai.F("generate_question_with_answer"),
-		Description: openai.F("Generate a new question based on the input question text"),
-		Schema:      openai.F(questionGeneratorOutputSchema),
+		Name:        "generate_question_with_answer",
+		Description: openai.String("Generate a new question based on the input question text"),
+		Schema:      questionGeneratorOutputSchema,
 		Strict:      openai.Bool(true),
 	}
 
@@ -65,17 +65,16 @@ func (a *Agent) GenerateSimilarQuestion(input models.SimilarQuestionGeneratorInp
 
 	// Query the Chat Completions API
 	response, err := a.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
+		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(systemPrompt),
 			openai.UserMessage(string(inputJSON)),
-		}),
-		ResponseFormat: openai.F[openai.ChatCompletionNewParamsResponseFormatUnion](
-			openai.ResponseFormatJSONSchemaParam{
-				Type:       openai.F(openai.ResponseFormatJSONSchemaTypeJSONSchema),
-				JSONSchema: openai.F(schemaParam),
+		},
+		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
+				JSONSchema: schemaParam,
 			},
-		),
-		Model:       openai.F(openai.ChatModelGPT4oMini),
+		},
+		Model:       openai.ChatModelO4Mini,
 		Temperature: openai.Float(0.4),
 	})
 	if err != nil {
@@ -98,9 +97,9 @@ func (a *Agent) GenerateNewQuestion(input models.NewQuestionGeneratorInputSchema
 
 	// Create a structured output parameter
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
-		Name:        openai.F("generate_question_with_answer"),
-		Description: openai.F("Generate a new question based on the input json listing the topic details"),
-		Schema:      openai.F(questionGeneratorOutputSchema),
+		Name:        "generate_question_with_answer",
+		Description: openai.String("Generate a new question based on the input json listing the topic details"),
+		Schema:      questionGeneratorOutputSchema,
 		Strict:      openai.Bool(true),
 	}
 
@@ -112,17 +111,16 @@ func (a *Agent) GenerateNewQuestion(input models.NewQuestionGeneratorInputSchema
 
 	// Query the Chat Completions API
 	response, err := a.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
+		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(systemPrompt),
 			openai.UserMessage(string(inputJSON)),
-		}),
-		ResponseFormat: openai.F[openai.ChatCompletionNewParamsResponseFormatUnion](
-			openai.ResponseFormatJSONSchemaParam{
-				Type:       openai.F(openai.ResponseFormatJSONSchemaTypeJSONSchema),
-				JSONSchema: openai.F(schemaParam),
+		},
+		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
+				JSONSchema: schemaParam,
 			},
-		),
-		Model:       openai.F(openai.ChatModelGPT4oMini),
+		},
+		Model:       openai.ChatModelGPT4oMini,
 		Temperature: openai.Float(0.6),
 	})
 	if err != nil {
@@ -144,9 +142,9 @@ func (a *Agent) GenerateAnswer(input models.QuestionGeneratorOutputSchema) (mode
 
 	// Create a structured output parameter
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
-		Name:        openai.F("generate_question_with_answer"),
-		Description: openai.F("Generate the correct answer based on the input question text"),
-		Schema:      openai.F(answerGeneratorOutputSchema),
+		Name:        "generate_question_with_answer",
+		Description: openai.String("Generate the correct answer based on the input question text"),
+		Schema:      answerGeneratorOutputSchema,
 		Strict:      openai.Bool(true),
 	}
 
@@ -158,17 +156,16 @@ func (a *Agent) GenerateAnswer(input models.QuestionGeneratorOutputSchema) (mode
 
 	// Set up the API parameters
 	params := openai.ChatCompletionNewParams{
-		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
+		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(prompts.AnswerGeneratorSystemPrompt),
 			openai.UserMessage(string(inputJSON)),
-		}),
-		ResponseFormat: openai.F[openai.ChatCompletionNewParamsResponseFormatUnion](
-			openai.ResponseFormatJSONSchemaParam{
-				Type:       openai.F(openai.ResponseFormatJSONSchemaTypeJSONSchema),
-				JSONSchema: openai.F(schemaParam),
+		},
+		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
+				JSONSchema: schemaParam,
 			},
-		),
-		Model: openai.F(openai.ChatModelGPT4oMini),
+		},
+		Model: openai.ChatModelGPT4oMini,
 		// Tools: openai.F([]openai.ChatCompletionToolParam{tools.CalculatorTool}),
 	}
 
@@ -194,9 +191,9 @@ func (a *Agent) GenerateQuestionOptions(input models.OptionGeneratorInputSchema)
 
 	// Create a structured output parameter
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
-		Name:        openai.F("generate_options_for_question"),
-		Description: openai.F("Generate options for a question based on the question text and answer in json"),
-		Schema:      openai.F(optionGeneratorOutputSchema),
+		Name:        "generate_options_for_question",
+		Description: openai.String("Generate options for a question based on the question text and answer in json"),
+		Schema:      optionGeneratorOutputSchema,
 		Strict:      openai.Bool(true),
 	}
 
@@ -208,17 +205,16 @@ func (a *Agent) GenerateQuestionOptions(input models.OptionGeneratorInputSchema)
 
 	// Query the Chat Completions API
 	response, err := a.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
+		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(prompts.OptionGeneratorSystemPrompt),
 			openai.UserMessage(string(inputJSON)),
-		}),
-		ResponseFormat: openai.F[openai.ChatCompletionNewParamsResponseFormatUnion](
-			openai.ResponseFormatJSONSchemaParam{
-				Type:       openai.F(openai.ResponseFormatJSONSchemaTypeJSONSchema),
-				JSONSchema: openai.F(schemaParam),
+		},
+		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
+				JSONSchema: schemaParam,
 			},
-		),
-		Model: openai.F(openai.ChatModelGPT4oMini),
+		},
+		Model: openai.ChatModelGPT4oMini,
 	})
 	if err != nil {
 		return models.OptionGeneratorOutputSchema{}, fmt.Errorf("API call failed: %w", err)
@@ -240,9 +236,9 @@ func (a *Agent) ValidateMathJaxFormatting(input models.Question) (models.Questio
 
 	// Create a structured output parameter
 	schemaParam := openai.ResponseFormatJSONSchemaJSONSchemaParam{
-		Name:        openai.F("validate_math_jax_formatting"),
-		Description: openai.F("Generate options for a question based on the question text and answer in json"),
-		Schema:      openai.F(rawQuestionOutputSchema),
+		Name:        "validate_math_jax_formatting",
+		Description: openai.String("Generate options for a question based on the question text and answer in json"),
+		Schema:      rawQuestionOutputSchema,
 		Strict:      openai.Bool(true),
 	}
 
@@ -254,17 +250,17 @@ func (a *Agent) ValidateMathJaxFormatting(input models.Question) (models.Questio
 
 	// Query the Chat Completions API
 	response, err := a.client.Chat.Completions.New(ctx, openai.ChatCompletionNewParams{
-		Messages: openai.F([]openai.ChatCompletionMessageParamUnion{
+		Messages: []openai.ChatCompletionMessageParamUnion{
 			openai.SystemMessage(prompts.MathJaxFormatter),
 			openai.UserMessage(string(inputJSON)),
-		}),
-		ResponseFormat: openai.F[openai.ChatCompletionNewParamsResponseFormatUnion](
-			openai.ResponseFormatJSONSchemaParam{
-				Type:       openai.F(openai.ResponseFormatJSONSchemaTypeJSONSchema),
-				JSONSchema: openai.F(schemaParam),
+		},
+		ResponseFormat: openai.ChatCompletionNewParamsResponseFormatUnion{
+			OfJSONSchema: &openai.ResponseFormatJSONSchemaParam{
+				JSONSchema: schemaParam,
 			},
-		),
-		Model: openai.F(openai.ChatModelGPT4oMini),
+		},
+
+		Model: openai.ChatModelGPT4oMini,
 	})
 	if err != nil {
 		return models.QuestionOutputSchema{}, fmt.Errorf("API call failed: %w", err)

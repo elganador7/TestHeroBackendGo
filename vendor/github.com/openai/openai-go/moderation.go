@@ -7,9 +7,11 @@ import (
 	"net/http"
 
 	"github.com/openai/openai-go/internal/apijson"
-	"github.com/openai/openai-go/internal/param"
 	"github.com/openai/openai-go/internal/requestconfig"
 	"github.com/openai/openai-go/option"
+	"github.com/openai/openai-go/packages/param"
+	"github.com/openai/openai-go/packages/respjson"
+	"github.com/openai/openai-go/shared/constant"
 )
 
 // ModerationService contains methods and other services that help with interacting
@@ -25,8 +27,8 @@ type ModerationService struct {
 // NewModerationService generates a new service that applies the given options to
 // each request. These options are applied after the parent client's options (if
 // there is one), and before any request-specific options.
-func NewModerationService(opts ...option.RequestOption) (r *ModerationService) {
-	r = &ModerationService{}
+func NewModerationService(opts ...option.RequestOption) (r ModerationService) {
+	r = ModerationService{}
 	r.Options = opts
 	return
 }
@@ -48,26 +50,22 @@ type Moderation struct {
 	// A list of the categories along with their scores as predicted by model.
 	CategoryScores ModerationCategoryScores `json:"category_scores,required"`
 	// Whether any of the below categories are flagged.
-	Flagged bool           `json:"flagged,required"`
-	JSON    moderationJSON `json:"-"`
+	Flagged bool `json:"flagged,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Categories                respjson.Field
+		CategoryAppliedInputTypes respjson.Field
+		CategoryScores            respjson.Field
+		Flagged                   respjson.Field
+		ExtraFields               map[string]respjson.Field
+		raw                       string
+	} `json:"-"`
 }
 
-// moderationJSON contains the JSON metadata for the struct [Moderation]
-type moderationJSON struct {
-	Categories                apijson.Field
-	CategoryAppliedInputTypes apijson.Field
-	CategoryScores            apijson.Field
-	Flagged                   apijson.Field
-	raw                       string
-	ExtraFields               map[string]apijson.Field
-}
-
-func (r *Moderation) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r Moderation) RawJSON() string { return r.JSON.raw }
+func (r *Moderation) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r moderationJSON) RawJSON() string {
-	return r.raw
 }
 
 // A list of the categories, and whether they are flagged or not.
@@ -114,283 +112,111 @@ type ModerationCategories struct {
 	// Content that depicts death, violence, or physical injury.
 	Violence bool `json:"violence,required"`
 	// Content that depicts death, violence, or physical injury in graphic detail.
-	ViolenceGraphic bool                     `json:"violence/graphic,required"`
-	JSON            moderationCategoriesJSON `json:"-"`
+	ViolenceGraphic bool `json:"violence/graphic,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Harassment            respjson.Field
+		HarassmentThreatening respjson.Field
+		Hate                  respjson.Field
+		HateThreatening       respjson.Field
+		Illicit               respjson.Field
+		IllicitViolent        respjson.Field
+		SelfHarm              respjson.Field
+		SelfHarmInstructions  respjson.Field
+		SelfHarmIntent        respjson.Field
+		Sexual                respjson.Field
+		SexualMinors          respjson.Field
+		Violence              respjson.Field
+		ViolenceGraphic       respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
 }
 
-// moderationCategoriesJSON contains the JSON metadata for the struct
-// [ModerationCategories]
-type moderationCategoriesJSON struct {
-	Harassment            apijson.Field
-	HarassmentThreatening apijson.Field
-	Hate                  apijson.Field
-	HateThreatening       apijson.Field
-	Illicit               apijson.Field
-	IllicitViolent        apijson.Field
-	SelfHarm              apijson.Field
-	SelfHarmInstructions  apijson.Field
-	SelfHarmIntent        apijson.Field
-	Sexual                apijson.Field
-	SexualMinors          apijson.Field
-	Violence              apijson.Field
-	ViolenceGraphic       apijson.Field
-	raw                   string
-	ExtraFields           map[string]apijson.Field
-}
-
-func (r *ModerationCategories) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r ModerationCategories) RawJSON() string { return r.JSON.raw }
+func (r *ModerationCategories) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r moderationCategoriesJSON) RawJSON() string {
-	return r.raw
 }
 
 // A list of the categories along with the input type(s) that the score applies to.
 type ModerationCategoryAppliedInputTypes struct {
 	// The applied input type(s) for the category 'harassment'.
-	Harassment []ModerationCategoryAppliedInputTypesHarassment `json:"harassment,required"`
+	//
+	// Any of "text".
+	Harassment []string `json:"harassment,required"`
 	// The applied input type(s) for the category 'harassment/threatening'.
-	HarassmentThreatening []ModerationCategoryAppliedInputTypesHarassmentThreatening `json:"harassment/threatening,required"`
+	//
+	// Any of "text".
+	HarassmentThreatening []string `json:"harassment/threatening,required"`
 	// The applied input type(s) for the category 'hate'.
-	Hate []ModerationCategoryAppliedInputTypesHate `json:"hate,required"`
+	//
+	// Any of "text".
+	Hate []string `json:"hate,required"`
 	// The applied input type(s) for the category 'hate/threatening'.
-	HateThreatening []ModerationCategoryAppliedInputTypesHateThreatening `json:"hate/threatening,required"`
+	//
+	// Any of "text".
+	HateThreatening []string `json:"hate/threatening,required"`
 	// The applied input type(s) for the category 'illicit'.
-	Illicit []ModerationCategoryAppliedInputTypesIllicit `json:"illicit,required"`
+	//
+	// Any of "text".
+	Illicit []string `json:"illicit,required"`
 	// The applied input type(s) for the category 'illicit/violent'.
-	IllicitViolent []ModerationCategoryAppliedInputTypesIllicitViolent `json:"illicit/violent,required"`
+	//
+	// Any of "text".
+	IllicitViolent []string `json:"illicit/violent,required"`
 	// The applied input type(s) for the category 'self-harm'.
-	SelfHarm []ModerationCategoryAppliedInputTypesSelfHarm `json:"self-harm,required"`
+	//
+	// Any of "text", "image".
+	SelfHarm []string `json:"self-harm,required"`
 	// The applied input type(s) for the category 'self-harm/instructions'.
-	SelfHarmInstructions []ModerationCategoryAppliedInputTypesSelfHarmInstruction `json:"self-harm/instructions,required"`
+	//
+	// Any of "text", "image".
+	SelfHarmInstructions []string `json:"self-harm/instructions,required"`
 	// The applied input type(s) for the category 'self-harm/intent'.
-	SelfHarmIntent []ModerationCategoryAppliedInputTypesSelfHarmIntent `json:"self-harm/intent,required"`
+	//
+	// Any of "text", "image".
+	SelfHarmIntent []string `json:"self-harm/intent,required"`
 	// The applied input type(s) for the category 'sexual'.
-	Sexual []ModerationCategoryAppliedInputTypesSexual `json:"sexual,required"`
+	//
+	// Any of "text", "image".
+	Sexual []string `json:"sexual,required"`
 	// The applied input type(s) for the category 'sexual/minors'.
-	SexualMinors []ModerationCategoryAppliedInputTypesSexualMinor `json:"sexual/minors,required"`
+	//
+	// Any of "text".
+	SexualMinors []string `json:"sexual/minors,required"`
 	// The applied input type(s) for the category 'violence'.
-	Violence []ModerationCategoryAppliedInputTypesViolence `json:"violence,required"`
+	//
+	// Any of "text", "image".
+	Violence []string `json:"violence,required"`
 	// The applied input type(s) for the category 'violence/graphic'.
-	ViolenceGraphic []ModerationCategoryAppliedInputTypesViolenceGraphic `json:"violence/graphic,required"`
-	JSON            moderationCategoryAppliedInputTypesJSON              `json:"-"`
+	//
+	// Any of "text", "image".
+	ViolenceGraphic []string `json:"violence/graphic,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Harassment            respjson.Field
+		HarassmentThreatening respjson.Field
+		Hate                  respjson.Field
+		HateThreatening       respjson.Field
+		Illicit               respjson.Field
+		IllicitViolent        respjson.Field
+		SelfHarm              respjson.Field
+		SelfHarmInstructions  respjson.Field
+		SelfHarmIntent        respjson.Field
+		Sexual                respjson.Field
+		SexualMinors          respjson.Field
+		Violence              respjson.Field
+		ViolenceGraphic       respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
 }
 
-// moderationCategoryAppliedInputTypesJSON contains the JSON metadata for the
-// struct [ModerationCategoryAppliedInputTypes]
-type moderationCategoryAppliedInputTypesJSON struct {
-	Harassment            apijson.Field
-	HarassmentThreatening apijson.Field
-	Hate                  apijson.Field
-	HateThreatening       apijson.Field
-	Illicit               apijson.Field
-	IllicitViolent        apijson.Field
-	SelfHarm              apijson.Field
-	SelfHarmInstructions  apijson.Field
-	SelfHarmIntent        apijson.Field
-	Sexual                apijson.Field
-	SexualMinors          apijson.Field
-	Violence              apijson.Field
-	ViolenceGraphic       apijson.Field
-	raw                   string
-	ExtraFields           map[string]apijson.Field
-}
-
-func (r *ModerationCategoryAppliedInputTypes) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r ModerationCategoryAppliedInputTypes) RawJSON() string { return r.JSON.raw }
+func (r *ModerationCategoryAppliedInputTypes) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r moderationCategoryAppliedInputTypesJSON) RawJSON() string {
-	return r.raw
-}
-
-type ModerationCategoryAppliedInputTypesHarassment string
-
-const (
-	ModerationCategoryAppliedInputTypesHarassmentText ModerationCategoryAppliedInputTypesHarassment = "text"
-)
-
-func (r ModerationCategoryAppliedInputTypesHarassment) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesHarassmentText:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesHarassmentThreatening string
-
-const (
-	ModerationCategoryAppliedInputTypesHarassmentThreateningText ModerationCategoryAppliedInputTypesHarassmentThreatening = "text"
-)
-
-func (r ModerationCategoryAppliedInputTypesHarassmentThreatening) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesHarassmentThreateningText:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesHate string
-
-const (
-	ModerationCategoryAppliedInputTypesHateText ModerationCategoryAppliedInputTypesHate = "text"
-)
-
-func (r ModerationCategoryAppliedInputTypesHate) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesHateText:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesHateThreatening string
-
-const (
-	ModerationCategoryAppliedInputTypesHateThreateningText ModerationCategoryAppliedInputTypesHateThreatening = "text"
-)
-
-func (r ModerationCategoryAppliedInputTypesHateThreatening) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesHateThreateningText:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesIllicit string
-
-const (
-	ModerationCategoryAppliedInputTypesIllicitText ModerationCategoryAppliedInputTypesIllicit = "text"
-)
-
-func (r ModerationCategoryAppliedInputTypesIllicit) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesIllicitText:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesIllicitViolent string
-
-const (
-	ModerationCategoryAppliedInputTypesIllicitViolentText ModerationCategoryAppliedInputTypesIllicitViolent = "text"
-)
-
-func (r ModerationCategoryAppliedInputTypesIllicitViolent) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesIllicitViolentText:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesSelfHarm string
-
-const (
-	ModerationCategoryAppliedInputTypesSelfHarmText  ModerationCategoryAppliedInputTypesSelfHarm = "text"
-	ModerationCategoryAppliedInputTypesSelfHarmImage ModerationCategoryAppliedInputTypesSelfHarm = "image"
-)
-
-func (r ModerationCategoryAppliedInputTypesSelfHarm) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesSelfHarmText, ModerationCategoryAppliedInputTypesSelfHarmImage:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesSelfHarmInstruction string
-
-const (
-	ModerationCategoryAppliedInputTypesSelfHarmInstructionText  ModerationCategoryAppliedInputTypesSelfHarmInstruction = "text"
-	ModerationCategoryAppliedInputTypesSelfHarmInstructionImage ModerationCategoryAppliedInputTypesSelfHarmInstruction = "image"
-)
-
-func (r ModerationCategoryAppliedInputTypesSelfHarmInstruction) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesSelfHarmInstructionText, ModerationCategoryAppliedInputTypesSelfHarmInstructionImage:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesSelfHarmIntent string
-
-const (
-	ModerationCategoryAppliedInputTypesSelfHarmIntentText  ModerationCategoryAppliedInputTypesSelfHarmIntent = "text"
-	ModerationCategoryAppliedInputTypesSelfHarmIntentImage ModerationCategoryAppliedInputTypesSelfHarmIntent = "image"
-)
-
-func (r ModerationCategoryAppliedInputTypesSelfHarmIntent) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesSelfHarmIntentText, ModerationCategoryAppliedInputTypesSelfHarmIntentImage:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesSexual string
-
-const (
-	ModerationCategoryAppliedInputTypesSexualText  ModerationCategoryAppliedInputTypesSexual = "text"
-	ModerationCategoryAppliedInputTypesSexualImage ModerationCategoryAppliedInputTypesSexual = "image"
-)
-
-func (r ModerationCategoryAppliedInputTypesSexual) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesSexualText, ModerationCategoryAppliedInputTypesSexualImage:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesSexualMinor string
-
-const (
-	ModerationCategoryAppliedInputTypesSexualMinorText ModerationCategoryAppliedInputTypesSexualMinor = "text"
-)
-
-func (r ModerationCategoryAppliedInputTypesSexualMinor) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesSexualMinorText:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesViolence string
-
-const (
-	ModerationCategoryAppliedInputTypesViolenceText  ModerationCategoryAppliedInputTypesViolence = "text"
-	ModerationCategoryAppliedInputTypesViolenceImage ModerationCategoryAppliedInputTypesViolence = "image"
-)
-
-func (r ModerationCategoryAppliedInputTypesViolence) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesViolenceText, ModerationCategoryAppliedInputTypesViolenceImage:
-		return true
-	}
-	return false
-}
-
-type ModerationCategoryAppliedInputTypesViolenceGraphic string
-
-const (
-	ModerationCategoryAppliedInputTypesViolenceGraphicText  ModerationCategoryAppliedInputTypesViolenceGraphic = "text"
-	ModerationCategoryAppliedInputTypesViolenceGraphicImage ModerationCategoryAppliedInputTypesViolenceGraphic = "image"
-)
-
-func (r ModerationCategoryAppliedInputTypesViolenceGraphic) IsKnown() bool {
-	switch r {
-	case ModerationCategoryAppliedInputTypesViolenceGraphicText, ModerationCategoryAppliedInputTypesViolenceGraphicImage:
-		return true
-	}
-	return false
 }
 
 // A list of the categories along with their scores as predicted by model.
@@ -420,75 +246,69 @@ type ModerationCategoryScores struct {
 	// The score for the category 'violence'.
 	Violence float64 `json:"violence,required"`
 	// The score for the category 'violence/graphic'.
-	ViolenceGraphic float64                      `json:"violence/graphic,required"`
-	JSON            moderationCategoryScoresJSON `json:"-"`
+	ViolenceGraphic float64 `json:"violence/graphic,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		Harassment            respjson.Field
+		HarassmentThreatening respjson.Field
+		Hate                  respjson.Field
+		HateThreatening       respjson.Field
+		Illicit               respjson.Field
+		IllicitViolent        respjson.Field
+		SelfHarm              respjson.Field
+		SelfHarmInstructions  respjson.Field
+		SelfHarmIntent        respjson.Field
+		Sexual                respjson.Field
+		SexualMinors          respjson.Field
+		Violence              respjson.Field
+		ViolenceGraphic       respjson.Field
+		ExtraFields           map[string]respjson.Field
+		raw                   string
+	} `json:"-"`
 }
 
-// moderationCategoryScoresJSON contains the JSON metadata for the struct
-// [ModerationCategoryScores]
-type moderationCategoryScoresJSON struct {
-	Harassment            apijson.Field
-	HarassmentThreatening apijson.Field
-	Hate                  apijson.Field
-	HateThreatening       apijson.Field
-	Illicit               apijson.Field
-	IllicitViolent        apijson.Field
-	SelfHarm              apijson.Field
-	SelfHarmInstructions  apijson.Field
-	SelfHarmIntent        apijson.Field
-	Sexual                apijson.Field
-	SexualMinors          apijson.Field
-	Violence              apijson.Field
-	ViolenceGraphic       apijson.Field
-	raw                   string
-	ExtraFields           map[string]apijson.Field
-}
-
-func (r *ModerationCategoryScores) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r ModerationCategoryScores) RawJSON() string { return r.JSON.raw }
+func (r *ModerationCategoryScores) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r moderationCategoryScoresJSON) RawJSON() string {
-	return r.raw
-}
-
 // An object describing an image to classify.
+//
+// The properties ImageURL, Type are required.
 type ModerationImageURLInputParam struct {
 	// Contains either an image URL or a data URL for a base64 encoded image.
-	ImageURL param.Field[ModerationImageURLInputImageURLParam] `json:"image_url,required"`
+	ImageURL ModerationImageURLInputImageURLParam `json:"image_url,omitzero,required"`
 	// Always `image_url`.
-	Type param.Field[ModerationImageURLInputType] `json:"type,required"`
+	//
+	// This field can be elided, and will marshal its zero value as "image_url".
+	Type constant.ImageURL `json:"type,required"`
+	paramObj
 }
 
 func (r ModerationImageURLInputParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow ModerationImageURLInputParam
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ModerationImageURLInputParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
-func (r ModerationImageURLInputParam) implementsModerationMultiModalInputUnionParam() {}
-
 // Contains either an image URL or a data URL for a base64 encoded image.
+//
+// The property URL is required.
 type ModerationImageURLInputImageURLParam struct {
 	// Either a URL of the image or the base64 encoded image data.
-	URL param.Field[string] `json:"url,required" format:"uri"`
+	URL string `json:"url,required" format:"uri"`
+	paramObj
 }
 
 func (r ModerationImageURLInputImageURLParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow ModerationImageURLInputImageURLParam
+	return param.MarshalObject(r, (*shadow)(&r))
 }
-
-// Always `image_url`.
-type ModerationImageURLInputType string
-
-const (
-	ModerationImageURLInputTypeImageURL ModerationImageURLInputType = "image_url"
-)
-
-func (r ModerationImageURLInputType) IsKnown() bool {
-	switch r {
-	case ModerationImageURLInputTypeImageURL:
-		return true
-	}
-	return false
+func (r *ModerationImageURLInputImageURLParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 type ModerationModel = string
@@ -500,72 +320,96 @@ const (
 	ModerationModelTextModerationStable     ModerationModel = "text-moderation-stable"
 )
 
-// An object describing an image to classify.
-type ModerationMultiModalInputParam struct {
-	// Always `image_url`.
-	Type     param.Field[ModerationMultiModalInputType] `json:"type,required"`
-	ImageURL param.Field[interface{}]                   `json:"image_url"`
-	// A string of text to classify.
-	Text param.Field[string] `json:"text"`
+func ModerationMultiModalInputParamOfImageURL(imageURL ModerationImageURLInputImageURLParam) ModerationMultiModalInputUnionParam {
+	var variant ModerationImageURLInputParam
+	variant.ImageURL = imageURL
+	return ModerationMultiModalInputUnionParam{OfImageURL: &variant}
 }
 
-func (r ModerationMultiModalInputParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+func ModerationMultiModalInputParamOfText(text string) ModerationMultiModalInputUnionParam {
+	var variant ModerationTextInputParam
+	variant.Text = text
+	return ModerationMultiModalInputUnionParam{OfText: &variant}
 }
 
-func (r ModerationMultiModalInputParam) implementsModerationMultiModalInputUnionParam() {}
-
-// An object describing an image to classify.
+// Only one field can be non-zero.
 //
-// Satisfied by [ModerationImageURLInputParam], [ModerationTextInputParam],
-// [ModerationMultiModalInputParam].
-type ModerationMultiModalInputUnionParam interface {
-	implementsModerationMultiModalInputUnionParam()
+// Use [param.IsOmitted] to confirm if a field is set.
+type ModerationMultiModalInputUnionParam struct {
+	OfImageURL *ModerationImageURLInputParam `json:",omitzero,inline"`
+	OfText     *ModerationTextInputParam     `json:",omitzero,inline"`
+	paramUnion
 }
 
-// Always `image_url`.
-type ModerationMultiModalInputType string
+func (u ModerationMultiModalInputUnionParam) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion[ModerationMultiModalInputUnionParam](u.OfImageURL, u.OfText)
+}
+func (u *ModerationMultiModalInputUnionParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
 
-const (
-	ModerationMultiModalInputTypeImageURL ModerationMultiModalInputType = "image_url"
-	ModerationMultiModalInputTypeText     ModerationMultiModalInputType = "text"
-)
-
-func (r ModerationMultiModalInputType) IsKnown() bool {
-	switch r {
-	case ModerationMultiModalInputTypeImageURL, ModerationMultiModalInputTypeText:
-		return true
+func (u *ModerationMultiModalInputUnionParam) asAny() any {
+	if !param.IsOmitted(u.OfImageURL) {
+		return u.OfImageURL
+	} else if !param.IsOmitted(u.OfText) {
+		return u.OfText
 	}
-	return false
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ModerationMultiModalInputUnionParam) GetImageURL() *ModerationImageURLInputImageURLParam {
+	if vt := u.OfImageURL; vt != nil {
+		return &vt.ImageURL
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ModerationMultiModalInputUnionParam) GetText() *string {
+	if vt := u.OfText; vt != nil {
+		return &vt.Text
+	}
+	return nil
+}
+
+// Returns a pointer to the underlying variant's property, if present.
+func (u ModerationMultiModalInputUnionParam) GetType() *string {
+	if vt := u.OfImageURL; vt != nil {
+		return (*string)(&vt.Type)
+	} else if vt := u.OfText; vt != nil {
+		return (*string)(&vt.Type)
+	}
+	return nil
+}
+
+func init() {
+	apijson.RegisterUnion[ModerationMultiModalInputUnionParam](
+		"type",
+		apijson.Discriminator[ModerationImageURLInputParam]("image_url"),
+		apijson.Discriminator[ModerationTextInputParam]("text"),
+	)
 }
 
 // An object describing text to classify.
+//
+// The properties Text, Type are required.
 type ModerationTextInputParam struct {
 	// A string of text to classify.
-	Text param.Field[string] `json:"text,required"`
+	Text string `json:"text,required"`
 	// Always `text`.
-	Type param.Field[ModerationTextInputType] `json:"type,required"`
+	//
+	// This field can be elided, and will marshal its zero value as "text".
+	Type constant.Text `json:"type,required"`
+	paramObj
 }
 
 func (r ModerationTextInputParam) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow ModerationTextInputParam
+	return param.MarshalObject(r, (*shadow)(&r))
 }
-
-func (r ModerationTextInputParam) implementsModerationMultiModalInputUnionParam() {}
-
-// Always `text`.
-type ModerationTextInputType string
-
-const (
-	ModerationTextInputTypeText ModerationTextInputType = "text"
-)
-
-func (r ModerationTextInputType) IsKnown() bool {
-	switch r {
-	case ModerationTextInputTypeText:
-		return true
-	}
-	return false
+func (r *ModerationTextInputParam) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
 // Represents if a given text input is potentially harmful.
@@ -575,57 +419,67 @@ type ModerationNewResponse struct {
 	// The model used to generate the moderation results.
 	Model string `json:"model,required"`
 	// A list of moderation objects.
-	Results []Moderation              `json:"results,required"`
-	JSON    moderationNewResponseJSON `json:"-"`
+	Results []Moderation `json:"results,required"`
+	// JSON contains metadata for fields, check presence with [respjson.Field.Valid].
+	JSON struct {
+		ID          respjson.Field
+		Model       respjson.Field
+		Results     respjson.Field
+		ExtraFields map[string]respjson.Field
+		raw         string
+	} `json:"-"`
 }
 
-// moderationNewResponseJSON contains the JSON metadata for the struct
-// [ModerationNewResponse]
-type moderationNewResponseJSON struct {
-	ID          apijson.Field
-	Model       apijson.Field
-	Results     apijson.Field
-	raw         string
-	ExtraFields map[string]apijson.Field
-}
-
-func (r *ModerationNewResponse) UnmarshalJSON(data []byte) (err error) {
+// Returns the unmodified JSON received from the API
+func (r ModerationNewResponse) RawJSON() string { return r.JSON.raw }
+func (r *ModerationNewResponse) UnmarshalJSON(data []byte) error {
 	return apijson.UnmarshalRoot(data, r)
-}
-
-func (r moderationNewResponseJSON) RawJSON() string {
-	return r.raw
 }
 
 type ModerationNewParams struct {
 	// Input (or inputs) to classify. Can be a single string, an array of strings, or
 	// an array of multi-modal input objects similar to other models.
-	Input param.Field[ModerationNewParamsInputUnion] `json:"input,required"`
+	Input ModerationNewParamsInputUnion `json:"input,omitzero,required"`
 	// The content moderation model you would like to use. Learn more in
 	// [the moderation guide](https://platform.openai.com/docs/guides/moderation), and
 	// learn about available models
 	// [here](https://platform.openai.com/docs/models#moderation).
-	Model param.Field[ModerationModel] `json:"model"`
+	Model ModerationModel `json:"model,omitzero"`
+	paramObj
 }
 
 func (r ModerationNewParams) MarshalJSON() (data []byte, err error) {
-	return apijson.MarshalRoot(r)
+	type shadow ModerationNewParams
+	return param.MarshalObject(r, (*shadow)(&r))
+}
+func (r *ModerationNewParams) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, r)
 }
 
-// Input (or inputs) to classify. Can be a single string, an array of strings, or
-// an array of multi-modal input objects similar to other models.
+// Only one field can be non-zero.
 //
-// Satisfied by [shared.UnionString], [ModerationNewParamsInputArray],
-// [ModerationNewParamsInputModerationMultiModalArray].
-type ModerationNewParamsInputUnion interface {
-	ImplementsModerationNewParamsInputUnion()
+// Use [param.IsOmitted] to confirm if a field is set.
+type ModerationNewParamsInputUnion struct {
+	OfString                    param.Opt[string]                     `json:",omitzero,inline"`
+	OfStringArray               []string                              `json:",omitzero,inline"`
+	OfModerationMultiModalArray []ModerationMultiModalInputUnionParam `json:",omitzero,inline"`
+	paramUnion
 }
 
-type ModerationNewParamsInputArray []string
+func (u ModerationNewParamsInputUnion) MarshalJSON() ([]byte, error) {
+	return param.MarshalUnion[ModerationNewParamsInputUnion](u.OfString, u.OfStringArray, u.OfModerationMultiModalArray)
+}
+func (u *ModerationNewParamsInputUnion) UnmarshalJSON(data []byte) error {
+	return apijson.UnmarshalRoot(data, u)
+}
 
-func (r ModerationNewParamsInputArray) ImplementsModerationNewParamsInputUnion() {}
-
-type ModerationNewParamsInputModerationMultiModalArray []ModerationMultiModalInputUnionParam
-
-func (r ModerationNewParamsInputModerationMultiModalArray) ImplementsModerationNewParamsInputUnion() {
+func (u *ModerationNewParamsInputUnion) asAny() any {
+	if !param.IsOmitted(u.OfString) {
+		return &u.OfString.Value
+	} else if !param.IsOmitted(u.OfStringArray) {
+		return &u.OfStringArray
+	} else if !param.IsOmitted(u.OfModerationMultiModalArray) {
+		return &u.OfModerationMultiModalArray
+	}
+	return nil
 }

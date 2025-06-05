@@ -10,11 +10,10 @@ import (
 )
 
 var WolframTool = openai.ChatCompletionToolParam{
-	Type: openai.F(openai.ChatCompletionToolTypeFunction),
-	Function: openai.F(openai.FunctionDefinitionParam{
-		Name:        openai.String("query_wolfram"),
+	Function: openai.FunctionDefinitionParam{
+		Name:        "query_wolfram",
 		Description: openai.String("Query the Wolfram Alpha API LLM to compute or verify mathematical expressions"),
-		Parameters: openai.F(openai.FunctionParameters{
+		Parameters: openai.FunctionParameters{
 			"type": "object",
 			"properties": map[string]interface{}{
 				"expression": map[string]string{
@@ -23,8 +22,8 @@ var WolframTool = openai.ChatCompletionToolParam{
 				},
 			},
 			"required": []string{"expression"},
-		}),
-	}),
+		},
+	},
 }
 
 type WolframToolObj struct {
